@@ -1,0 +1,27 @@
+<simulation name="example">
+
+   <duration value="10" units="sec"/>
+
+   <pipeline stagenumber="4"/>
+
+   <events>
+      <csv_path value="./csv_data/event_trace_60s.csv" units="ms"/>
+      <period value="100" units="ms"/>
+      <jitter value="150" units="ms"/>
+      <distance value="0" units="ms"/>
+      <wcets value="{14.2 9 3.6 5.7}" units="ms"/>
+      <relative_deadline value="120" units="ms"/>
+   </events>
+
+   <scheduler>
+      <kernel type="BWS">
+         <period value="15" units="ms"/>
+         <offlinedata>
+            <prefix path="./csv_data/Dell9020ThermalProp"/>
+         </offlinedata>
+      </kernel>
+   </scheduler>
+
+</simulation>
+
+

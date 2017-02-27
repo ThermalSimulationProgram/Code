@@ -1,0 +1,25 @@
+<simulation name="warming_curve">
+
+   <duration value="2" units="sec"/>
+
+   <pipeline stagenumber="1"/>
+
+   <events>
+      <csv_path value="" units="ms"/>
+      <period value="100" units="ms"/>
+      <jitter value="150" units="ms"/>
+      <distance value="0" units="ms"/>
+      <wcets value="{35}" units="ms"/>
+      <relative_deadline value="120" units="ms"/>
+   </events>
+
+   <scheduler>
+      <kernel type="PBOO">
+         <ton value="10" units="ms"/>
+         <toff value="30" units="ms"/>
+      </kernel>
+   </scheduler>
+
+</simulation>
+
+
