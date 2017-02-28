@@ -57,7 +57,7 @@ void Thread::trigger()
 }
 
 Thread::~Thread() {
-  cout << "Thread Object " << id << " is being destructed\n";
+  // cout << "Thread Object " << id << " is being destructed\n";
 }
 
 /*********** MEMBER FUNCTIONS ***********/

@@ -22,6 +22,7 @@ protected:
 
 public:
 	ScheduleKernel(unsigned n, enum _schedule_kernel kernel_type);
+	virtual ~ScheduleKernel();
 	
 	void setScheduler(Scheduler*);
 

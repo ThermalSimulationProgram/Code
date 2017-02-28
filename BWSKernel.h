@@ -17,6 +17,8 @@ private:
 public:
 	BWSKernel(unsigned n, vector<double> wcets, 
 		vector<double> _tbet, enum _schedule_kernel kernel);
+
+	~BWSKernel();
 	
 	void getScheduleScheme(vector<double> &, vector<double>&, pipeinfo&);
 	

@@ -30,7 +30,7 @@ Dispatcher::Dispatcher(vector<unsigned long> _rl_arrive_times,
 
 
 Dispatcher::~Dispatcher(){
-	std::cout << "dispatcher with id " << id << " is being destructed\n";
+	// std::cout << "dispatcher with id " << id << " is being destructed\n";
 }
 
 ///This is the pthread's wrapper function

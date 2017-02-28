@@ -41,6 +41,11 @@ TempWatcher::TempWatcher(unsigned period, string _filename, unsigned _id): Timed
 
 }	
 
+
+TempWatcher::~TempWatcher(){
+  // cout << "temperature watcher with id " << id << " is being destructed\n";
+}
+
 void TempWatcher::activate(){
 	setPriority(Priorities::get_server_pr());
 }
@@ -191,18 +196,43 @@ return ret;
 
 double TempWatcher::getMaxTemp(){
 	vector<double> s_max;
+  s_max.reserve(tempTrace.size());
 	for (unsigned i = 0; i < tempTrace.size(); ++i)
 	{
 		s_max.push_back(maxElement(tempTrace[i]));
 	}
- //return maxElement(s_max);
-  double sum = std::accumulate(s_max.begin(), s_max.end(), 0.0);
-  double avg = sum/s_max.size();
+ return maxElement(s_max);
+  // double sum = std::accumulate(s_max.begin(), s_max.end(), 0.0);
+  // double avg = sum/s_max.size();
 	
-  return avg;
+  // return avg;
 
 }
 
+
+vector<double> TempWatcher::getMeanTemp(){
+  vector<double> ret;
+  unsigned nstage = curTemp.size();
+
+  for (unsigned i = 0; i < nstage; ++i)
+  {
+    vector<double> singleStageTempTrace;
+    singleStageTempTrace.reserve(tempTrace.size());
+
+    for (unsigned j = 0; j < tempTrace.size(); ++j)
+    {
+      singleStageTempTrace.push_back(tempTrace[j][i]);
+    }
+
+    double sum = std::accumulate(singleStageTempTrace.begin(), 
+      singleStageTempTrace.end(), 0.0);
+    double avg = sum/singleStageTempTrace.size();
+    ret.push_back(avg);
+  }
+
+  return ret;
+
+}
 
 
 

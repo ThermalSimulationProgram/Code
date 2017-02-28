@@ -16,6 +16,10 @@ TimedRunnable::TimedRunnable(unsigned _id) : Thread(_id){
 	sem_init(&wrapper_sem, 0, 0);
 }
 
+TimedRunnable::~TimedRunnable(){
+	
+}
+
 ///This is the pthread's wrapper function
 void TimedRunnable::wrapper(){
 	

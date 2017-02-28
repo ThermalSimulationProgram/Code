@@ -58,6 +58,8 @@ public:
 	// Constructor needs the xml file path
 	Pipeline(string);
 
+	~Pipeline();
+
 	/************** Simulation interface functions ************/
 	// prepare for simulation, initialize statistics, dispatcher, scheduler
 	void initialize();

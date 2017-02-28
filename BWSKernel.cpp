@@ -14,6 +14,10 @@ AdaptiveKernel(_nstages, _wcets, _tbet, kernel){
 	
 }
 
+BWSKernel::~BWSKernel(){
+	
+}
+
 void BWSKernel::getScheduleScheme(vector<double> & tons, 
 	vector<double>& toffs, pipeinfo& config){
 

@@ -7,6 +7,10 @@ StaticKernel::StaticKernel(unsigned n, enum _schedule_kernel kernel_type)
 
 }
 
+StaticKernel::~StaticKernel(){
+	
+}
+
 void StaticKernel::setStaticScheme(vector<double> _tons, 
 	vector<double> _toffs){
 	tons = _tons;

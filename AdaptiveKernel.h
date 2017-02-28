@@ -33,7 +33,7 @@ protected:
 public:
 	AdaptiveKernel(unsigned n, vector<double> wcets, 
 		vector<double> _tbet, enum _schedule_kernel kernel);
-
+	virtual ~AdaptiveKernel();
 
 	void setHaAlpha(vector<jobject>, double);
 

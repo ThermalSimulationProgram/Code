@@ -30,7 +30,7 @@ protected:
 public:
 	///Constructor needs nothing
 	TimedRunnable(unsigned);
-	//~TimedRunnable();
+	virtual ~TimedRunnable();
 
 	///gives the  thread the ACTIVE priority
 	virtual void activate() = 0;

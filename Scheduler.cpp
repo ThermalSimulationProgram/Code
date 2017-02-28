@@ -43,7 +43,8 @@ Scheduler::Scheduler(Pipeline * p, _schedule_kernel _sche_type, \
 
 Scheduler::~Scheduler()
 {
-	std::cout << "scheduler with id " << id << " is being destructed\n";
+	delete kernel;
+	// cout << "scheduler with id " << id << "is being destructed\n";
 }
 
 

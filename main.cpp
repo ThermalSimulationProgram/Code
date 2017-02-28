@@ -101,7 +101,7 @@ void runSimulation(int argc, char** argv){
 	p->initialize();
 
 	double temp = p->simulate();
-	cout << temp << endl;
+	// cout << temp << endl;
 	delete p;
 	delete file;
 

@@ -11,6 +11,10 @@ ScheduleKernel::ScheduleKernel(unsigned n,
 	// initialized = false;
 }
 
+ScheduleKernel::~ScheduleKernel(){
+	
+}
+
 
 void ScheduleKernel::setScheduler(Scheduler* s){
 	scheduler = s;

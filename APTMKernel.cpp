@@ -24,6 +24,10 @@ AdaptiveKernel(_nstages, _wcets, _tbet, kernel){
 	block = 20;
 }
 
+APTMKernel::~APTMKernel(){
+	
+}
+
 void APTMKernel::setOfflineData(thermalProp t){
 	offlineData = t;
 }

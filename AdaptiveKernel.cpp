@@ -21,6 +21,10 @@ ScheduleKernel(n, kernel){
 	
 }
 
+AdaptiveKernel::~AdaptiveKernel(){
+	
+}
+
 void AdaptiveKernel::setHaAlpha(vector<jobject> _haalpha, double rldeadline){
 	relativeDeadline = rldeadline;
 	haAlpha = _haalpha;

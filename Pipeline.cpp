@@ -68,9 +68,21 @@ Pipeline::Pipeline(string xml_path)
 		cout << "Run with root\n";
 		pthread_exit(0);
 	}
-	
+	tempwatcher 	= new TempWatcher(200000, Scratch::getName(), 98);
 	// initialize();	
 }
+
+Pipeline::~Pipeline(){
+	delete dispatcher;
+	delete scheduler;
+	delete tempwatcher;
+
+	for (int i = 0; i < n_stages; ++i)
+	{
+		delete workers[i];
+	}
+}
+
 
 // explicitly set the CPUs to which the works are attached 
 void Pipeline::setWorkerCPU(vector<unsigned> order){
@@ -91,7 +103,7 @@ void Pipeline::setWorkerCPU(vector<unsigned> order){
 void Pipeline::initialize(){
 	Statistics::initialize();
 
-	tempwatcher 	= new TempWatcher(200000, Scratch::getName(), 98);
+	
 	
 	vector<unsigned long> wcets = Scratch::getWcets();
 	dispatcher->setPipeline(this);
@@ -163,7 +175,13 @@ int Pipeline::simulate(){
 	// join other threads, wait them to finish
 	join_all();
 	// return the average temperature 
-	return tempwatcher->getMaxTemp();
+	string tempSaveName = Scratch::getName() + "_meantemp";
+	saveDoubleVectorToFile2(tempwatcher->getMeanTemp(), 
+		tempSaveName);
+	double maxTemp = tempwatcher->getMaxTemp();
+	saveDoubleVectorToFile(vector<double>(1, maxTemp),
+		tempSaveName);
+	return 1;
 }
 
 

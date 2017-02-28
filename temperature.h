@@ -162,6 +162,7 @@ protected:
 
 public:
 	TempWatcher(unsigned, string, unsigned);
+	~TempWatcher();
 
 	static std::vector<double> get_cpu_temperature();
 
@@ -183,6 +184,7 @@ public:
 
 	double getMaxTemp();
 
+	vector<double> getMeanTemp();
 
 
 

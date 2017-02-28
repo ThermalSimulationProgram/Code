@@ -25,6 +25,8 @@ private:
 public:
 	APTMKernel(unsigned n, vector<double> wcets, 
 		vector<double> _tbet, double _bcoef, enum _schedule_kernel kernel);
+
+	~APTMKernel();
 	
 	void setOfflineData(thermalProp);
 	

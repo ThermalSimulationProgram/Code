@@ -17,6 +17,8 @@ protected:
 public:
 	StaticKernel(unsigned n, enum _schedule_kernel kernel_type);
 
+	~StaticKernel();
+
 	void setStaticScheme(vector<double>, vector<double>);
 
 	void getScheduleScheme(vector<double> &, vector<double>&, pipeinfo&);
