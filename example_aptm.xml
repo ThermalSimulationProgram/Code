@@ -10,12 +10,14 @@
       <jitter value="150" units="ms"/>
       <distance value="0" units="ms"/>
       <wcets value="{14.2 9 3.6 5.7}" units="ms"/>
+      <exe_factor value="0.9"/>
       <relative_deadline value="120" units="ms"/>
    </events>
 
    <scheduler>
       <kernel type="APTM">
          <period value="10" units="ms"/>
+         <b_factor value="0.93"/>
          <offlinedata>
             <prefix path="./csv_data/Dell9020ThermalProp"/>
          </offlinedata>

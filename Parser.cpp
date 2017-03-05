@@ -89,6 +89,8 @@ int Parser::parseFile(){
 		return -1;
 	}
 	
+	// get the execution time factor
+	double exe_factor = event_node.child("exe_factor").attribute("value").as_double();
 
 	// get scheduler attributes
 	xml_node schedule_node = sim_node.child("scheduler");
@@ -112,14 +114,18 @@ int Parser::parseFile(){
 	Scratch::initialize(nstage, period, jitter, distance, 
 		rltDeadline, wcets, rl_release_times, type, duration, name);
 
-	
+	Scratch::setExeFactor(exe_factor);
+
 	// handle additional parameters for the scheduler
 	if(type == APTM){
 		unsigned long adaptPeriod = parseTimeMircroSecond(kernel_node.child("period"));
+		double b_factor 		  = kernel_node.child("b_factor").attribute("value").as_double();
+
 		xml_node offline_node     = kernel_node.child("offlinedata");
 		string prefix             = offline_node.child("prefix").attribute("path").value();
 		thermalProp offlinedata   = getOfflineData(prefix, nstage);
 
+		Scratch::setBFactor(b_factor);
 		Scratch::setAdaptionPeriod(adaptPeriod);
 		Scratch::setOfflineData(offlinedata);
 	}else if (type == BWS){

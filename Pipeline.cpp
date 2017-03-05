@@ -181,6 +181,9 @@ int Pipeline::simulate(){
 	double maxTemp = tempwatcher->getMaxTemp();
 	saveDoubleVectorToFile(vector<double>(1, maxTemp),
 		tempSaveName);
+
+	saveDoubleVectorToFile(scheduler->getKernelTime(), 
+		tempSaveName);
 	return 1;
 }
 

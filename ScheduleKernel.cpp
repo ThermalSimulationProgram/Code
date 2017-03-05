@@ -7,7 +7,7 @@ ScheduleKernel::ScheduleKernel(unsigned n,
 	nstages = n;
 	kernel_type = _kernel_type;
 
-	timeExpense.reserve(10000);
+	timeExpense.reserve(50000);
 	// initialized = false;
 }
 
@@ -23,10 +23,10 @@ void ScheduleKernel::setScheduler(Scheduler* s){
 
 void ScheduleKernel::getScheme(vector<double> & tons, 
 	vector<double>& toffs, pipeinfo& config){
-	double timein = (double)Statistics::getRelativeTime_ms();
+	double timein = (double)Statistics::getRelativeTime();
 	ScheduleKernel *t = (ScheduleKernel *) this;
 	t->getScheduleScheme( tons,  toffs,  config);
-	double timeout = (double)Statistics::getRelativeTime_ms();
+	double timeout = (double)Statistics::getRelativeTime();
 	timeExpense.push_back(timeout - timein);
 }
 

@@ -139,8 +139,8 @@ void Scheduler::wrapper(){
 	timedRun();
 
 	// if (kernel_type == APTM || kernel_type == BWS){
-		cout << "Scheduler:: kernel max time expense: " << kernel->getMaxTimeExpense()<< endl;
-		cout << "Scheduler:: kernel mean time expense: " << kernel->getMeanTimeExpense()<< endl;
+	//	cout << "Scheduler:: kernel max time expense: " << kernel->getMaxTimeExpense()<< endl;
+	//	cout << "Scheduler:: kernel mean time expense: " << kernel->getMeanTimeExpense()<< endl;
 	// }	
 	
 
@@ -187,3 +187,10 @@ const vector<double>& wcets, const vector<double>& TBET){
 	
 }
 	
+
+vector<double> Scheduler::getKernelTime(){
+	vector<double> ret;
+	ret.push_back(kernel->getMaxTimeExpense());
+	ret.push_back(kernel->getMeanTimeExpense());
+	return ret;
+}

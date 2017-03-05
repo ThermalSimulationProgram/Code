@@ -53,7 +53,7 @@ public:
 
 	void getPipelineInfo(pipeinfo&, const vector<double>&, const vector<double>&);
 
-
+	vector<double> getKernelTime();
 
 };
 
