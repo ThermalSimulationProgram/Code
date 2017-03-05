@@ -175,7 +175,7 @@ int Pipeline::simulate(){
 	// join other threads, wait them to finish
 	join_all();
 	// return the average temperature 
-	string tempSaveName = Scratch::getName() + "_meantemp";
+	string tempSaveName = Scratch::getName() + "_result";
 	saveDoubleVectorToFile2(tempwatcher->getMeanTemp(), 
 		tempSaveName);
 	double maxTemp = tempwatcher->getMaxTemp();
