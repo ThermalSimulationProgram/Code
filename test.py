@@ -135,6 +135,7 @@ def change_relative_deadline():
 	base_value = 120
 	read_filename = 'example_aptm'
 	filename = 'relative_deadline_'
+	make_dir('result/csv/relative_deadline')
 	# filepath = "".join(['./',filename,'.xml'])
 	dirname = 'result/xml/relative_deadline/'
 	make_dir(dirname)
@@ -148,7 +149,7 @@ def change_relative_deadline():
 		new_value = new_value+x*10
 		new_filename = filename+str(new_value)
 		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,new_filename)
+		change_filename(tree,new_filepath, "".join(["relative_deadline/",new_filename]))
 		change_node_properties(result_nodes, {"value": str(new_value)})  
 		
 		new_filename = "".join([dirname,'relative_deadline_',str(new_value),'.xml'])
@@ -163,6 +164,7 @@ def change_exe_factor():
 	read_filename = 'example_aptm'
 	filename = 'exe_factor_'
 	# filepath = "".join(['./',filename,'.xml'])
+	make_dir('result/csv/exe_factor')
 	dirname = 'result/xml/exe_factor/'
 	make_dir(dirname)
 	tree = read_xml("".join([read_filename,'.xml']))  
@@ -175,7 +177,7 @@ def change_exe_factor():
 		new_value = base_value+x*0.1
 		new_filename = filename+str(new_value)
 		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,new_filename)
+		change_filename(tree,new_filepath,"".join(["exe_factor/",new_filename]))
 		change_node_properties(result_nodes, {"value": str(new_value)})  
 		
 		new_filename = "".join([dirname,'exe_factor_',str(new_value),'.xml'])
@@ -185,119 +187,47 @@ def change_exe_factor():
 		print command_exe
 		if not no_command:
 			os.system(command_exe)
-def change_event_period():
-	base_value = 100
+def change_event(eventname,event_period,event_jitter,event_distance,event_wcets):
+	base_period = "100"
+	base_jitter = "150"
+	base_distance = "0"
+	base_wcets = "{14.2 9 3.6 5.7}"
 	read_filename = 'example_aptm'
-	filename = 'event_peroid_'
-	# filepath = "".join(['./',filename,'.xml'])
-	dirname = 'result/xml/event_peroid/'
+
+	dirname = 'result/xml/event/'
 	make_dir(dirname)
+
 	tree = read_xml("".join([read_filename,'.xml']))  
+	nodes = find_nodes(tree, "events/period") 
+	result_nodes = get_node_by_keyvalue(nodes, {"value":base_period})  
+	change_node_properties(result_nodes, {"value": str(event_period)})
+	write_xml(tree,"".join([dirname,eventname,".xml"]))
 
-	nodes = find_nodes(tree, "events/event_peroid") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":str(base_value)})  
-
-	new_value = base_value
-	for x in range(0,1):
-		new_value = new_value+ x*10
-		new_filename = filename+str(new_value)
-		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,new_filename)
-		change_node_properties(result_nodes, {"value": str(new_value)})  
-		
-		new_filename = "".join([dirname,'event_peroid_',str(new_value),'.xml'])
-		write_xml(tree,new_filename)
-
-		command_exe = 	'sudo ./main '+new_filename
-		print command_exe
-		if not no_command:
-			os.system(command_exe)
-def change_event_Jitter():
-	base_value = 150
-	read_filename = 'example_aptm'
-	filename = 'event_Jitter_'
-	# filepath = "".join(['./',filename,'.xml'])
-	dirname = 'result/xml/event_Jitter/'
-	make_dir(dirname)
+	read_filename = "".join([dirname,eventname])
 	tree = read_xml("".join([read_filename,'.xml']))  
+	nodes = find_nodes(tree,"events/jitter")
+	result_nodes = get_node_by_keyvalue(nodes, {"value":base_jitter})  
+	change_node_properties(result_nodes, {"value": str(event_jitter)})
+	write_xml(tree,"".join([read_filename,".xml"]))
 
-	nodes = find_nodes(tree, "events/event_Jitter") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":str(base_value)})  
-
-	new_value = base_value
-	for x in range(0,1):
-		new_value = base_value+ x*10
-		new_filename = filename+str(new_value)
-		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,new_filename)
-		change_node_properties(result_nodes, {"value": str(new_value)})  
-		
-		new_filename = "".join([dirname,'event_Jitter_',str(new_value),'.xml'])
-		write_xml(tree,new_filename)
-
-		command_exe = 	'sudo ./main '+new_filename
-		print command_exe
-		if not no_command:
-			os.system(command_exe)
-def change_event_distance():
-	base_value = 0
-	read_filename = 'example_aptm'
-	filename = 'event_distance_'
-	# filepath = "".join(['./',filename,'.xml'])
-	dirname = 'result/xml/event_distance/'
-	make_dir(dirname)
 	tree = read_xml("".join([read_filename,'.xml']))  
+	nodes = find_nodes(tree,"events/distance")
+	result_nodes = get_node_by_keyvalue(nodes, {"value":base_distance})  
+	change_node_properties(result_nodes, {"value": str(event_distance)})
+	write_xml(tree,"".join([read_filename,".xml"]))
 
-	nodes = find_nodes(tree, "events/event_distance") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":str(base_value)})  
-
-	new_value = base_value
-	for x in range(0,1):
-		new_value = base_value+ x*10
-		new_filename = filename+str(new_value)
-		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,new_filename)
-		change_node_properties(result_nodes, {"value": str(new_value)})  
-		
-		new_filename = "".join([dirname,'event_distance_',str(new_value),'.xml'])
-		write_xml(tree,new_filename)
-
-		command_exe = 	'sudo ./main '+new_filename
-		print command_exe
-		if not no_command:
-			os.system(command_exe)
-def change_event_wcets():
-	base_value = "{14.2 9 3.6 5.7}"
-	read_filename = 'example_aptm'
-	filename = 'event_wcets_'
-	# filepath = "".join(['./',filename,'.xml'])
-	dirname = 'result/xml/event_wcets/'
-	make_dir(dirname)
 	tree = read_xml("".join([read_filename,'.xml']))  
+	nodes = find_nodes(tree,"events/wcets")
+	result_nodes = get_node_by_keyvalue(nodes, {"value":base_wcets})  
+	change_node_properties(result_nodes, {"value": str(event_wcets)})
+	write_xml(tree,"".join([read_filename,".xml"]))
 
-	nodes = find_nodes(tree, "events/event_wcets") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":str(base_value)})  
-
-	new_value = base_value
-	for x in range(0,1):
-		new_value = base_value
-		new_filename = filename+str(new_value)
-		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,new_filename)
-		change_node_properties(result_nodes, {"value": str(new_value)})  
-		
-		new_filename = "".join([dirname,'event_wcets_',str(new_value),'.xml'])
-		write_xml(tree,new_filename)
-
-		command_exe = 	'sudo ./main '+new_filename
-		print command_exe
-		if not no_command:
-			os.system(command_exe)
 def change_kernel_period():
 	base_value = 10
 	read_filename = 'example_aptm'
 	filename = 'kernel_period_'
 	# filepath = "".join(['./',filename,'.xml'])
+	make_dir('result/csv/kernel_period')
 	dirname = 'result/xml/kernel_period/'
 	make_dir(dirname)
 	tree = read_xml("".join([read_filename,'.xml']))  
@@ -310,7 +240,7 @@ def change_kernel_period():
 		new_value = base_value+ x*10
 		new_filename = filename+str(new_value)
 		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,new_filename)
+		change_filename(tree,new_filepath,"".join(["kernel_period/",new_filename]))
 		change_node_properties(result_nodes, {"value": str(new_value)})  
 		
 		new_filename = "".join([dirname,'kernel_period_',str(new_value),'.xml'])
@@ -324,6 +254,7 @@ def change_kernel_factor():
 	base_value = 0.6
 	read_filename = 'example_aptm'
 	filename = 'kernel_factor_'
+	make_dir('result/csv/kernel_factor')
 	# filepath = "".join(['./',filename,'.xml'])
 	dirname = 'result/xml/kernel_factor/'
 	make_dir(dirname)
@@ -337,7 +268,7 @@ def change_kernel_factor():
 		new_value = x*0.01
 		new_filename = filename+str(new_value)
 		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,new_filename)
+		change_filename(tree,new_filepath,"".join(["kernel_factor/",new_filename]))
 		change_node_properties(result_nodes, {"value": str(new_value)})  
 		
 		new_filename = "".join([dirname,'kernel_factor_',str(new_value),'.xml'])
@@ -354,14 +285,11 @@ if __name__ == "__main__":
 	make_dir('result/csv')
 
 	global no_command
-	no_command = False
+	no_command = True
 
 	change_relative_deadline()
 	change_exe_factor()
-	change_event_period()
-	change_event_Jitter()
-	change_event_wcets()
-	change_event_distance()
-	change_kernel_period()
-	change_kernel_factor()
+	change_event("event1",120,151,1,"{14.2 10 3.6 5.7}")
+	# change_kernel_period()
+	# change_kernel_factor()
 
