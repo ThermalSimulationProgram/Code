@@ -70,7 +70,7 @@ void rtcjni::initialize(){
 	options[0].optionString = const_cast<char*> (".");
 	int res;
 
-	vm_args.version            = JNI_VERSION_1_8;
+	vm_args.version            = JNI_VERSION_1_6;
 	vm_args.nOptions           = 1;
 	vm_args.options            = options;
 	vm_args.ignoreUnrecognized = true;
