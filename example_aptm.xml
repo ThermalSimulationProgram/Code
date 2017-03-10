@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <simulation name="example">
 
-   <duration units="sec" value="30" />
+   <duration value="1" units="sec"/>
 
    <pipeline stagenumber="4" />
 

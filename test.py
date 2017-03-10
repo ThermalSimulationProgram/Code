@@ -138,7 +138,7 @@ def change_filename(tree,new_filepath,new_filename,kernel_type):
 
 
 def change_relative_deadline(kernel_type):
-	base_value = 120
+	base_value = 80
 	read_filename = "".join(['result/xml/event/','example_',kernel_type.lower()])
 	filename = "".join(['relative_deadline_',kernel_type,'_'])
 	make_dir('result/csv/relative_deadline')
@@ -150,9 +150,9 @@ def change_relative_deadline(kernel_type):
 	nodes = find_nodes(tree, "events/relative_deadline") 
 	result_nodes = get_node_by_keyvalue(nodes, {"value":str(base_value)})  
 
-	new_value = base_value
-	for x in range(0,1):
-		new_value = new_value+x*10
+	#new_value = base_value
+	for x in range(0,10):
+		new_value = base_value+x*10
 		new_filename = filename+str(new_value)
 		new_filepath = "".join([dirname,new_filename])
 		print(new_filepath)
@@ -360,7 +360,6 @@ if __name__ == "__main__":
 	
 	global no_command
 	no_command = False
-	# no_command = True
 
 	change_event(event,120,151,1,"{14.2 10 3.6 5.7}")
 
