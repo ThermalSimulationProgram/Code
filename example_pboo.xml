@@ -1,11 +1,11 @@
 <simulation name="example">
 
-   <duration value="30" units="sec"/>
+   <duration value="1" units="sec"/>
 
    <pipeline stagenumber="4"/>
 
    <events>
-      <csv_path value="" units="ms"/>
+      <csv_path value="./csv_data/event_trace_60s.csv" units="ms"/>
       <period value="100" units="ms"/>
       <jitter value="150" units="ms"/>
       <distance value="0" units="ms"/>
