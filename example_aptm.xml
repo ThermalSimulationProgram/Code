@@ -1,29 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
 <simulation name="example">
 
-   <duration value="30" units="sec"/>
+   <duration units="sec" value="30" />
 
-   <pipeline stagenumber="4"/>
+   <pipeline stagenumber="4" />
 
    <events>
-      <csv_path value="./csv_data/event_trace_60s.csv" units="ms"/>
-      <period value="100" units="ms"/>
-      <jitter value="150" units="ms"/>
-      <distance value="0" units="ms"/>
-      <wcets value="{14.2 9 3.6 5.7}" units="ms"/>
-      <exe_factor value="0.9"/>
-      <relative_deadline value="120" units="ms"/>
+      <csv_path units="ms" value="./csv_data/event_trace_60s.csv" />
+      <period units="ms" value="100" />
+      <jitter units="ms" value="150" />
+      <distance units="ms" value="0" />
+      <wcets units="ms" value="{14.2 9 3.6 5.7}" />
+      <exe_factor value="0.9" />
+      <relative_deadline units="ms" value="120" />
    </events>
 
    <scheduler>
       <kernel type="APTM">
-         <period value="10" units="ms"/>
-         <b_factor value="0.93"/>
+         <period units="ms" value="10" />
+         <b_factor value="0.93" />
          <offlinedata>
-            <prefix path="./csv_data/Dell9020ThermalProp"/>
+            <prefix path="./csv_data/Dell9020ThermalProp" />
          </offlinedata>
       </kernel>
    </scheduler>
  
 </simulation>
-
-
