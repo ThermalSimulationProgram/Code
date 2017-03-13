@@ -60,7 +60,17 @@ void dumpMatrix(std::vector<T> a){
 	std::cout << "]" << std::endl ;
 }
 
-
+template<typename T>
+string vectorTostring(const vector<T>& data){
+	stringstream out;
+	for(unsigned int c=0; c< data.size();c++) {
+		if ( c != data.size()-1 )
+			out << data[c] << ", " ;
+		else
+			out << data[c];
+	}
+	return out.str();
+}
 
 
 

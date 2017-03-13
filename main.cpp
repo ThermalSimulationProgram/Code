@@ -81,6 +81,9 @@ void testFileOperator(){
 	dumpMatrix(t);
 	vector<double> t2 = loadVectorFromFile<double>("example_result.csv");
 	dumpMatrix(t2);
+
+	saveToNewFile("testttest.csv", t2);
+	appendToFile("testttest.csv", t2);
 	 // t = loadVectorFromFile<double>("notexistfile.csv");
 }
 
