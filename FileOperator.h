@@ -31,6 +31,25 @@ vector<T> loadVectorFromFile(string name){
 	return ret;
 }
 
+template<typename T>
+vector<vector<T> > loadMaxtrixFromFile(string name){
+
+	ifstream file = openFile(name);
+	
+	std::string line;
+	std::vector<vector<T> > maxtrix;
+	while(std::getline(file, line)){
+		std::vector<T> row;
+		appStringToVector(line, row);
+
+		maxtrix.push_back(row);
+	}
+
+	closeFile(file);
+	return maxtrix;
+}
+
+
 
 
 

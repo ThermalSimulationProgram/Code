@@ -37,9 +37,27 @@ void appStringToVector(std::string const& pointLine, vector<T>& data)
 template<typename T> 
 void dumpVector(std::vector<T> a){
 	for (int i = 0; i < int(a.size()); ++i){
-		std::cout << a[i] << "  "  ;
+		std::cout << a[i] << "\t"  ;
 	}
-	std::cout<<std::endl<<"*************************"<<std::endl;
+}
+
+
+template<typename T> 
+void dumpMatrix(std::vector<vector<T>> a){
+	std::cout << "[";
+	for (int i = 0; i < int(a.size()); ++i){
+		dumpVector(a[i]);
+		if (i < int(a.size())-1)
+			std::cout << std::endl ;
+	}
+	std::cout << "]" << std::endl ;
+}
+
+template<typename T> 
+void dumpMatrix(std::vector<T> a){
+	std::cout << "[";
+	dumpVector(a);
+	std::cout << "]" << std::endl ;
 }
 
 

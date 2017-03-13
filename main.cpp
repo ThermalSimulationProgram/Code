@@ -77,11 +77,14 @@ testFileOperator();
 void testFileOperator(){
 
 
-	vector<double> t = loadVectorFromFile<double>("testfile.xml");
-	dumpVector(t);
-
-	 t = loadVectorFromFile<double>("notexistfile.csv");
+	vector<vector<double>> t = loadMaxtrixFromFile<double>("./csv_data/Dell9020ThermalProp_coolslopes.csv");
+	dumpMatrix(t);
+	vector<double> t2 = loadVectorFromFile<double>("example_result.csv");
+	dumpMatrix(t2);
+	 // t = loadVectorFromFile<double>("notexistfile.csv");
 }
+
+
 
 
 
@@ -91,6 +94,7 @@ void testStringUtils(){
 	appStringToVector(test, t);
 	displayvector(t, "t");
 }
+
 
 
 void offlineSimulation(){
