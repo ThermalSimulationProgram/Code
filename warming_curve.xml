@@ -1,6 +1,6 @@
 <simulation name="warming_curve">
 
-   <duration value="1" units="sec"/>
+   <duration value="25" units="sec"/>
 
    <pipeline stagenumber="1"/>
 
