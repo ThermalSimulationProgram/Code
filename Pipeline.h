@@ -68,7 +68,7 @@ public:
 	void setWorkerCPU(vector<unsigned>);
 
 	// Start the simulation, the duration is loaded from Scratch class
-	int simulate();
+	double simulate();
 
 	// join other threads, wait them to finish
 	void join_all();

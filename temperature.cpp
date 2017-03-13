@@ -209,6 +209,19 @@ double TempWatcher::getMaxTemp(){
 
 }
 
+double TempWatcher::getMeanMaxTemp(){
+  vector<double> s_max;
+  s_max.reserve(tempTrace.size());
+  for (unsigned i = 0; i < tempTrace.size(); ++i)
+  {
+    s_max.push_back(maxElement(tempTrace[i]));
+  }
+  double sum = std::accumulate(s_max.begin(), s_max.end(), 0.0);
+  double avg = sum/s_max.size();
+  
+  return avg;
+}
+
 
 vector<double> TempWatcher::getMeanTemp(){
   vector<double> ret;

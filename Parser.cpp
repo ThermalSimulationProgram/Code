@@ -287,7 +287,7 @@ vector<double> string2vector(string sin){
 	string base = sin;
 	if (base.length() < 3)
 	{
-		cerr<<"Invalid input string<---"<<endl;
+		cerr<<"string2vector:: Input string too short!"<<endl;
 		exit(1);
 	}
 	std::replace(base.begin(), base.end(), '{', ' ');

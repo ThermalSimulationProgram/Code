@@ -184,6 +184,8 @@ public:
 
 	double getMaxTemp();
 
+	double getMeanMaxTemp();
+
 	vector<double> getMeanTemp();
 
 

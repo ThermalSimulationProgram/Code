@@ -25,6 +25,7 @@ public:
 	static void 					setExeFactor(double);
 	static void 					setBFactor(double f);
 	static void 					setName(string);
+	static void 					setSavingFile(bool);
 	
 
 	static unsigned long 			getAdaptionPeriod();
@@ -46,6 +47,7 @@ public:
 	static double 					getExeFactor();
 	static double 					getBFactor();
 	static void 					print();
+	static bool 					isSaveFile();
 
 
 private:
@@ -71,6 +73,7 @@ private:
 	static thermalProp 				offlinedata;
 
 	static sem_t 					access_sem;
+	static bool 					isSave;
 };
 
 

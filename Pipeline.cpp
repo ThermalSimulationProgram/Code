@@ -131,7 +131,7 @@ void Pipeline::initialize(){
 }
 
 // Start the simulation, the duration is loaded from Scratch class
-int Pipeline::simulate(){
+double Pipeline::simulate(){
 	Worker *t;
 	// activate all the threads and attach them to their CPUs.
 	for (unsigned i = 0; i < workers.size(); ++i)
@@ -175,16 +175,21 @@ int Pipeline::simulate(){
 	// join other threads, wait them to finish
 	join_all();
 	// return the average temperature 
-	string tempSaveName = Scratch::getName() + "_result";
-	saveDoubleVectorToFile2(tempwatcher->getMeanTemp(), 
-		tempSaveName);
-	double maxTemp = tempwatcher->getMaxTemp();
-	saveDoubleVectorToFile(vector<double>(1, maxTemp),
-		tempSaveName);
 
-	saveDoubleVectorToFile(scheduler->getKernelTime(), 
-		tempSaveName);
-	return 1;
+	if (Scratch::isSaveFile()){
+		string tempSaveName = Scratch::getName() + "_result";
+
+		saveDoubleVectorToFile2(tempwatcher->getMeanTemp(), 
+			tempSaveName);
+		double maxTemp = tempwatcher->getMaxTemp();
+		saveDoubleVectorToFile(vector<double>(1, maxTemp),
+			tempSaveName);
+
+		saveDoubleVectorToFile(scheduler->getKernelTime(), 
+			tempSaveName);
+	}
+	
+	return tempwatcher->getMeanMaxTemp();
 }
 
 

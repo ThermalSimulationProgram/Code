@@ -35,28 +35,15 @@
 
 using namespace std;
 
-// dynamicdata getDynamicData(){
-// 	dynamicdata d;
 
-// 	unsigned ncols = (unsigned) getDouble("ncols.csv");
-// 	unsigned ncols2 = (unsigned) getDouble("ncols2.csv");
-// 	d.wcets = getVector<double>("wcets.csv");
-// 	d.rho = getVector<double>("rho.csv");
-// 	d.numValidData = getVector<unsigned>("numValidData.csv");
-// 	d.breakToffs = getMatrix("breakToffs.csv",  ncols);
-// 	d.slopes = getMatrix("slopes.csv",  ncols);
-// 	d.breakToffs2 = getMatrix("breakToffs2.csv",  ncols2);
-// 	d.slopes2 = getMatrix("slopes2.csv",  ncols2);
-// 	d.temps = getMatrix("temps.csv",  ncols2);
-// 	d.K = d.wcets * d.rho;
-// 	return d;
-// }
 
 
 #define _TESTRTC  0
 
 void testCalcAPTM(vector<double> &tons, vector<double>& toffs, unsigned i);
 void runSimulation(int argc, char** argv);
+void offlineSimulation();
+
 
 void testAssignToff(double upBound, 
 	const vector<int> &index, const vector<double>& tau0, 
@@ -74,9 +61,19 @@ int main(int argc, char** argv){
 //   getCoolingCurve(4, wcets);
 
  // testrtc();
-runSimulation( argc, argv);
+// runSimulation( argc, argv);
+
+	offlineSimulation();
 	
 }
+
+void offlineSimulation(){
+	unsigned ncore = 4;
+	vector<unsigned long> wcets = {14200, 9000, 3600, 5700};
+	getWarmingCurve(ncore);
+	getCoolingCurve(ncore, wcets);
+}
+
 
 
 void runSimulation(int argc, char** argv){
@@ -100,7 +97,7 @@ void runSimulation(int argc, char** argv){
 	Pipeline *p = new Pipeline(*file);
 	p->initialize();
 
-	double temp = p->simulate();
+	//double temp = p->simulate();
 	// cout << temp << endl;
 	delete p;
 	delete file;
@@ -155,7 +152,7 @@ void testCalcAPTM(vector<double> &tons, vector<double>& toffs, unsigned i){
 	 config.activeSet = vector<int>{0,1,2,3};
 	 config.sleepSet = vector<int>{};
 	 config.ccs = vector<double>{};
-	 double ttt = 36 + (double)(i%17)/17;
+	 ///double ttt = 36 + (double)(i%17)/17;
 	 config.dcs = vector<double>{std::numeric_limits<double>::infinity(),
 	 	std::numeric_limits<double>::infinity(), 4.20732,69.7434};
 	 config.rho = vector<double>{0.0127029, 0.0127029,0.0127029,0.0127029};	
@@ -238,6 +235,27 @@ cout << rtc::toString(c );
 
 
 }
+
+
+// dynamicdata getDynamicData(){
+// 	dynamicdata d;
+
+// 	unsigned ncols = (unsigned) getDouble("ncols.csv");
+// 	unsigned ncols2 = (unsigned) getDouble("ncols2.csv");
+// 	d.wcets = getVector<double>("wcets.csv");
+// 	d.rho = getVector<double>("rho.csv");
+// 	d.numValidData = getVector<unsigned>("numValidData.csv");
+// 	d.breakToffs = getMatrix("breakToffs.csv",  ncols);
+// 	d.slopes = getMatrix("slopes.csv",  ncols);
+// 	d.breakToffs2 = getMatrix("breakToffs2.csv",  ncols2);
+// 	d.slopes2 = getMatrix("slopes2.csv",  ncols2);
+// 	d.temps = getMatrix("temps.csv",  ncols2);
+// 	d.K = d.wcets * d.rho;
+// 	return d;
+// }
+
+
+
 	/*Pipeline *p = new Pipeline("example.xml");
 	p->initialize();
 

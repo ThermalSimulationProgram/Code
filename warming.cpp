@@ -20,7 +20,7 @@ using namespace std;
 void getCoolingCurve(unsigned n_cpu, vector<unsigned long> wcets){
     string path = "./cooling_curve.xml";
 
-    for (unsigned k = 3; k < n_cpu; ++k)
+    for (unsigned k = 0; k < n_cpu; ++k)
     {
       vector<unsigned long> toffs;
       unsigned long toff = 2000;
@@ -31,7 +31,12 @@ void getCoolingCurve(unsigned n_cpu, vector<unsigned long> wcets){
       vector<unsigned long> tons(toffs.size(), wcets[k]); 
 
       stringstream name;
-      name << "stage_"<<k+1<<"_cooling_";
+      string savepath = "./offlineResults/";
+      name << savepath << "stage_"<< k+1 <<"_cooling";
+      if (system(("mkdir -p " + savepath).data() ))
+      {
+        cout << "error creating folder " << endl;
+      }
       getOneStageCurve(toffs, tons, k, path, name.str());
 
     }
@@ -40,6 +45,11 @@ void getCoolingCurve(unsigned n_cpu, vector<unsigned long> wcets){
 void getWarmingCurve(unsigned n_cpu){
 	string path = "./warming_curve.xml";
     unsigned slope_step = 5;
+    string savepath = "./offlineResults/";
+    if (system(("mkdir -p " + savepath).data() ))
+      {
+        cout << "error creating folder " << endl;
+      }
 
     for(unsigned k = 0; k < n_cpu; k++){
         for(unsigned i=1; i<95; i = i + slope_step){
@@ -47,7 +57,7 @@ void getWarmingCurve(unsigned n_cpu){
             double activek = (double)i/100;
 
             stringstream name;
-            name << "stage_"<<k+1<<"_slope_"<<i;
+            name << savepath << "stage_"<<k+1<<"_slope_"<<i;
 
             vector<unsigned long> toffs;
             vector<unsigned long> tons;
@@ -96,7 +106,7 @@ void getOneStageCurve(const vector<unsigned long> & toffs, const vector<unsigned
       unsigned long toff = toffs[i] - 1000;
       unsigned long ton = tons[i] + 1000;
       stringstream name2;
-      name2 << filename << "_toff_"<< toff << endl;
+      name2 << filename << "_toff_"<< toff;
 
       Pipeline* p = new Pipeline(path);
       Scratch::setName(name2.str());
@@ -110,6 +120,8 @@ void getOneStageCurve(const vector<unsigned long> & toffs, const vector<unsigned
       vton.push_back(ton);
       vtoff.push_back(toff);
       p->setPTMs(vton, vtoff);
+      Scratch::setSavingFile(false);
+      
 
       Semaphores::print_sem.wait_sem();
       cout<< filename << "|toff: "<< toff<<endl;
@@ -121,7 +133,7 @@ void getOneStageCurve(const vector<unsigned long> & toffs, const vector<unsigned
 
       delete p;
 
-      sleep(5);
+      //sleep(5);
     }
 
     saveVectorToFile(Tvstoff, filename);
