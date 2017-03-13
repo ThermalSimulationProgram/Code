@@ -31,7 +31,8 @@
 #include "APTMKernel.h"
 
 
-
+#include "utils.h"
+#include "FileOperator.h"
 
 using namespace std;
 
@@ -52,6 +53,10 @@ void testAssignToff(double upBound,
 	const vector<int>& numValidData);
 
 void testrtc();
+
+void testStringUtils();
+void testFileOperator();
+
 int main(int argc, char** argv){
 	
 
@@ -63,15 +68,37 @@ int main(int argc, char** argv){
  // testrtc();
 // runSimulation( argc, argv);
 
-	offlineSimulation();
+//	offlineSimulation();
+	testStringUtils();
+testFileOperator();
 	
 }
+
+void testFileOperator(){
+
+
+	vector<double> t = loadVectorFromFile<double>("testfile.xml");
+	dumpVector(t);
+
+	 t = loadVectorFromFile<double>("notexistfile.csv");
+}
+
+
+
+void testStringUtils(){
+	string test = " 1 ,5, 7";
+	vector<double> t = stringToVector<double>(test);
+	appStringToVector(test, t);
+	displayvector(t, "t");
+}
+
 
 void offlineSimulation(){
 	unsigned ncore = 4;
 	vector<unsigned long> wcets = {14200, 9000, 3600, 5700};
 	getWarmingCurve(ncore);
 	getCoolingCurve(ncore, wcets);
+
 }
 
 
