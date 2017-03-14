@@ -137,8 +137,9 @@ void getOneStageCurve(const vector<unsigned long> & toffs, const vector<unsigned
       //sleep(5);
     }
 
-    appendToFile(filename, Tvstoff);
-    appendToFile(filename, vectoff);
+    string savename = filename + ".csv";
+    appendToFile(savename, Tvstoff);
+    appendToFile(savename, vectoff);
 
 }
 

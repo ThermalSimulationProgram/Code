@@ -82,9 +82,8 @@ Pipeline::~Pipeline(){
 	delete tempwatcher;
 
 	for (int i = 0; i < n_stages; ++i)
-	{
 		delete workers[i];
-	}
+	
 }
 
 
@@ -198,7 +197,7 @@ void Pipeline::join_all() {
 	Worker* t;
    	#if _DEBUG==1
   		cout << "Joining all threads...\n";
-     #endif
+    #endif
 
 	for( unsigned i=0;i<workers.size();i++) {
 		t = workers[i];

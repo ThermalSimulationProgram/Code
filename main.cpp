@@ -59,11 +59,11 @@ int main(int argc, char** argv){
  // testrtc();
 // runSimulation( argc, argv);
 
-//	offlineSimulation();
+	offlineSimulation();
 	// testStringUtils();
 	// testFileOperator();
 
-	testParser("example.xml");
+	//testParser("example.xml");
 }
 
 

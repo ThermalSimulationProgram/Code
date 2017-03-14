@@ -40,21 +40,20 @@ int Parser::parseFile(){
 
 	// save the duration in microsecond unit
 	unsigned long duration = parseTimeMircroSecond(sim_node.child("duration"));
-
+	
 	// get pipeline stage number
-	xml_node pipe_node = sim_node.child("pipeline");
-	int nstage         = (int) stoul(pipe_node.attribute("stagenumber").value(), NULL, 0);
+	xml_node pipe_node     = sim_node.child("pipeline");
+	int nstage             = (int) stoul(pipe_node.attribute("stagenumber").value(), NULL, 0);
 
 	// get job release times
 	vector<unsigned long> rl_release_times;
 	xml_node event_node     = sim_node.child("events");
 	string arrival_csv_path = event_node.child("csv_path").attribute("value").value();
-	string unit            = event_node.child("csv_path").attribute("units").value();
+	string unit             = event_node.child("csv_path").attribute("units").value();
 	
 	if(arrival_csv_path.length() > 0){
 		vector<double> initv = loadVectorFromFile<double> (arrival_csv_path);
-
-		vector<double> v = formatTimeMicros<double>(initv, unit);
+		vector<double> v     = formatTimeMicros<double>(initv, unit);
 
 		for (unsigned i = 0; i < v.size(); ++i){
 			if( (i>0) && (v[i]< v[i-1])){			
@@ -111,16 +110,31 @@ int Parser::parseFile(){
 
 	// handle additional parameters for the scheduler
 	if(type == APTM){
-		unsigned long adaptPeriod = parseTimeMircroSecond(kernel_node.child("period"));
-		double b_factor 		  = kernel_node.child("b_factor").attribute("value").as_double();
+		xml_node APeriodNode  = kernel_node.child("period");
+		xml_node b_factorNode = kernel_node.child("b_factor");
+		xml_node offline_node = kernel_node.child("offlinedata");
 
-		xml_node offline_node     = kernel_node.child("offlinedata");
+		if(!APeriodNode){
+			cout << "Parser::parseFile(): adaption period is required for APTM kernel\n";
+			return -1;
+		}
+		if(!offline_node){
+			cout << "Parser::parseFile(): offline data is required for APTM kernel\n";
+			return -1;
+		}
+		unsigned long adaptPeriod = parseTimeMircroSecond(APeriodNode);
 		string prefix             = offline_node.child("prefix").attribute("path").value();
 		thermalProp offlinedata   = getOfflineData(prefix, nstage);
 
-		Scratch::setBFactor(b_factor);
+		
 		Scratch::setAdaptionPeriod(adaptPeriod);
 		Scratch::setOfflineData(offlinedata);
+
+		if(b_factorNode){
+			double b_factor   	= b_factorNode.attribute("value").as_double();
+			Scratch::setBFactor(b_factor);
+		}
+		
 	}else if (type == BWS){
 		unsigned long adaptPeriod = parseTimeMircroSecond(kernel_node.child("period"));
 		Scratch::setAdaptionPeriod(adaptPeriod);

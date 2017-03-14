@@ -49,7 +49,7 @@ void Scratch::initialize(int _nstage, unsigned long _period,
 	name            = _name;
 	adaption_period = 0;
 	exefactor 		= 1;
-	bfactor 		= 0.9;
+	bfactor 		= 0.93;
 	isSave 			= true;
 	for (unsigned i = 0; i < wcets.size(); ++i)
 		dwcets.push_back((double)wcets[i]/1000);
