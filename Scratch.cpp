@@ -1,5 +1,7 @@
 #include "Scratch.h"
-#include "Parser.h"
+
+
+#include "utils.h"
 
 #include <iostream>
 
@@ -56,18 +58,18 @@ void Scratch::initialize(int _nstage, unsigned long _period,
 }
 
 void Scratch::print(){
-	cout << "nstage \t\t\t=" << nstage << endl;
-	cout << "period \t\t\t=" << period << endl;
-	cout << "jitter \t\t\t=" << jitter << endl;
-	cout << "distance \t\t=" << distance << endl;
-	cout << "rltDeadline \t=" << rltDeadline << endl;
-	cout << "rltDeadline_ms \t=" << rltDeadline_ms << endl;
-	cout << "kernel \t\t\t=" << kernel << endl;
-	cout << "duration \t\t=" << duration << endl;
-	cout << "name \t\t\t=" << name << endl;
-	cout << "adaption_period =" << adaption_period << endl;
-	cout << "exefactor \t\t=" << exefactor << endl;
-	cout << "bfactor \t\t=" << bfactor << endl;
+	cout << "nstage \t\t\t= " << nstage << endl;
+	cout << "period \t\t\t= " << period << endl;
+	cout << "jitter \t\t\t= " << jitter << endl;
+	cout << "distance \t\t= " << distance << endl;
+	cout << "rltDeadline \t\t= " << rltDeadline << endl;
+	cout << "rltDeadline_ms \t\t= " << rltDeadline_ms << endl;
+	cout << "kernel \t\t\t= " << kernel << endl;
+	cout << "duration \t\t= " << duration << endl;
+	cout << "name \t\t\t= " << name << endl;
+	cout << "adaption_period \t= " << adaption_period << endl;
+	cout << "exefactor \t\t= " << exefactor << endl;
+	cout << "bfactor \t\t= " << bfactor << endl;
 	displayvector(wcets, "wcets");
 }
 void Scratch::setSavingFile(bool f){

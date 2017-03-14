@@ -1,4 +1,7 @@
 #include "APTMKernel.h"
+
+#include <iostream>
+
 #include "Scratch.h"
 #include "vectormath.h"
 #include "Scheduler.h"
@@ -6,8 +9,9 @@
 #include "Parser.h"
 #include "Semaphores.h"
 #include "Statistics.h"
+#include "utils.h"
 
-#include <iostream>
+
 
 using namespace std;
 

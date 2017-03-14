@@ -1,9 +1,6 @@
 #ifndef _PARSER_H
 #define _PARSER_H
 
-#include "pugixml.hpp"
-#include "structdef.h"
-
 #include <string>
 #include <vector>
 #include <time.h>
@@ -11,82 +8,14 @@
 #include <fstream>
 #include <sstream>
 
+#include "pugixml.hpp"
+
+#include "structdef.h"
+#include "utils.h"
+
+
 using namespace pugi;
 using namespace std;
-
-template<typename T>
-vector<T> getVector(string name){
-	ifstream file (name);
-	if (!file.is_open()){
-		cerr << "getVector:: failed to open given file named: '" << 
-		name << "'"  << endl;
-		exit(1);
-	}
-
-	std::string line;
-	std::vector<T> ret;
-	while(std::getline(file, line)){
-		std::stringstream lineStream(line);
-		std::string cell;
-		while(std::getline(lineStream,cell,','))
-			ret.push_back((T)stod(cell));
-	}
-	file.close();
-	if (file.is_open()){
-		cerr << "getVector:: failed to close given file named: '" << 
-		name << "'"  << endl;
-		exit(1);
-	}
-	return ret;
-
-}
-
-
-template<typename T> void displayvector(std::vector<T> a, std::string name){
-
-	std::cout << name<<": ";
-	for (int i = 0; i < int(a.size()); ++i)
-	{
-		std::cout<< "  " << a[i] ;
-	}
-	std::cout<<std::endl<<"*************************"<<std::endl;
-}
-
-// This function converts a string to a double vector. The  string should be 
-// in format: {number1, number2, ..., numbern} or {number1 number2 ... numbern}
-vector<double> string2vector(string);
-
-
-template<typename T> vector<T> parseTimeVectorMicro(xml_node n){
-	vector<double> initvalues = string2vector(n.attribute("value").value());
-
-	string units = n.attribute("units").value();
-	vector<T> ret;
-	for (unsigned i = 0; i < initvalues.size(); ++i){
-		T v;
-		if (units == "sec")
-			v = (T) (initvalues[i]*1000000);
-		else if (units == "ms")
-			v = (T) (initvalues[i]*1000);
-		else if (units == "us")
-			v = (T) (initvalues[i]);
-		else {
-			cout << "parseTimeVectorMicro: Parser error: could not recognize time unit!\n";
-			return ret;
-		}
-		ret.push_back(v);
-	}
-	return ret;	
-}
-
-vector<vector<double>> getMatrix(string name);
-
-
-double getDouble(string name);
-
-void saveDoubleVectorToFile(vector<double> data, string filename);
-
-void saveDoubleVectorToFile2(vector<double> data, string filename);
 
 
 
@@ -111,15 +40,47 @@ public:
 	// This function loads thermal property data of the processor from csv files
 	static thermalProp getOfflineData(string, unsigned);
 	
-
-	// This function is used for debugging. Not used in real program
-	static pipeinfo loadPipeInfo(unsigned nstage);
-	// This function is used for debugging. Not used in real program
-	static vector<workerinfo> loadWorkerInfo(unsigned nstage);
-
 };
 
 
+template<typename T> T formatTimeMicros(double v, string unit){
+	T r;
+	if (unit == "sec")
+		r = (T) (v*1000000);
+	else if (unit == "ms")
+		r = (T) (v*1000);
+	else if (unit == "us")
+		r = (T) (v);
+	else {
+		cout << "parseTimeVectorMicro: Parser error: could not recognize time unit!\n";
+		r = -1;
+	}
+	return r;
+}
+
+template<typename T> vector<T> formatTimeMicros(const vector<double>& v, string unit){
+	vector<T> ret;
+	for (int i = 0; i < (int) v.size(); ++i)
+		ret.push_back(formatTimeMicros<T>(v[i], unit));
+
+	return ret;
+}
+
+
+template<typename T> vector<T> parseTimeVectorMicro(xml_node n){
+	vector<double> initvalues = stringToVector<double>(n.attribute("value").value());
+
+	string unit = n.attribute("units").value();
+	vector<T> ret = formatTimeMicros<T>(initvalues, unit);
+
+	return ret;	
+}
+
+
+// This function is used for debugging. Not used in real program
+pipeinfo loadPipeInfo(unsigned nstage);
+// This function is used for debugging. Not used in real program
+vector<workerinfo> loadWorkerInfo(unsigned nstage);
 
 
 

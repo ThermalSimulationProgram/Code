@@ -10,98 +10,122 @@
 
 #include "utils.h"
 
+
+#define FSTREAM_IN (0xF)
+#define FSTREAM_OUT (0x0)
+#define FSTREAM_TRUNC (0x1)
+#define FSTREAM_APP (0x2)
+
 using namespace std;
 
-ifstream openInputFile(const string& filename);
-ofstream openNewOutputFile(const string& filename);
-ofstream openOutputFile(const string& filename);
 
+class FileOperator{
+private:
+	ifstream iFile;
+	ofstream oFile;
 
+	bool is_input_active;
 
+	bool isOpen;
 
-void closeFile(ifstream& file);
-void closeFile(ofstream& file);
+	bool isSaved;
 
-void changePermission(const string& filename);
+	string filename;
 
-template<typename T>
-vector<T> loadVectorFromFile(string filename){
+	vector<string> content;
 
-	ifstream file = openInputFile(filename);
+	int mode;
+
+public:
+	FileOperator(const string&, int);
+	FileOperator(const FileOperator&);
+	~FileOperator();
+
+	double readDouble();
 	
-	std::string line;
-	std::vector<T> ret;
-	while(std::getline(file, line))
-		appStringToVector(line, ret);
-	
-	closeFile(file);
+	template<typename T> 
+	vector<T> readVector();
+
+	template<typename T>
+	vector<vector<T>> readMatrix();
+
+	void write(const string &);
+
+	void write(const vector<string>& );
+
+	void save();
+
+	void close();
+
+	void changePermission();
+	void changePermission(const string&);
+};
+
+template<typename T> 
+vector<T> FileOperator::readVector(){
+	vector<T> ret;
+	if ((!is_input_active) && isOpen)
+		return ret;
+	for (int i = 0; i < (int) content.size(); ++i)
+		appStringToVector(content[i], ret);
+
 	return ret;
 }
 
 template<typename T>
-vector<vector<T> > loadMaxtrixFromFile(string filename){
+vector<vector<T>> FileOperator::readMatrix(){
+	vector<vector<T>> ret;
+	if ((!is_input_active) && isOpen)
+		return ret;
+	ret.reserve( content.size());
+	for (int i = 0; i < (int) content.size(); ++i)
+		ret.push_back(stringToVector<T>(content[i]));
 
-	ifstream file = openInputFile(filename);
+	return ret;
+}
+
+// read a csv file and save the first numbers as double
+double loadDoubleFromFile(const string  filename);
+
+
+template<typename T>
+vector<T> loadVectorFromFile(const string  filename){
+
+	FileOperator file = FileOperator(filename, (int)FSTREAM_IN);
 	
-	std::string line;
-	std::vector<vector<T> > maxtrix;
-	while(std::getline(file, line)){
-		std::vector<T> row;
-		appStringToVector(line, row);
-
-		maxtrix.push_back(row);
-	}
-
-	closeFile(file);
-	return maxtrix;
+	return file.readVector<T>();
 }
 
 template<typename T>
-void dumpDataToFile(ofstream& file, const string& filename, vector<T> data){
-	string out = vectorTostring(data);
+vector<vector<T> > loadMatrixFromFile(const string filename){
+	FileOperator file = FileOperator(filename, (int)FSTREAM_IN);
+	
+	return file.readMatrix<T>();
+}
 
-	file << out << endl;
+void saveContentToNewFile(const string filename, const vector<string>&data);
+void appendContentToFile(const string filename, const vector<string>&data);
 
-	closeFile(file);
-
-	changePermission(filename);
+template<typename T>
+void saveToNewFile(const string filename,  const vector<T>& data){
+	saveContentToNewFile(filename, vector<string>(1, vectorTostring(data)));
 }
 
 template<typename T>
-void saveToNewFile(const string& filename,  vector<T> data){
-	ofstream file = openNewOutputFile(filename);
-	dumpDataToFile(file, filename, data);
+void saveToNewFile(const string filename,  const vector<vector<T>>& data){
+	saveContentToNewFile(filename, matrixTostring(data));
+}
+
+
+template<typename T>
+void appendToFile(const string filename,  const vector<T>& data){
+	appendContentToFile(filename, vector<string>(1, vectorTostring(data)));
 }
 
 template<typename T>
-void appendToFile(const string& filename,  vector<T> data){
-
-	ofstream file = openOutputFile(filename);
-	dumpDataToFile(file, filename, data);
-
+void appendToFile(const string filename,  const vector<vector<T>>&data){
+	appendContentToFile(filename, matrixTostring(data));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

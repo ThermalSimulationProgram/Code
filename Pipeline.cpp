@@ -1,4 +1,15 @@
 #include "Pipeline.h"
+
+
+#include <unistd.h>
+#include <pthread.h>
+#include <iostream>
+#include <cstddef>
+#include <sys/stat.h>
+#include <string>
+#include <cmath>
+
+
 #include "Dispatcher.h"
 #include "Scheduler.h"
 #include "Worker.h"
@@ -11,14 +22,7 @@
 #include "Parser.h"
 #include "Scratch.h"
 #include "temperature.h"
-
-#include <unistd.h>
-#include <pthread.h>
-#include <iostream>
-#include <cstddef>
-#include <sys/stat.h>
-#include <string>
-#include <cmath>
+#include "FileOperator.h"
 
 
 using namespace std;
@@ -177,16 +181,13 @@ double Pipeline::simulate(){
 	// return the average temperature 
 
 	if (Scratch::isSaveFile()){
-		string tempSaveName = Scratch::getName() + "_result";
+		string tempSaveName = Scratch::getName() + "_result.csv";
 
-		saveDoubleVectorToFile2(tempwatcher->getMeanTemp(), 
-			tempSaveName);
+		saveToNewFile(tempSaveName, tempwatcher->getMeanTemp());
 		double maxTemp = tempwatcher->getMaxTemp();
-		saveDoubleVectorToFile(vector<double>(1, maxTemp),
-			tempSaveName);
+		appendToFile(tempSaveName, vector<double>(1, maxTemp));
 
-		saveDoubleVectorToFile(scheduler->getKernelTime(), 
-			tempSaveName);
+		appendToFile(tempSaveName, scheduler->getKernelTime());
 	}
 	
 	return tempwatcher->getMeanMaxTemp();
@@ -294,10 +295,10 @@ enum _schedule_kernel kernel){
 void Pipeline::loadInfoFromFile(pipeinfo& config, 
 const vector<double>& wcets, const vector<double>& TBET,
 enum _schedule_kernel kernel){
-	config.allT = getVector<double>("allT.csv");
-	double curTime = getDouble("CurTime.csv");
+	config.allT = loadVectorFromFile<double>("allT.csv");
+	double curTime = loadDoubleFromFile("CurTime.csv");
 	unsigned ustages = wcets.size();
-	vector<workerinfo> allinfo =  Parser::loadWorkerInfo(ustages);
+	vector<workerinfo> allinfo =  loadWorkerInfo(ustages);
 	for (unsigned i = 0; i < ustages; ++i){
 		
 		workerinfo tmp = allinfo[i];

@@ -1,63 +1,140 @@
 #include "FileOperator.h"
 
+FileOperator::FileOperator(const string& _filename, 
+	int _mode):filename(_filename), mode(_mode){
+	// default values
+	iFile = ifstream();
+	oFile = ofstream();
+	is_input_active = false;
+	isOpen = false;
+	isSaved = true;
+	content.clear();
 
-ifstream openInputFile(const string& filename){
-	ifstream file (filename);
-	if (!file.is_open()){
-		cerr << "openInputFile:: failed to open given file named: '" << 
+	// construct ifsteam and ofstream object
+	if (mode == FSTREAM_IN){
+		iFile = ifstream(filename, std::ofstream::in);
+		is_input_active = true;
+	}
+	else if (mode == FSTREAM_OUT)
+		oFile = ofstream(filename, std::ofstream::out);
+	else if (mode == (FSTREAM_OUT | FSTREAM_TRUNC))
+		oFile = ofstream(filename, std::ofstream::out | std::ofstream::trunc);
+	else if (mode == (FSTREAM_OUT | FSTREAM_APP))
+		oFile = ofstream(filename, std::ofstream::out | std::ofstream::app);
+	else{
+		cerr << "FileOperator::FileOperator: invalid mode! Failed to open file: \n"
+		<< filename << "\n with mode: " << mode << endl;
+		exit(1);
+	}
+
+	//check if the file is open
+	if (is_input_active)
+		isOpen = iFile.is_open();
+	else
+		isOpen = oFile.is_open();
+
+	if (!isOpen){
+		cerr << "FileOperator::FileOperator: failed to open given file named: '" << 
 		filename << "'" << endl;
 		exit(1);
 	}
-	return file;
-}
 
-
-ofstream openNewOutputFile(const string& filename){
-	ofstream file;
-  	file.open(filename, std::ofstream::out | std::ofstream::trunc);
-
-	if (!file.is_open()){
-		cerr << "openNewOutputFile:: failed to open given file named: '" << 
-		filename << "'" << endl;
-		exit(1);
+	//read content
+	if (is_input_active){
+		std::string line;
+		while(std::getline(iFile, line))
+			content.push_back(line);
 	}
-	return file;
-}
-ofstream openOutputFile(const string& filename){
-	ofstream file;
-  	file.open(filename, std::ofstream::out | std::ofstream::app);
-  	
-	if (!file.is_open()){
-		cerr << "openOutputFile:: failed to open given file named: '" << 
-		filename << "'" << endl;
-		exit(1);
-	}
-	return file;
 }
 
-void closeFile(ifstream& file){
-	file.close();
-	if (file.is_open()){
-		cerr << "closeFile:: failed to close given file named: '" << 
-		endl;
+FileOperator::FileOperator(const FileOperator& f){}
+FileOperator::~FileOperator(){
+	if (!isSaved)
+		save();
+	close();
+}
+
+double FileOperator::readDouble(){
+	vector<double> temp = readVector<double>();
+	if (temp.size() > 0)
+		return temp[0];
+	else{
+		cerr << "FileOperator::readDouble: failed to read the file!"<< endl;
 		exit(1);
 	}
 }
 
-void closeFile(ofstream& file){
-	file.close();
-	if (file.is_open()){
-		cerr << "closeFile:: failed to close given file named: '" << 
-		endl;
-		exit(1);
+void FileOperator::write(const string & newline){
+	if((!is_input_active) && isOpen){
+		content.push_back(newline);
+		isSaved = false;
 	}
 }
 
+void FileOperator::write(const vector<string>& lines){
+	for (int i = 0; i < (int)lines.size(); ++i)
+		write(lines[i]);
 
+}
 
-void changePermission(const string& filename){
-	if (system(("chmod 666 " + filename ).data() )){
-		cout << "changePermission: Failed to change permission of file "
+void FileOperator::save(){
+	if((!is_input_active) && isOpen){
+		for (int i = 0; i < (int)content.size(); ++i)
+			oFile << content[i] << endl;
+
+		isSaved = true;
+		content.clear();
+	}
+}
+
+void FileOperator::close(){
+	// cout << "FileOperator::close(): closing" << endl;
+	if (!isOpen){
+		cout << "FileOperator::close(): No file to close!" << endl;
+		return;
+	}
+	if(is_input_active){
+		iFile.close();
+		isOpen = iFile.is_open();
+	}else{
+		oFile.close();
+		isOpen = oFile.is_open();
+	}
+
+	content.clear();
+
+	if (isOpen){
+		cerr << "FileOperator::close(): failed to close given file named: '" 
+		<< filename << "'" << endl;
+		exit(1);
+	}
+
+}
+
+void FileOperator::changePermission(){
+	changePermission("666");
+}
+
+void FileOperator::changePermission(const string & permission){
+	if (system(("chmod " + permission + " " + filename).data() )){
+		cout << "FileOperator::changePermission: Failed to change permission of file "
 		<< filename << endl;
+		exit(1);
 	}
 }
+
+
+double loadDoubleFromFile(string filename){
+	FileOperator file = FileOperator(filename, FSTREAM_IN);
+	return file.readDouble();
+}
+
+void saveContentToNewFile(const string filename, const vector<string>& data){
+	FileOperator file = FileOperator (filename, (int)(FSTREAM_OUT|FSTREAM_TRUNC));
+	file.write(data);
+}
+void appendContentToFile(const string filename, const vector<string>& data){
+	FileOperator file = FileOperator (filename, (int)(FSTREAM_OUT|FSTREAM_APP));
+	file.write(data);
+}
+

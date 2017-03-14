@@ -13,7 +13,7 @@ void getCoolingCurve(unsigned, vector<unsigned long> wcets);
 void getOneStageCurve(const vector<unsigned long> &, const vector<unsigned long> &, 
 	const unsigned, const string, const string);
 
-void saveVectorToFile(vector<double>, string);
+
 
 
 

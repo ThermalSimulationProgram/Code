@@ -1,15 +1,19 @@
 #include "Parser.h"
-#include "Scratch.h"
-#include "TimeUtil.h"
-#include "Enumerations.h"
-#include "warmingCurve.h"
-#include "vectormath.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <algorithm>
+
+
+#include "Scratch.h"
+#include "TimeUtil.h"
+#include "Enumerations.h"
+#include "warmingCurve.h"
+#include "vectormath.h"
+#include "FileOperator.h"
+
 
 using namespace pugi;
 using namespace std;
@@ -33,39 +37,28 @@ int Parser::parseFile(){
 	// get simulation name and duration
 	xml_node sim_node      = doc.child("simulation");
 	string name            = sim_node.attribute("name").value();
+
 	// save the duration in microsecond unit
-	unsigned long duration = parseTimeMircroSecond(
-		sim_node.child("duration"));
-	#if _DEBUG==1
-	cout << "duration" << duration << endl;
-	#endif
+	unsigned long duration = parseTimeMircroSecond(sim_node.child("duration"));
 
 	// get pipeline stage number
 	xml_node pipe_node = sim_node.child("pipeline");
-	int nstage         = (int) stoul(
-		pipe_node.attribute("stagenumber").value(), NULL, 0);
+	int nstage         = (int) stoul(pipe_node.attribute("stagenumber").value(), NULL, 0);
 
 	// get job release times
+	vector<unsigned long> rl_release_times;
 	xml_node event_node     = sim_node.child("events");
 	string arrival_csv_path = event_node.child("csv_path").attribute("value").value();
-	string units            = event_node.child("csv_path").attribute("units").value();
-	vector<unsigned long> rl_release_times;
+	string unit            = event_node.child("csv_path").attribute("units").value();
+	
 	if(arrival_csv_path.length() > 0){
-		vector<double> v = getVector<double> (arrival_csv_path);
-		if (units == "sec")
-			v = v*1000000;
-		else if (units == "ms")
-			v = v*1000;
-		else if (units == "us")
-			v = v;
-		else {
-			cout << "Parser error: could not recognize time unit!\n";
-			return -1;
-		}
+		vector<double> initv = loadVectorFromFile<double> (arrival_csv_path);
+
+		vector<double> v = formatTimeMicros<double>(initv, unit);
 
 		for (unsigned i = 0; i < v.size(); ++i){
 			if( (i>0) && (v[i]< v[i-1])){			
-				cout << "At lease on element in input time vector is less than its" <<\
+				cout << "At lease on element in input time vector is less than its" <<
 				" previous and is modified to its previous value \n";
 				v[i] = v[i-1];
 			} 
@@ -151,9 +144,9 @@ int Parser::parseFile(){
 // This function loads thermal property data of the processor from csv files
 thermalProp Parser::getOfflineData(string prefix, unsigned nstage){
 	thermalProp ret;
-	ret.coolbreakToffs = getMatrix(prefix+"_coolBreakToffs.csv");
-	ret.coolslopes     = getMatrix(prefix+"_coolslopes.csv");
-	ret.numValidData   = getVector<int>(prefix+"_numValidData.csv");
+	ret.coolbreakToffs = loadMatrixFromFile<double>(prefix+"_coolBreakToffs.csv");
+	ret.coolslopes     = loadMatrixFromFile<double>(prefix+"_coolslopes.csv");
+	ret.numValidData   = loadVectorFromFile<int>(prefix+"_numValidData.csv");
 	ret.allStageCurves = parseWarmingingCurve(prefix, nstage);
 	return ret;
 }
@@ -163,7 +156,7 @@ thermalProp Parser::getOfflineData(string prefix, unsigned nstage){
 vector<warmingCurves> Parser::parseWarmingingCurve(string prefix, unsigned nstage){
 
 	// first get the activation slope step
-	unsigned slopestep = (unsigned) getDouble(prefix+"_slopestep.csv");
+	unsigned slopestep = (unsigned) loadDoubleFromFile( prefix+"_slopestep.csv");
 
 	vector<warmingCurves> ret;
 	// load the warming curves for all stages
@@ -184,8 +177,8 @@ vector<warmingCurves> Parser::parseWarmingingCurve(string prefix, unsigned nstag
 
 
 		// load the matrix representation of the two files
-		vector<vector<double>> tmp  = getMatrix(name1.str());
-		vector<unsigned> dataNumber = getVector<unsigned>(name2.str());
+		vector<vector<double>> tmp  = loadMatrixFromFile<double>(name1.str());
+		vector<unsigned> dataNumber = loadVectorFromFile<unsigned>(name2.str());
 
 		// load the curve for each activation slope
 		unsigned cursor = 0;
@@ -209,104 +202,6 @@ vector<warmingCurves> Parser::parseWarmingingCurve(string prefix, unsigned nstag
 	return ret;
 }
 
-// This function is used for debugging. Not used in real program
-pipeinfo Parser::loadPipeInfo(unsigned nstage){
-	pipeinfo ret;
-	ret.Q         = getVector<int>("Q.csv");
-	ret.activeSet = getVector<int>("activeSet.csv");
-	ret.sleepSet  = getVector<int>("sleepSet.csv");
-	ret.ccs       = getVector<double>("ccs.csv");
-	ret.dcs       = getVector<double>("dcs.csv");
-	ret.rho       = getVector<double>("rho.csv");
-	ret.K         = getVector<double>("K.csv");
-	ret.allT      = getVector<double>("allT.csv");
-
-	vector<vector<double>> tmp;
-	for (unsigned i = 0; i < nstage; ++i)
-	{
-		stringstream name1; 
-		name1 << "FIFOcurveData" << i+1 << ".csv";
-		vector<double> tmpstage = getVector<double>(name1.str());
-		tmp.push_back(tmpstage);
-
-	}
-
-	ret.FIFOcurveData = tmp;
-	return ret;
-
-}
-
-// This function is used for debugging. Not used in real program
-vector<workerinfo> Parser::loadWorkerInfo(unsigned nstage){
-	
-	vector<workerinfo> ret;
-
-	vector<int> allnfifijobs     = getVector<int>(
-		"allnFIFOJobs.csv");
-	vector<unsigned> allstates   = getVector<unsigned>(
-		"allstates.csv");
-	vector<int> allonGoEventIds  = getVector<int>(
-		"allonGoEventIds.csv");
-	vector<double> allexecuteds  = getVector<double>(
-		"allexecuteds.csv");
-	vector<double> allsleepTimes = getVector<double>(
-		"allsleepTimes.csv");
-
-	for (int i = 0; i < (int)nstage; ++i)
-	{
-		workerinfo tmp;
-		tmp.stageId   = i;
-		tmp.nFIFOJobs = allnfifijobs[i];
-		tmp.executed  = allexecuteds[i];
-		unsigned s    = allstates[i];
-
-		if (s==0)
-			tmp.state = _sleep;
-		else
-			tmp.state = _active;
-
-		tmp.sleepTime   = allsleepTimes[i];
-		
-		tmp.onGoEventId = allonGoEventIds[i];
-
-		stringstream name1;
-		name1 << "allEventAbsDeadlines" << i+1 << ".csv";
-		tmp.allEventAbsDeadlines = getVector<double>(name1.str());
-		
-		name1.str("");
-
-		ret.push_back(tmp);
-
-	}
-	return ret;
-}
-
-// This function converts a string to a double vector. The  string should be 
-// in format: {number1, number2, ..., numbern} or {number1 number2 ... numbern}
-vector<double> string2vector(string sin){
-	string base = sin;
-	if (base.length() < 3)
-	{
-		cerr<<"string2vector:: Input string too short!"<<endl;
-		exit(1);
-	}
-	std::replace(base.begin(), base.end(), '{', ' ');
-	std::replace(base.begin(), base.end(), '}', ' ');
-	std::replace(base.begin(), base.end(), ',', ' ');
-	std::string::size_type sz;
-	vector<double> result;
-	try{
-		do{
-			result.push_back(stod(base, &sz));
-			base = base.substr(sz);
-		}while(base.length()>=2);
-	}
-	catch(...){
-		cerr<<"Unknown error happens for string "<<sin<<endl;
-		exit(1);
-	}
-	return result;
-}
 
 
 unsigned long Parser::parseTimeMircroSecond(xml_node n){
@@ -335,114 +230,73 @@ struct timespec Parser::parseTime(xml_node n) {
 	return ret;
 }
 
-// read a csv file and save the numbers in a 2-D vector 
-vector<vector<double>> getMatrix(string name){
-	std::ifstream  data(name);
-	if (!data.is_open()){
-		cerr << "getMatrix:: failed to open given file named: '" << 
-		name << "'"  << endl;
-		exit(1);
+
+// This function is used for debugging. Not used in real program
+pipeinfo loadPipeInfo(unsigned nstage){
+	pipeinfo ret;
+	ret.Q         = loadVectorFromFile<int>("Q.csv");
+	ret.activeSet = loadVectorFromFile<int>("activeSet.csv");
+	ret.sleepSet  = loadVectorFromFile<int>("sleepSet.csv");
+	ret.ccs       = loadVectorFromFile<double>("ccs.csv");
+	ret.dcs       = loadVectorFromFile<double>("dcs.csv");
+	ret.rho       = loadVectorFromFile<double>("rho.csv");
+	ret.K         = loadVectorFromFile<double>("K.csv");
+	ret.allT      = loadVectorFromFile<double>("allT.csv");
+
+	vector<vector<double>> tmp;
+	for (unsigned i = 0; i < nstage; ++i){
+		stringstream name1; 
+		name1 << "FIFOcurveData" << i+1 << ".csv";
+		vector<double> tmpstage = loadVectorFromFile<double>(name1.str());
+		tmp.push_back(tmpstage);
+
 	}
-	std::string line;
-	std::vector<vector<double> > parsedCsv;
-	while(std::getline(data,line))
+
+	ret.FIFOcurveData = tmp;
+	return ret;
+}
+
+// This function is used for debugging. Not used in real program
+vector<workerinfo> loadWorkerInfo(unsigned nstage){
+	
+	vector<workerinfo> ret;
+
+	vector<int> allnfifijobs     = loadVectorFromFile<int>(
+		"allnFIFOJobs.csv");
+	vector<unsigned> allstates   = loadVectorFromFile<unsigned>(
+		"allstates.csv");
+	vector<int> allonGoEventIds  = loadVectorFromFile<int>(
+		"allonGoEventIds.csv");
+	vector<double> allexecuteds  = loadVectorFromFile<double>(
+		"allexecuteds.csv");
+	vector<double> allsleepTimes = loadVectorFromFile<double>(
+		"allsleepTimes.csv");
+
+	for (int i = 0; i < (int)nstage; ++i)
 	{
-		std::stringstream lineStream(line);
-		std::string cell;
-		std::vector<double> parsedRow;
-		while(std::getline(lineStream,cell,','))
-			parsedRow.push_back(stod(cell));
+		workerinfo tmp;
+		tmp.stageId   = i;
+		tmp.nFIFOJobs = allnfifijobs[i];
+		tmp.executed  = allexecuteds[i];
+		unsigned s    = allstates[i];
 
-		parsedCsv.push_back(parsedRow);
+		if (s==0)
+			tmp.state = _sleep;
+		else
+			tmp.state = _active;
+
+		tmp.sleepTime   = allsleepTimes[i];
+		
+		tmp.onGoEventId = allonGoEventIds[i];
+
+		stringstream name1;
+		name1 << "allEventAbsDeadlines" << i+1 << ".csv";
+		tmp.allEventAbsDeadlines = loadVectorFromFile<double>(name1.str());
+		
+		name1.str("");
+
+		ret.push_back(tmp);
+
 	}
-	data.close();
-	if (data.is_open()){
-		cerr << "getMatrix:: failed to close given file named: '" << 
-		name << "'"  << endl;
-		exit(1);
-	}
-	return parsedCsv;
+	return ret;
 }
-
-// read a csv file and save the first numbers in double type
-double getDouble(string name){
-	ifstream file (name);
-	if (!file.is_open()){
-		cerr << "getDouble:: failed to open given file named: '" << 
-		name << "'"  << endl;
-		exit(1);
-	}
-	double v; 
-	file>>v;
-	file.close();
-	if (file.is_open()){
-		cerr << "getDouble:: failed to close given file named: '" << 
-		name << "'"  << endl;
-		exit(1);
-	}
-	return v;
-}
-
-// This function saves a double vector to a file, appending new data to its existing data
-void saveDoubleVectorToFile(vector<double> data, string filename){
-  ofstream file;
-  file.open((filename + ".csv").data() , std::ofstream::out | std::ofstream::app);
-  if (!file.is_open()){
-		cerr << "saveDoubleVectorToFile:: failed to open given file named: '" << 
-		filename << "'"  << endl;
-		exit(1);
-	}
-  stringstream out;
-  for(unsigned int c=0; c< data.size();c++) {
-    if ( c != data.size()-1 )
-      out << data[c] << "," ;
-    else
-      out << data[c];
-
-  }
-  file << out.str() << endl;
-  file.close();
-  if (file.is_open()){
-		cerr << "saveDoubleVectorToFile:: failed to close given file named: '" << 
-		filename << "'"  << endl;
-		exit(1);
-	}
-
-  //Change the owner and permissions of generated files
-  //system(("chown hsf:hsf " + filePrefix + "_*.csv").data() );
-  if (system(("chmod 666 " + filename + ".csv").data() )){
-    cout << "saveDoubleVectorToFile:: error changing file permissions " << endl;
-  }
-
-}
-
-
-// This function saves a double vector to a file, overwriting existing data
-void saveDoubleVectorToFile2(vector<double> data, string filename){
-  ofstream file;
-
-  /************ SAVING _temprature_trace *********/
-  file.open((filename + ".csv").data(), std::ofstream::out | std::ofstream::trunc);
-  stringstream out;
-  for(unsigned int c=0; c< data.size();c++) {
-
-    if ( c != data.size()-1 )
-      out << data[c] << "," ;
-    else
-      out << data[c];
-
-  }
-  file << out.str() << endl;
-  file.close();
-  //Change the owner and permissions of generated files
-  //system(("chown hsf:hsf " + filePrefix + "_*.csv").data() );
-  if (system(("chmod 666 " + filename + ".csv").data() ))
-  {
-    cout << "error saving file " << endl;
-  }
-
-}
-
-
-
-

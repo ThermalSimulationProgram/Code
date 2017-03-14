@@ -16,3 +16,7 @@ istringstream stringToiss(const string& base){
 	std::istringstream iss(fstring);
 	return iss;
 }
+
+void dumpLinesSeperator(){
+	std::cout << "***********************************************" << std::endl;
+}

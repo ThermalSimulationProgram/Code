@@ -14,6 +14,7 @@
 #include "Scratch.h"
 #include "temperature.h"
 #include "Semaphores.h"
+#include "FileOperator.h"
 
 using namespace std;
 
@@ -136,39 +137,39 @@ void getOneStageCurve(const vector<unsigned long> & toffs, const vector<unsigned
       //sleep(5);
     }
 
-    saveVectorToFile(Tvstoff, filename);
-    saveVectorToFile(vectoff, filename);
+    appendToFile(filename, Tvstoff);
+    appendToFile(filename, vectoff);
 
 }
 
 
 
-void saveVectorToFile(vector<double> data, string filename){
-  ofstream file;
+// void saveVectorToFile(vector<double> data, string filename){
+//   ofstream file;
 
-  /************ SAVING _temprature_trace *********/
-  file.open((filename + ".csv").data() , std::ofstream::out | std::ofstream::app);
-  stringstream out;
-  for(unsigned int c=0; c< data.size();c++) {
+//   /************ SAVING _temprature_trace *********/
+//   file.open((filename + ".csv").data() , std::ofstream::out | std::ofstream::app);
+//   stringstream out;
+//   for(unsigned int c=0; c< data.size();c++) {
 
-    if ( c != data.size()-1 )
-      out << data[c] << "," ;
-    else
-      out << data[c];
+//     if ( c != data.size()-1 )
+//       out << data[c] << "," ;
+//     else
+//       out << data[c];
 
-  }
-  file << out.str() << endl;
-  file.close();
+//   }
+//   file << out.str() << endl;
+//   file.close();
 
 
-  //Change the owner and permissions of generated files
-  //system(("chown hsf:hsf " + filePrefix + "_*.csv").data() );
-  if (system(("chmod 666 " + filename + ".csv").data() ))
-  {
-    cout << "error saving file " << endl;
-  }
+//   //Change the owner and permissions of generated files
+//   //system(("chown hsf:hsf " + filePrefix + "_*.csv").data() );
+//   if (system(("chmod 666 " + filename + ".csv").data() ))
+//   {
+//     cout << "error saving file " << endl;
+//   }
 
-}
+// }
 
 
 
