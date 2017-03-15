@@ -1,14 +1,14 @@
 #include "temperature.h"
+
+#include <iostream>
+
+
 #include "Pipeline.h"
 #include "Scratch.h"
 #include "vectormath.h"
 #include "Priorities.h"
 #include "Semaphores.h"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
+#include "FileOperator.h"
 
 
 using namespace std;
@@ -112,31 +112,8 @@ vector<double> TempWatcher::getCurTemp(){
 
 void TempWatcher::toFile(){
 
-	ofstream file;
-
-  /************ SAVING _temprature_trace *********/
-  file.open((filename + "_temprature_trace.csv").data());
-  for(unsigned int c=0; c< tempTrace.size();c++) {
-  	stringstream out;
-    vector<double> tmp = tempTrace[c];
-    for (unsigned i = 0; i < tmp.size(); ++i){
-    	if ( i != tmp.size()-1 )
-    		out << tmp[i] << "," ;
-    	else
-    		out << tmp[i];
-    }
-
-    file << out.str() << endl; 
-  }
-  file.close();
-
-
-  //Change the owner and permissions of generated files
-  //system(("chown hsf:hsf " + filePrefix + "_*.csv").data() );
-  if (system(("chmod 666 " + filename + "_*.csv").data() )){
-    cout << "TempWatcher::toFile:error saving file " << endl;
-  }
-
+  filename = filename + "_temprature_trace.csv";
+  saveToNewFile(filename, tempTrace);
 }
 
 

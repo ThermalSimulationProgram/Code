@@ -3,9 +3,8 @@
 
 #include <vector>
 
-#include "structdef.h"
-#include "rtc.h"
 #include "AdaptiveKernel.h"
+
 
 using namespace std;
 
@@ -15,16 +14,17 @@ private:
 	
 
 public:
-	BWSKernel(unsigned n, vector<double> wcets, 
-		vector<double> _tbet, enum _schedule_kernel kernel);
+	BWSKernel(unsigned n, std::vector<double> wcets, 
+		std::vector<double> _tbet, enum _schedule_kernel kernel,
+		std::vector<unsigned long>& rl_scheduling_times);
 
 	~BWSKernel();
 	
-	void getScheduleScheme(vector<double> &, vector<double>&, pipeinfo&);
+	void getScheme(std::vector<double> &, std::vector<double>&);
 	
-	void calcBWS(vector<double> &, vector<double>&, const pipeinfo&);
+	void calcBWS(std::vector<double> &, std::vector<double>&, const AdaptInfo&);
 
-	void getPipelineInfo(pipeinfo& config);
+	void getAdaptInfo(AdaptInfo& config);
 };
 
 

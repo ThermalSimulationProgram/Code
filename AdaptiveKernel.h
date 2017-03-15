@@ -1,52 +1,79 @@
 #ifndef _ADAPTIVEKERNEL_H
 #define _ADAPTIVEKERNEL_H 
 
+#include <vector>
 
 #include "ScheduleKernel.h"
+#include "rtc.h"
 
 
-using namespace std;
+typedef struct
+{
+	std::vector<int>   Q;
+	std::vector<int> activeSet;
+	std::vector<int> sleepSet;
+	std::vector<double> ccs;
+	std::vector<double> dcs;
+	std::vector<double> rho;
+	std::vector<double> K;
+	std::vector<std::vector<double>> FIFOcurveData;
+	std::vector<double> allT;
+	int adaptionIndex;
+} AdaptInfo;
 
 
 
 class AdaptiveKernel: public ScheduleKernel{
 
 protected:
-	vector<double> wcets;
+	std::vector<double> wcets;
 
-	vector<double> allk;
+	std::vector<double> allk;
 
-	vector<double> minDSCs;
+	std::vector<double> minDSCs;
 
-	vector<double> minALLKs;
+	std::vector<double> minALLKs;
 
-	vector<double> TBET;
+	std::vector<double> TBET;
 	
 	double relativeDeadline;
 
 	jobject curvezero;
 
-	vector<jobject> haAlpha;
+	std::vector<jobject> haAlpha;
+
+	int adaptCounter;
 
 	
 
 public:
-	AdaptiveKernel(unsigned n, vector<double> wcets, 
-		vector<double> _tbet, enum _schedule_kernel kernel);
+	AdaptiveKernel(unsigned n, std::vector<double> wcets, 
+		std::vector<double> _tbet, enum _schedule_kernel kernel, 
+		std::vector<unsigned long>& rl_scheduling_times);
+
 	virtual ~AdaptiveKernel();
 
-	void setHaAlpha(vector<jobject>, double);
+	void setHaAlpha(std::vector<jobject>, double);
 
-	virtual void getScheduleScheme(vector<double> &, vector<double>&, pipeinfo&) = 0;
+	virtual void getScheme(std::vector<double> &, std::vector<double>&) = 0;
 
-	static vector<double> reduceM(const vector<int> &, const vector<int> &, 
-		vector<double> , const vector<double> &, unsigned);
+	// virtual void getAdaptScheme(std::vector<double> &, std::vector<double>&);
 
+	static std::vector<double> reduceM(const std::vector<int> &, const std::vector<int> &, 
+		std::vector<double> , const std::vector<double> &, unsigned);
+
+	void getRawAdaptInfo(AdaptInfo&);
+
+	// get the curve data required to construct the arrival curve of the jobs
+	// in ith FIFO
+	static std::vector<double> getFIFODemands(const double&, 
+		const std::vector<double>&, const int&, 
+		const double&, const double&, enum _schedule_kernel kernel);
 	
 };
 
 
-
+void pipeinfo_print(const AdaptInfo &);
 
 
 

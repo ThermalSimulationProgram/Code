@@ -9,32 +9,32 @@
 #include <iostream>
 #include <algorithm>
 
-using namespace std;
+// using namespace std;
 
 
-template<typename T, typename T1> void vectorAssign(vector<T> & pvec, 
-const vector<int> & ids, const vector<T1>& values){
+template<typename T, typename T1> void vectorAssign(std::vector<T> & pvec, 
+const std::vector<int> & ids, const std::vector<T1>& values){
 	int numel = (int) pvec.size();
 	if(ids.size() != values.size()){
-		cerr<<"vectormath::vectorAssign:Input index does not match the values\n";
+		std::cerr<<"vectormath::vectorAssign:Input index does not match the values\n";
 			exit(1);
 	}
 	for (unsigned i = 0; i < ids.size(); ++i)
 	{
 		if(ids[i] >= numel){
-			cerr<<"vectormath::vectorAssign:Input index exceeds valid range of input vector\n";
+			std::cerr<<"vectormath::vectorAssign:Input index exceeds valid range of input vector\n";
 			exit(1);
 		}
 		if(ids[i] < 0){
-			cerr<<"vectormath::vectorAssign:Input index is negative\n";
+			std::cerr<<"vectormath::vectorAssign:Input index is negative\n";
 			exit(1);
 		}
 		pvec[ids[i]] = (T)values[i];
 	}
 }
 
-template<typename T, typename T1> void vectorAssign(vector<T> & pvec, 
-const vector<bool> & logicalIds, const vector<T1>& values){
+template<typename T, typename T1> void vectorAssign(std::vector<T> & pvec, 
+const std::vector<bool> & logicalIds, const std::vector<T1>& values){
 	unsigned nvalues = values.size();
 	unsigned numel = pvec.size();
 	unsigned counter = 0;
@@ -45,7 +45,7 @@ const vector<bool> & logicalIds, const vector<T1>& values){
 		
 		if (logicalIds[i]){
 			if (counter >= nvalues){
-			cerr<<"vectormath::vectorAssign:Input index does not match the values\n";
+			std::cerr<<"vectormath::vectorAssign:Input index does not match the values\n";
 			exit(1);
 			}
 			pvec[i] = (T)values[counter];
@@ -56,17 +56,17 @@ const vector<bool> & logicalIds, const vector<T1>& values){
 }
 
 
-template<typename T, typename T1> void vectorAssign(vector<T> & pvec, 
-const vector<int> & ids, const T1& value){
+template<typename T, typename T1> void vectorAssign(std::vector<T> & pvec, 
+const std::vector<int> & ids, const T1& value){
 	int numel = (int) pvec.size();
 	for (unsigned i = 0; i < ids.size(); ++i)
 	{
 		if(ids[i] >= numel){
-			cerr<<"vectormath::vectorAssign:Input index exceeds valid range of input vector\n";
+			std::cerr<<"vectormath::vectorAssign:Input index exceeds valid range of input vector\n";
 			exit(1);
 		}
 		if(ids[i] < 0){
-			cerr<<"vectormath::vectorAssign:Input index is negative\n";
+			std::cerr<<"vectormath::vectorAssign:Input index is negative\n";
 			exit(1);
 		}
 		pvec[ids[i]] = (T)value;
@@ -74,26 +74,26 @@ const vector<int> & ids, const T1& value){
 }
 
 template<typename T, typename T1> 
-void vectorAssign(vector<vector<T>>& pvec, const vector<int> & rowIds, 
-const int &  colId, const vector<T1> & values){
+void vectorAssign(std::vector<std::vector<T>>& pvec, const std::vector<int> & rowIds, 
+const int &  colId, const std::vector<T1> & values){
 	unsigned nrows = pvec.size();
 	if(rowIds.size() != values.size()){
-		cerr<<"vectormath::vectorAssign:Input index does not match the values\n";
+		std::cerr<<"vectormath::vectorAssign:Input index does not match the values\n";
 			exit(1);
 	}
 	if(colId < 0){
-		cerr<<"vectormath::vectorAssign: Column Input index is negative\n";
+		std::cerr<<"vectormath::vectorAssign: Column Input index is negative\n";
 		exit(1);
 	}
 
 	for (unsigned i = 0; i < rowIds.size(); ++i)
 	{
 		if(rowIds[i] >= nrows || colId >= pvec[rowIds[i]].size()){
-			cerr<<"vectormath::vectorAssign:Input index exceeds valid range of input vector\n";
+			std::cerr<<"vectormath::vectorAssign:Input index exceeds valid range of input vector\n";
 			exit(1);
 		}
 		if(rowIds[i] < 0){
-			cerr<<"vectormath::vectorAssign: Row Input index is negative\n";
+			std::cerr<<"vectormath::vectorAssign: Row Input index is negative\n";
 			exit(1);
 		}
 
@@ -102,21 +102,21 @@ const int &  colId, const vector<T1> & values){
 }
 
 template<typename T, typename T1> 
-void vectorAssign(vector<vector<T>>& pvec, const vector<int> & rowIds, 
+void vectorAssign(std::vector<std::vector<T>>& pvec, const std::vector<int> & rowIds, 
 const int &  colId, const T1 & value){
 	int nrows = (int)pvec.size();
 	if(colId < 0){
-		cerr<<"vectormath::vectorAssign: Column Input index is negative\n";
+		std::cerr<<"vectormath::vectorAssign: Column Input index is negative\n";
 		exit(1);
 	}
 	for (unsigned i = 0; i < rowIds.size(); ++i)
 	{
 		if(rowIds[i] >= nrows || colId >= (int)pvec[rowIds[i]].size()){
-			cerr<<"vectormath::vectorAssign:Input index exceeds valid range of input vector\n";
+			std::cerr<<"vectormath::vectorAssign:Input index exceeds valid range of input vector\n";
 			exit(1);
 		}
 		if(rowIds[i] < 0){
-			cerr<<"vectormath::vectorAssign: Row Input index is negative\n";
+			std::cerr<<"vectormath::vectorAssign: Row Input index is negative\n";
 			exit(1);
 		}	
 		pvec[rowIds[i]][colId] = (T)value;
@@ -124,20 +124,20 @@ const int &  colId, const T1 & value){
 }
 
 template<typename T, typename T1> 
-void vectorAssign(vector<vector<T>>& pvec, const int & rowId, 
-const vector<int>& colIds, const vector<T1> & values){
+void vectorAssign(std::vector<std::vector<T>>& pvec, const int & rowId, 
+const std::vector<int>& colIds, const std::vector<T1> & values){
 	unsigned nrows = pvec.size();
 
 	if(rowId >= nrows){
-		cerr<<"vectormath::vectorAssign:Invalid input row index\n";
+		std::cerr<<"vectormath::vectorAssign:Invalid input row index\n";
 		exit(1);
 	}
 	if(rowId < 0){
-		cerr<<"vectormath::vectorAssign: Row Input index is negative\n";
+		std::cerr<<"vectormath::vectorAssign: Row Input index is negative\n";
 		exit(1);
 	}
 	if(colIds.size() != values.size()){
-		cerr<<"vectormath::vectorAssign:Input index does not match the values\n";
+		std::cerr<<"vectormath::vectorAssign:Input index does not match the values\n";
 			exit(1);
 	}
 	unsigned ncols = pvec[rowId].size();
@@ -145,11 +145,11 @@ const vector<int>& colIds, const vector<T1> & values){
 	for (unsigned i = 0; i < colIds.size(); ++i)
 	{
 		if(colIds[i] >= ncols){
-			cerr<<"vectormath::vectorAssign:Invalid input index\n";
+			std::cerr<<"vectormath::vectorAssign:Invalid input index\n";
 			exit(1);
 		}
 		if(colIds[i] < 0){
-			cerr<<"vectormath::vectorAssign:Column Input index is negative\n";
+			std::cerr<<"vectormath::vectorAssign:Column Input index is negative\n";
 			exit(1);
 		}	
 		pvec[rowId][colIds[i]] = (T)values[i];
@@ -157,16 +157,16 @@ const vector<int>& colIds, const vector<T1> & values){
 }
 
 template<typename T, typename T1> 
-void vectorAssign(vector<vector<T>>& pvec, const int & rowId, 
-const vector<int>& colIds, const T1 & value){
+void vectorAssign(std::vector<std::vector<T>>& pvec, const int & rowId, 
+const std::vector<int>& colIds, const T1 & value){
 	unsigned nrows = pvec.size();
 
 	if(rowId >= nrows){
-		cerr<<"vectormath::vectorAssign:Invalid input row index\n";
+		std::cerr<<"vectormath::vectorAssign:Invalid input row index\n";
 		exit(1);
 	}
 	if(rowId < 0){
-		cerr<<"vectormath::vectorAssign: Row Input index is negative\n";
+		std::cerr<<"vectormath::vectorAssign: Row Input index is negative\n";
 		exit(1);
 	}
 	unsigned ncols = pvec[rowId].size();
@@ -174,11 +174,11 @@ const vector<int>& colIds, const T1 & value){
 	for (unsigned i = 0; i < colIds.size(); ++i)
 	{
 		if(colIds[i] >= ncols){
-			cerr<<"vectormath::vectorAssign:Invalid input index\n";
+			std::cerr<<"vectormath::vectorAssign:Invalid input index\n";
 			exit(1);
 		}
 		if(colIds[i] < 0){
-			cerr<<"vectormath::vectorAssign:Column Input index is negative\n";
+			std::cerr<<"vectormath::vectorAssign:Column Input index is negative\n";
 			exit(1);
 		}	
 		pvec[rowId][colIds[i]] = (T)value;
@@ -187,18 +187,18 @@ const vector<int>& colIds, const T1 & value){
 
 
 
-template<typename T> vector<T> vectorExtract(const vector<T> & a, 
-const vector<int>& ids){
-	vector<T> ret;
+template<typename T> std::vector<T> vectorExtract(const std::vector<T> & a, 
+const std::vector<int>& ids){
+	std::vector<T> ret;
 	int numel = (int)a.size();
 	for (unsigned i = 0; i < ids.size(); ++i)
 	{
 		if(ids[i] >= numel){
-			cerr<<"vectormath::vectorExtract:Invalid input index\n";
+			std::cerr<<"vectormath::vectorExtract:Invalid input index\n";
 			exit(1);
 		}
 		if(ids[i] < 0 ){
-			cerr<<"vectormath::vectorExtract:negative input index error\n";
+			std::cerr<<"vectormath::vectorExtract:negative input index error\n";
 			exit(1);
 		}
 		ret.push_back(a[ids[i]]);	
@@ -206,9 +206,9 @@ const vector<int>& ids){
 	return ret;
 }
 
-template<typename T> vector<T> vectorExtract(const vector<T> &a, 
-const vector<bool>& logicalIds){
-	vector<T> ret;
+template<typename T> std::vector<T> vectorExtract(const std::vector<T> &a, 
+const std::vector<bool>& logicalIds){
+	std::vector<T> ret;
 	unsigned numel = a.size();
 
 	for (unsigned i = 0; i < logicalIds.size(); ++i)
@@ -222,30 +222,30 @@ const vector<bool>& logicalIds){
 	return ret;
 }
 
-template<typename T> vector<T> vectorExtract(const vector<vector<T>>& a, 
-const vector<int>& rowIds, const int colId){
-	vector<T> ret;
+template<typename T> std::vector<T> vectorExtract(const std::vector<std::vector<T>>& a, 
+const std::vector<int>& rowIds, const int colId){
+	std::vector<T> ret;
 	unsigned nrows = a.size();
 	if (nrows == 0 )
 		return ret;
 	unsigned ncols = a[0].size();
 	if(colId >= ncols){
-		cerr<<"vectormath::vectorExtract:Invalid input index\n";
+		std::cerr<<"vectormath::vectorExtract:Invalid input index\n";
 		exit(1);
 	}
 	if(colId < 0){
-		cerr<<"vectormath::vectorExtract: Column Input index is negative\n";
+		std::cerr<<"vectormath::vectorExtract: Column Input index is negative\n";
 		exit(1);
 	}
 	ret.reserve(rowIds.size());
 	for (unsigned i = 0; i < rowIds.size(); ++i)
 	{
 		if(rowIds[i] >= nrows ){
-			cerr<<"vectormath::vectorExtract:Invalid input index\n";
+			std::cerr<<"vectormath::vectorExtract:Invalid input index\n";
 			exit(1);
 		}
 		if(rowIds[i] < 0){
-			cerr<<"vectormath::vectorExtract: Row Input index is negative\n";
+			std::cerr<<"vectormath::vectorExtract: Row Input index is negative\n";
 			exit(1);
 		}	
 		ret.push_back(a[rowIds[i]][colId]);	
@@ -253,9 +253,9 @@ const vector<int>& rowIds, const int colId){
 	return ret;
 }
 
-template<typename T> vector<vector<T>> vectorExtract(const vector<vector<T>>& a, 
-const vector<int>& rowIds, const vector<int>& colIds){
-	vector<vector<T>> ret;
+template<typename T> std::vector<std::vector<T>> vectorExtract(const std::vector<std::vector<T>>& a, 
+const std::vector<int>& rowIds, const std::vector<int>& colIds){
+	std::vector<std::vector<T>> ret;
 	int nrows = (int)a.size();
 	if (nrows == 0 )
 		return ret;
@@ -263,22 +263,22 @@ const vector<int>& rowIds, const vector<int>& colIds){
 	for (unsigned i = 0; i < rowIds.size(); ++i)
 	{
 		if (rowIds[i] >= nrows){
-			cerr<<"vectormath::vectorExtract:Invalid input index\n";
+			std::cerr<<"vectormath::vectorExtract:Invalid input index\n";
 			exit(1);
 		}
 		if (rowIds[i] < 0){
-			cerr<<"vectormath::vectorExtract: Row Input index is negative\n";
+			std::cerr<<"vectormath::vectorExtract: Row Input index is negative\n";
 			exit(1);
 		}
-		vector<T> tmp = vectorExtract(a[rowIds[i]], colIds);
+		std::vector<T> tmp = vectorExtract(a[rowIds[i]], colIds);
 		ret.push_back(tmp);
 	}
 	return ret;
 }
 
-template<typename T> vector<T> vectorExtract(const vector<vector<T>>& a, 
-const vector<int>& ids){
-	vector<T> ret;
+template<typename T> std::vector<T> vectorExtract(const std::vector<std::vector<T>>& a, 
+const std::vector<int>& ids){
+	std::vector<T> ret;
 	int nrows = (int)a.size();
 	if (nrows == 0 )
 		return ret;
@@ -289,11 +289,11 @@ const vector<int>& ids){
 	for (unsigned i = 0; i < ids.size(); ++i)
 	{
 		if(ids[i] >= numel){
-			cerr<<"vectormath::vectorExtract:Invalid input index\n";
+			std::cerr<<"vectormath::vectorExtract:Invalid input index\n";
 			exit(1);
 		}
 		if (ids[i] < 0){
-			cerr<<"vectormath::vectorExtract: Input index is negative\n";
+			std::cerr<<"vectormath::vectorExtract: Input index is negative\n";
 			exit(1);
 		}
 		colid = ids[i] / nrows;
@@ -303,9 +303,9 @@ const vector<int>& ids){
 	return ret;
 }
 
-template<typename T> vector<T> vectorExtract(const vector<vector<T>>& a, 
-const vector<bool>& logicalIds){
-	vector<T> ret;
+template<typename T> std::vector<T> vectorExtract(const std::vector<std::vector<T>>& a, 
+const std::vector<bool>& logicalIds){
+	std::vector<T> ret;
 	unsigned nrows = a.size();
 	if (nrows == 0 )
 		return ret;
@@ -328,11 +328,11 @@ const vector<bool>& logicalIds){
 	return ret;
 }
 
-template<typename T> T vectorExtract(const vector<vector<T>> &a, 
+template<typename T> T vectorExtract(const std::vector<std::vector<T>> &a, 
 int ids){
 	T ret = 0;
 	if (ids < 0){
-		cerr<<"vectormath::vectorExtract: Input index is negative\n";
+		std::cerr<<"vectormath::vectorExtract: Input index is negative\n";
 		exit(1);
 	}
 	int nrows = (int) a.size();
@@ -343,7 +343,7 @@ int ids){
 	int rowid, colid;
 	
 	if(ids >= numel){
-		cerr<<"vectormath::vectorExtract:Invalid input index\n";
+		std::cerr<<"vectormath::vectorExtract:Invalid input index\n";
 		exit(1);
 	}
 	colid = ids / nrows;

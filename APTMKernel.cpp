@@ -2,11 +2,8 @@
 
 #include <iostream>
 
-#include "Scratch.h"
+
 #include "vectormath.h"
-#include "Scheduler.h"
-#include "Pipeline.h"
-#include "Parser.h"
 #include "Semaphores.h"
 #include "Statistics.h"
 #include "utils.h"
@@ -19,9 +16,13 @@ using namespace std;
 #define _INFO 0
 #define _PROFILE 0
 
+
+
+
 APTMKernel::APTMKernel(unsigned _nstages, vector<double> _wcets,
-	vector<double> _tbet, double _bcoef, enum _schedule_kernel kernel):
-AdaptiveKernel(_nstages, _wcets, _tbet, kernel){
+	vector<double> _tbet, double _bcoef, enum _schedule_kernel kernel,
+	vector<unsigned long>& rl_scheduling_times):
+AdaptiveKernel(_nstages, _wcets, _tbet, kernel, rl_scheduling_times){
 	bcoef 	= _bcoef;
 	partTimes = vector<double>(10, 0);
 	counter = 0;
@@ -40,8 +41,7 @@ void APTMKernel::setBcoef(double b){
 }
 
 
-void APTMKernel::getScheduleScheme(vector<double> & tons, 
-	vector<double>& toffs, pipeinfo& config){
+void APTMKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 	#if _DEBUG == 1
 	Semaphores::print_sem.wait_sem();
 	cout << "aptm kernel starts collecting info\n";
@@ -51,7 +51,8 @@ void APTMKernel::getScheduleScheme(vector<double> & tons,
 	#if _PROFILE == 1
 	double timein = (double)Statistics::getRelativeTime_ms();
 	#endif
-	getPipelineInfo(config);
+	AdaptInfo config;
+	getApdatInfo(config);
 	#if _PROFILE == 1
 	double timeout = (double)Statistics::getRelativeTime_ms();
 	double time1 = timeout - timein;
@@ -74,7 +75,8 @@ void APTMKernel::getScheduleScheme(vector<double> & tons,
 	if (time1 + time2 > 20){
 		partTimes[0] += time1;
 		partTimes[1] += time2;
-		cout << "getScheduleScheme:time1:  "<<partTimes[0] << "   getScheduleScheme:time2:  " << partTimes[1] << endl;
+		cout << "getScheduleScheme:time1:  "<<partTimes[0] << 
+		"   getScheduleScheme:time2:  " << partTimes[1] << endl;
 	}
 	#endif
 	
@@ -89,7 +91,7 @@ void APTMKernel::getScheduleScheme(vector<double> & tons,
 
 
 void APTMKernel::calcAPTM(vector<double> & tonsin, vector<double>& toffsin, 
-	const pipeinfo& config){
+	const AdaptInfo& config){
 	#if _DEBUG == 1
 	cout << "Inside APTMKernel::calcAPTM \n";
 	#endif
@@ -559,14 +561,16 @@ vector<double> APTMKernel::assignTons(double upBound,
 
 
 
-void APTMKernel::getPipelineInfo(pipeinfo& config){
+void APTMKernel::getApdatInfo(AdaptInfo& config){
 	// string callfun = "APTM::getPipelineInfo";
-	int index = config.adaptionIndex;
+	
 
 	#if _PROFILE == 1
 	double timein = (double)Statistics::getRelativeTime_ms();
 	#endif
-	scheduler->getPipelineInfo(config,  wcets, TBET);
+	getRawAdaptInfo(config);
+	int index = config.adaptionIndex;
+	// scheduler->getPipelineInfo(config,  wcets, TBET);
 	
 	
 	// Pipeline::getInfo2(config, wcets, TBET);
@@ -582,15 +586,15 @@ void APTMKernel::getPipelineInfo(pipeinfo& config){
 	
 	double bmax = 0;
 	#if _PROFILE == 1
-	double timeout = (double)Statistics::getRelativeTime_ms();
-	double time1 = timeout - timein;
+	double timeout  = (double)Statistics::getRelativeTime_ms();
+	double time1    = timeout - timein;
 	double timein2f = (double)Statistics::getRelativeTime_ms();
-	double time21 = 0;
-	double time22 = 0;
-	double time23 = 0;
-	double time211 = 0;
-	double time212 = 0;
-	double time213 = 0;
+	double time21   = 0;
+	double time22   = 0;
+	double time23   = 0;
+	double time211  = 0;
+	double time212  = 0;
+	double time213  = 0;
 	#endif
 	for (int i = 0; i < (int)nstages; ++i){
 		double minDSC    = minDSCs[i];
@@ -605,8 +609,8 @@ void APTMKernel::getPipelineInfo(pipeinfo& config){
 			#if _DEBUG==1
 			cout << "haAlpha[index]" << rtc::toString(haAlpha[index] );
 			#endif
-			alpha_f          = rtc::Curve(config.FIFOcurveData[i] );
-			alpha_d = rtc::plus(haAlpha[index], alpha_f );
+			alpha_f                     = rtc::Curve(config.FIFOcurveData[i] );
+			alpha_d                     = rtc::plus(haAlpha[index], alpha_f );
 			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 2000);
 			#if _PROFILE == 1
 			timeout = (double)Statistics::getRelativeTime_ms();

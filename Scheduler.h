@@ -1,6 +1,10 @@
 #ifndef _SCHEDULER_H
 #define _SCHEDULER_H
 
+#include <vector>
+#include <time.h>
+#include <pthread.h>
+#include <semaphore.h>
 
 #include "Pipeline.h"
 #include "Thread.h"
@@ -8,32 +12,24 @@
 #include "TimeUtil.h"
 #include "TimedRunnable.h"
 #include "TimeSim.h"
-#include "rtc.h"
 #include "structdef.h"
+#include "ScheduleKernelEnumerations.h"
 
 
-
-
-#include <vector>
-#include <time.h>
-#include <pthread.h>
-#include <semaphore.h>
-using namespace std;
-
-class ScheduleKernel;
+class ScheduleKernelAPI;
 
 class Scheduler : public TimedRunnable
 {
 protected:
 
 	/////////////////////////////////////////////
-	vector<unsigned long> rl_scheduling_times;
+	std::vector<unsigned long> rl_scheduling_times;
 	
 	Pipeline * pipeline;
 
 	enum _schedule_kernel kernel_type;
 	
-	ScheduleKernel *kernel;
+	ScheduleKernelAPI *kernelAPI;
 
 public:
 	Scheduler(Pipeline *, _schedule_kernel,  unsigned);
@@ -51,9 +47,11 @@ public:
 
 	void timedJob(unsigned);
 
-	void getPipelineInfo(pipeinfo&, const vector<double>&, const vector<double>&);
+	// void getPipelineInfo(pipeinfo&, const vector<double>&, const vector<double>&);
 
-	vector<double> getKernelTime();
+	std::vector<double> getKernelTime();
+
+	Pipeline* getPipelinePointer();
 
 };
 

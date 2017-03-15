@@ -3,50 +3,40 @@
 
 #include <vector>
 
-using namespace std;
 
 #include "warmingCurve.h"
 #include "Enumerations.h"
 
 typedef struct offlinedata{
-	vector<vector<double>> coolbreakToffs;
-	vector<vector<double>> coolslopes;
-	vector<int> numValidData;
-	vector<warmingCurves> allStageCurves;
+	std::vector<std::vector<double>> coolbreakToffs;
+	std::vector<std::vector<double>> coolslopes;
+	std::vector<int> numValidData;
+	std::vector<warmingCurves> allStageCurves;
 }thermalProp;
 
 typedef struct pipeinfo
 {
-	vector<int>   Q;
-	vector<int> activeSet;
-	vector<int> sleepSet;
-	vector<double> ccs;
-	vector<double> dcs;
-	vector<double> rho;
-	vector<double> K;
-	vector<vector<double>> FIFOcurveData;
-	vector<double> allT;
+	std::vector<int>   Q;
+	std::vector<int> activeSet;
+	std::vector<int> sleepSet;
+	std::vector<double> ccs;
+	std::vector<double> dcs;
+	std::vector<double> rho;
+	std::vector<double> K;
+	std::vector<std::vector<double>> FIFOcurveData;
+	std::vector<double> allT;
 	unsigned adaptionIndex;
 } pipeinfo;
 
 void pipeinfo_print(const pipeinfo &);
 
 typedef struct ptmspec{
-	vector<double> tons;
-	vector<double> toffs;
+	std::vector<double> tons;
+	std::vector<double> toffs;
 }ptmspec;
 
 
-typedef struct dynamicinfo
-{
-	vector<double> rho;
-	vector<vector<double>> breakToffs;
-	vector<vector<double>> slopes;
-	vector<int> numValidData;
-	vector<linearSegs> warmingcurves;
-	vector<double> K;
-	
-}dynamicdata;
+
 
 
 typedef struct{
@@ -56,8 +46,16 @@ typedef struct{
 	enum _worker_state state;
 	double sleepTime;
 	int onGoEventId;
-	vector<double> allEventAbsDeadlines;
-} workerinfo;
+	std::vector<double> allEventAbsDeadlines;
+} WorkerInfo;
+
+
+typedef struct{
+	std::vector<WorkerInfo> workerinfos;
+	std::vector<double> temperature;
+	double currentTime;
+	int numstages;
+}PipelineInfo;
 
 
 

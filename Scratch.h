@@ -1,22 +1,25 @@
 #ifndef _SCRATCH_H
 #define _SCRATCH_H
 
-#include "Enumerations.h"
-#include "structdef.h"
-#include "rtc.h"
-
 #include <vector>
 #include <string>
 #include <semaphore.h>
-using namespace std;
+
+
+#include "Enumerations.h"
+#include "ScheduleKernelEnumerations.h"
+#include "structdef.h"
+#include "rtc.h"
+
+
 
 
 class Scratch{
 public:
 
 	static void initialize(int, unsigned long, unsigned long, unsigned long,
-		unsigned long, vector<unsigned long>, vector<unsigned long>,
-		enum _schedule_kernel, unsigned long, string);
+		unsigned long, std::vector<unsigned long>, std::vector<unsigned long>,
+		enum _schedule_kernel, unsigned long, std::string);
 
 
 	static void 					setAdaptionPeriod(unsigned long);
@@ -24,24 +27,24 @@ public:
 	static void 					setOfflineData(thermalProp);
 	static void 					setExeFactor(double);
 	static void 					setBFactor(double f);
-	static void 					setName(string);
+	static void 					setName(std::string);
 	static void 					setSavingFile(bool);
 	
 
 	static unsigned long 			getAdaptionPeriod();
 	static thermalProp 				getOfflineData();
 	static ptmspec 					getPTMValues();
-	static string 					getName();
+	static std::string 					getName();
 	static int 						getNstage();
 	static unsigned long 			getPeriod();
 	static unsigned long 			getJitter();
 	static unsigned long 			getDistance();
 	static unsigned long 			getRltDeadline();
 	static double 					getRltDeadline_ms();
-	static vector<unsigned long> 	getWcets();
-	static vector<double> 			getDwcets();
-	static vector<unsigned long> 	getArrivalTimes();
-	static vector<double> 			getArrivalTimes_ms();
+	static std::vector<unsigned long> 	getWcets();
+	static std::vector<double> 			getDwcets();
+	static std::vector<unsigned long> 	getArrivalTimes();
+	static std::vector<double> 			getArrivalTimes_ms();
 	static enum _schedule_kernel 	getKernel();
 	static unsigned long 			getDuration();
 	static double 					getExeFactor();
@@ -52,16 +55,16 @@ public:
 
 private:
 	
-	static string 					name;
+	static std::string 					name;
 	static int 						nstage;
 	static unsigned long 			period;
 	static unsigned long 			jitter;
 	static unsigned long 			distance;
 	static unsigned long 			rltDeadline;
 	static double 					rltDeadline_ms;
-	static vector<unsigned long> 	wcets;
-	static vector<double> 			dwcets;
-	static vector<unsigned long> 	arrival_times;
+	static std::vector<unsigned long> 	wcets;
+	static std::vector<double> 			dwcets;
+	static std::vector<unsigned long> 	arrival_times;
 	static enum _schedule_kernel 	kernel;
 	static unsigned long 			duration;
 

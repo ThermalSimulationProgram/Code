@@ -1,14 +1,11 @@
 #include "Thread.h"
-#include "Priorities.h"
-#include "Statistics.h"
-#include "TimeSim.h"
-#include "Semaphores.h"
 
 #include <iostream>
-#include <stdlib.h>
 #include <unistd.h>
 
-
+#include "Priorities.h"
+#include "Statistics.h"
+#include "Semaphores.h"
 
 #define _INFO 0
 

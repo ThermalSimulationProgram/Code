@@ -2,26 +2,25 @@
 
 
 #include <unistd.h>
-#include <pthread.h>
 #include <iostream>
-#include <cstddef>
 #include <sys/stat.h>
 #include <string>
-#include <cmath>
 
-
+//components
+#include "temperature.h"
 #include "Dispatcher.h"
 #include "Scheduler.h"
 #include "Worker.h"
+#include "Job.h"
+//parser
+#include "Parser.h"
+//utilities
+#include "Scratch.h"
 #include "TimeUtil.h"
 #include "Semaphores.h"
 #include "Priorities.h"
 #include "Statistics.h"
 #include "Operators.h"
-#include "Job.h"
-#include "Parser.h"
-#include "Scratch.h"
-#include "temperature.h"
 #include "FileOperator.h"
 
 
@@ -57,6 +56,7 @@ Pipeline::Pipeline(string xml_path)
 	n_stages        = _n_stages;
 	// create a Dispatcher and a Scheduler
 	dispatcher      = new Dispatcher(Scratch::getArrivalTimes(), 17);
+
 	scheduler       = new Scheduler(this, Scratch::getKernel(), 99);
 	
 	// create n_stages workers and attach it to default CPU
@@ -214,182 +214,24 @@ void Pipeline::join_all() {
 }
 
 
-// This function collects the dynamic information of the pipeline
-// in the simulation, and save it in config
-void Pipeline::getInfo(pipeinfo& config, 
-const vector<double>& wcets, const vector<double>& TBET, 
-enum _schedule_kernel kernel){
-	// fill structure config with dynamic information of pipeline.
-	// return config satisfying:
-	// 1. config.Q, config.FIFOcurveData, config.allT have size == nstages
-	// 2. size of activeSet + size of sleepSet == nstages
-	// 3. size of sleepSet == ccs;
+void Pipeline::getAllPipelineInfo(PipelineInfo& pinfo){
 
-	config.Q.clear();
-	config.activeSet.clear();
-	config.sleepSet.clear();
-	config.ccs.clear();
-	config.FIFOcurveData.clear();
-
-	// get current temperature
-	config.allT = tempwatcher->getCurTemp();
-	#if _DEBUG == 1
-	cout << "got temperature\n";
-	#endif
+	pinfo.workerinfos.clear();
+	pinfo.temperature = tempwatcher->getCurTemp();
+	pinfo.numstages   = n_stages;
 
 	// get current time from simulation start, unit ms
 	double curTime = (double)Statistics::getRelativeTime()/1000;
-	
-	for (int i = 0; i < n_stages; ++i)
-	{
-		workerinfo tmp;
-		#if _DEBUG == 1
-		cout << "getting worker info: " << i << endl;
-		#endif
+
+	pinfo.currentTime = curTime;
+
+	for (int i = 0; i < n_stages; ++i){
+		WorkerInfo tmp;
 		workers[i]->getAllInfo(curTime, tmp);
-		#if _DEBUG == 1
-		cout << "finish getting worker info: " << i << endl;
-		#endif
-		// number of jobs in the ith FIFO  
-		config.Q.push_back(tmp.nFIFOJobs);
-		// if the ith stage is sleeping or working
-		if (tmp.state == _sleep){
-			config.sleepSet.push_back(tmp.stageId);
-			if (TBET[i] > tmp.sleepTime)
-				config.ccs.push_back(TBET[i] - tmp.sleepTime);
-			else
-				config.ccs.push_back(0);
-		}
-		else
-			config.activeSet.push_back(tmp.stageId);
-
-		// get the curve data required to construct the arrival curve of the jobs
-		// in ith FIFO
-		config.FIFOcurveData.push_back(getFIFODemands(curTime,
-			tmp.allEventAbsDeadlines, tmp.onGoEventId, tmp.executed,
-			wcets[i], kernel));
-	}
-
-	#if _DEBUG == 1
-	bool noerror = true;
-	if ((int)config.Q.size() !=  n_stages)
-		noerror = false;
-	if ((int)config.FIFOcurveData.size()!= n_stages || 
-		(int)config.allT.size() != n_stages)
-		noerror = false;
-
-	if ((int)config.activeSet.size() + (int)config.sleepSet.size() 
-		!= n_stages)
-		noerror = false;
-
-	if (!noerror){
-		cerr << "Pipeline::getInfo: error config\n";
-		exit(2);
-	}
-	#endif
-	
+		pinfo.workerinfos.push_back(tmp);
+	}	
 }
 
-// This function is used for debugging, not used in real program
-void Pipeline::loadInfoFromFile(pipeinfo& config, 
-const vector<double>& wcets, const vector<double>& TBET,
-enum _schedule_kernel kernel){
-	config.allT = loadVectorFromFile<double>("allT.csv");
-	double curTime = loadDoubleFromFile("CurTime.csv");
-	unsigned ustages = wcets.size();
-	vector<workerinfo> allinfo =  loadWorkerInfo(ustages);
-	for (unsigned i = 0; i < ustages; ++i){
-		
-		workerinfo tmp = allinfo[i];
-		config.Q.push_back(tmp.nFIFOJobs);
-		if (tmp.state == _sleep){
-			config.sleepSet.push_back(tmp.stageId);
-			if (TBET[i] > tmp.sleepTime)
-				config.ccs.push_back(TBET[i] - tmp.sleepTime);
-			else
-				config.ccs.push_back(0);
-		}
-		else
-			config.activeSet.push_back(tmp.stageId);
-
-		config.FIFOcurveData.push_back(getFIFODemands(curTime,
-			tmp.allEventAbsDeadlines, tmp.onGoEventId, tmp.executed,
-			wcets[i], kernel));
-	}
-	
-}
-
-// get the curve data required to construct the arrival curve of the jobs
-// in ith FIFO
-vector<double> Pipeline::getFIFODemands(const double& curTime, 
-	const vector<double>& allDeadlines, const int& onGoEventId, 
-	const double& abet, const double& wcet,
-	enum _schedule_kernel kernel){
-
-	// unsigned Q = allDeadlines.size();
-	vector<double> curvedata = {0.0, 0.0, 0.0};
-	// cout << "curTime" << curTime << endl;
-	double timeToDeadline0 = 0;
-	double timeToDeadline;
-	unsigned startId = 0;
-	if (onGoEventId != 0){
-		// cout << "Pipeline::getFIFODemands:has workload "<<endl;
-		timeToDeadline = allDeadlines[0] - curTime;
-		if (timeToDeadline  < timeToDeadline0){
-			cout << "timeToDeadline:  " << timeToDeadline << endl;
-			cout << "timeToDeadline0:  " << timeToDeadline0 << endl;
-			cout << "Pipeline::getFIFODemands: Warning: Current event deadline miss happened!"<<endl;
-			// exit(1);
-			curvedata[1] = curvedata[1] ;
-		}else{
-			if (abs(timeToDeadline - timeToDeadline0)<0.000001){
-				curvedata[1] = curvedata[1] + 1;
-				// cout << "Pipeline::getFIFODemands:add 1 "<<endl;
-			}
-
-			else{
-				double remained;
-				if (kernel == APTM){
-					remained = (wcet - abet) / wcet;
-				}else {
-					remained = 1;
-				}
-				
-				curvedata.push_back(timeToDeadline);
-				curvedata.push_back(curvedata[1] + remained);
-				curvedata.push_back(0);
-				// cout << "Pipeline::getFIFODemands:update "<<endl;
-				timeToDeadline0 = timeToDeadline;
-			}	
-		}
-		startId ++;
-	}
-
-	// cout << "startId   "<<startId<<endl;
-	for (unsigned i = startId; i < allDeadlines.size(); ++i){
-		timeToDeadline = allDeadlines[i] - curTime;
-		if (timeToDeadline  < timeToDeadline0){
-			cout << "timeToDeadline:  " << timeToDeadline << endl;
-			cout << "timeToDeadline0:  " << timeToDeadline0 << endl;
-			cout << "Pipeline::getFIFODemands: Error: incorrect order of jobs in FIFO"<<endl;
-			// exit(1);
-		}else{
-			unsigned numel = curvedata.size();
-			if (abs(timeToDeadline - timeToDeadline0) < 0.000001){
-				curvedata[numel-2] = curvedata[numel-2] + 1;
-				// cout << "Pipeline::getFIFODemands:add 1 "<<endl;
-			}
-			else{
-				curvedata.push_back(timeToDeadline);
-				curvedata.push_back(curvedata[numel-2] + 1);
-				curvedata.push_back(0);
-				// cout << "Pipeline::getFIFODemands:update "<<endl;
-				timeToDeadline0 = timeToDeadline;
-			}
-		}
-	}
-	return curvedata;
-}
 
 
 // This function is called by the dispatcher to release a new job
@@ -452,3 +294,113 @@ void Pipeline::setPTMs(vector<unsigned long> ton, vector<unsigned long> toff){
 unsigned Pipeline::getNCPU(){
 	return n_cpus;
 }
+
+
+
+
+// // This function is used for debugging, not used in real program
+// void Pipeline::loadInfoFromFile(pipeinfo& config, 
+// const vector<double>& wcets, const vector<double>& TBET,
+// enum _schedule_kernel kernel){
+// 	config.allT = loadVectorFromFile<double>("allT.csv");
+// 	double curTime = loadDoubleFromFile("CurTime.csv");
+// 	unsigned ustages = wcets.size();
+// 	vector<workerinfo> allinfo =  loadWorkerInfo(ustages);
+// 	for (unsigned i = 0; i < ustages; ++i){
+		
+// 		workerinfo tmp = allinfo[i];
+// 		config.Q.push_back(tmp.nFIFOJobs);
+// 		if (tmp.state == _sleep){
+// 			config.sleepSet.push_back(tmp.stageId);
+// 			if (TBET[i] > tmp.sleepTime)
+// 				config.ccs.push_back(TBET[i] - tmp.sleepTime);
+// 			else
+// 				config.ccs.push_back(0);
+// 		}
+// 		else
+// 			config.activeSet.push_back(tmp.stageId);
+
+// 		config.FIFOcurveData.push_back(getFIFODemands(curTime,
+// 			tmp.allEventAbsDeadlines, tmp.onGoEventId, tmp.executed,
+// 			wcets[i], kernel));
+// 	}
+	
+// }
+
+
+
+// // This function collects the dynamic information of the pipeline
+// // in the simulation, and save it in config
+// void Pipeline::getInfo(pipeinfo& config, 
+// const vector<double>& wcets, const vector<double>& TBET, 
+// enum _schedule_kernel kernel){
+// 	// fill structure config with dynamic information of pipeline.
+// 	// return config satisfying:
+// 	// 1. config.Q, config.FIFOcurveData, config.allT have size == nstages
+// 	// 2. size of activeSet + size of sleepSet == nstages
+// 	// 3. size of sleepSet == ccs;
+
+// 	config.Q.clear();
+// 	config.activeSet.clear();
+// 	config.sleepSet.clear();
+// 	config.ccs.clear();
+// 	config.FIFOcurveData.clear();
+
+// 	// get current temperature
+// 	config.allT = tempwatcher->getCurTemp();
+// 	#if _DEBUG == 1
+// 	cout << "got temperature\n";
+// 	#endif
+
+// 	// get current time from simulation start, unit ms
+// 	double curTime = (double)Statistics::getRelativeTime()/1000;
+	
+// 	for (int i = 0; i < n_stages; ++i)
+// 	{
+// 		workerinfo tmp;
+// 		#if _DEBUG == 1
+// 		cout << "getting worker info: " << i << endl;
+// 		#endif
+// 		workers[i]->getAllInfo(curTime, tmp);
+// 		#if _DEBUG == 1
+// 		cout << "finish getting worker info: " << i << endl;
+// 		#endif
+// 		// number of jobs in the ith FIFO  
+// 		config.Q.push_back(tmp.nFIFOJobs);
+// 		// if the ith stage is sleeping or working
+// 		if (tmp.state == _sleep){
+// 			config.sleepSet.push_back(tmp.stageId);
+// 			if (TBET[i] > tmp.sleepTime)
+// 				config.ccs.push_back(TBET[i] - tmp.sleepTime);
+// 			else
+// 				config.ccs.push_back(0);
+// 		}
+// 		else
+// 			config.activeSet.push_back(tmp.stageId);
+
+// 		// get the curve data required to construct the arrival curve of the jobs
+// 		// in ith FIFO
+// 		config.FIFOcurveData.push_back(getFIFODemands(curTime,
+// 			tmp.allEventAbsDeadlines, tmp.onGoEventId, tmp.executed,
+// 			wcets[i], kernel));
+// 	}
+
+// 	#if _DEBUG == 1
+// 	bool noerror = true;
+// 	if ((int)config.Q.size() !=  n_stages)
+// 		noerror = false;
+// 	if ((int)config.FIFOcurveData.size()!= n_stages || 
+// 		(int)config.allT.size() != n_stages)
+// 		noerror = false;
+
+// 	if ((int)config.activeSet.size() + (int)config.sleepSet.size() 
+// 		!= n_stages)
+// 		noerror = false;
+
+// 	if (!noerror){
+// 		cerr << "Pipeline::getInfo: error config\n";
+// 		exit(2);
+// 	}
+// 	#endif
+	
+// }

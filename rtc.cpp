@@ -1,12 +1,11 @@
 #include "rtc.h"
 
 #include "Statistics.h"
-#include "Parser.h"
-
+// #include "Parser.h"
+#include "utils.h"
 
 
 #include <iostream>
-// #include <math.h>
 #include <limits>
 #include <algorithm>
 
@@ -353,7 +352,7 @@ double rtc::minspeedbdfEDG2(jobject beta, double delay){
 vector<double> rtc::segementsData(jobject a, double xmax){
 	jobject segments = rtc::segmentsLT(a, xmax);
 	string s = rtc::segLTtoString(segments);
-	vector<double>ret =  string2vector(s);
+	vector<double>ret =  stringToVector<double>(s);
 	return ret;
 }
 
@@ -567,7 +566,7 @@ jobject rtc::approxs(jobject c, double px0New, int pdxNew, bool isUpper ){
 		jobject tmp = aperiodicSegments(rPer );
 		trimLT(tmp, (double)pdxNew );
 		string describe = segLTtoString(tmp );
-		vector<double> tmpdata = string2vector(describe );
+		vector<double> tmpdata = stringToVector<double>(describe );
 
 		if (px0New == 0)
 			rTail = Curve(tmpdata, 0, pdxNew, pdxNew*slope );
@@ -653,36 +652,7 @@ jobject rtc::Curve(vector<double> aper, vector<double> per, double px0,
 
 }
 
-vector<double> rtc::string2vector(string sin ){
-	// callfun = "rtc::string2vector<---" + callfun;
-	string base = sin;
-	if (base.length() < 15){
-		cerr<<"Invalid input string<---"<<endl;
-		exit(RTC_EINPUT);
-	}
-	std::replace(base.begin(), base.end(), '{', ' ');
-	std::replace(base.begin(), base.end(), '}', ' ');
-	std::replace(base.begin(), base.end(), '(', ' ');
-	std::replace(base.begin(), base.end(), ')', ' ');
-	std::replace(base.begin(), base.end(), ',', ' ');
-	std::string::size_type sz;
-	vector<double> result;
-	try{
-		do{
-			result.push_back(stod(base, &sz));
-			base = base.substr(sz);
-		}while(base.length()>=5);
-	}
-	catch(...){
-		cerr<<"Unknown error happens for string "<<sin<<endl;
-		exit(RTC_ERR);
-	}
-	if (result.size()%3 != 0){
-		cerr<<"Invalid input string<---"<<endl;
-		exit(RTC_EINPUT);
-	}
-	return result;
-}
+
 
 jobject rtc::createPJDCurve(long p, double j, double d, bool upper ){
 	// callfun = "rtc::createPJDCurve<---" + callfun;
@@ -914,3 +884,34 @@ int lcm(int a, int b){
     return temp ? (a / temp * b) : 0;
 }
 
+
+// vector<double> rtc::string2vector(string sin ){
+// 	// callfun = "rtc::stringToVector<---" + callfun;
+// 	string base = sin;
+// 	if (base.length() < 15){
+// 		cerr<<"Invalid input string<---"<<endl;
+// 		exit(RTC_EINPUT);
+// 	}
+// 	std::replace(base.begin(), base.end(), '{', ' ');
+// 	std::replace(base.begin(), base.end(), '}', ' ');
+// 	std::replace(base.begin(), base.end(), '(', ' ');
+// 	std::replace(base.begin(), base.end(), ')', ' ');
+// 	std::replace(base.begin(), base.end(), ',', ' ');
+// 	std::string::size_type sz;
+// 	vector<double> result;
+// 	try{
+// 		do{
+// 			result.push_back(stod(base, &sz));
+// 			base = base.substr(sz);
+// 		}while(base.length()>=5);
+// 	}
+// 	catch(...){
+// 		cerr<<"Unknown error happens for string "<<sin<<endl;
+// 		exit(RTC_ERR);
+// 	}
+// 	if (result.size()%3 != 0){
+// 		cerr<<"Invalid input string<---"<<endl;
+// 		exit(RTC_EINPUT);
+// 	}
+// 	return result;
+// }

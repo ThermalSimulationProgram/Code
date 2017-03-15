@@ -3,7 +3,7 @@
 
 
 
-
+using namespace std;
 
 vector<int> integerVector(int start, int end){
 	vector<int> ret;

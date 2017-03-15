@@ -142,26 +142,25 @@ typedef enum sensors_subfeature_type {
 } sensors_subfeature_type;
 
 
-using namespace std;
 // static
 // int get_type_scaling(sensors_subfeature_type type);
 
 class TempWatcher : public TimedRunnable{
 
 protected:
-	vector<vector<double>> tempTrace;
-	vector<double> curTemp;
+	std::vector<std::vector<double>> tempTrace;
+	std::vector<double> curTemp;
 
 
-	vector<unsigned long> reading_times;
+	std::vector<unsigned long> reading_times;
 
-	string filename;
+	std::string filename;
 
 	sem_t temp_sem;
 
 
 public:
-	TempWatcher(unsigned, string, unsigned);
+	TempWatcher(unsigned, std::string, unsigned);
 	~TempWatcher();
 
 	static std::vector<double> get_cpu_temperature();
@@ -178,7 +177,7 @@ public:
 
 	void timedJob(unsigned);
 
-	vector<double> getCurTemp();
+	std::vector<double> getCurTemp();
 
 	void toFile();
 
@@ -186,7 +185,7 @@ public:
 
 	double getMeanMaxTemp();
 
-	vector<double> getMeanTemp();
+	std::vector<double> getMeanTemp();
 
 
 

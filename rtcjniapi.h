@@ -9,7 +9,6 @@
 #define RTC_EINPUT 	(-2)
 #define RTC_ENULL 	(-3)
 
-using namespace std;
 
 enum _method_return_type{
 	_void,
@@ -96,12 +95,12 @@ public:
 
 	/********************* PUBLIC METHODS **************************/
 	static void initialize();
-	static void handleException(const string &);
+	static void handleException(const std::string &);
 
-	static jobjectArray vector2jni2darray(vector<double>);
+	static jobjectArray vector2jni2darray(std::vector<double>);
 	static jobjectArray jni2darray(double data[][3], unsigned, unsigned);
-	static string jstring2string(jstring);
-	static jstring string2jstring(string);
+	static std::string jstring2string(jstring);
+	static jstring string2jstring(std::string);
 
 	static jclass findclass(const char *);
 	static jmethodID getmethodid(jclass, const char *, const char *, enum _method_type);
@@ -114,7 +113,7 @@ public:
 	static double jobjectIndoubleOut(jmethodID, jobject);
 	static jobject staticTwojobjectInjobjectOut(jclass, jmethodID, jobject, jobject);
 	static jobject jobjectInjobjectOut(jmethodID, jobject);
-	static string jobjectInstringOut(jmethodID, jobject);
+	static std::string jobjectInstringOut(jmethodID, jobject);
 
 };
 

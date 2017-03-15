@@ -10,11 +10,11 @@ using namespace std;
 
 
 
- vector<int> integerVector(int start, int end);
- vector<int> integerVector(int start, int end, int interval);
+ std::vector<int> integerVector(int start, int end);
+ std::vector<int> integerVector(int start, int end, int interval);
 
- bool vectorAny(const vector<bool> &);
- bool vectorAll(const vector<bool> &);
+ bool vectorAny(const std::vector<bool> &);
+ bool vectorAll(const std::vector<bool> &);
 
 
 #endif

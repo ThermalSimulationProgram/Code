@@ -4,14 +4,13 @@
 #include <string>
 #include <vector>
 
-using namespace std;
 
 void getWarmingCurve(unsigned);
 
-void getCoolingCurve(unsigned, vector<unsigned long> wcets);
+void getCoolingCurve(unsigned, std::vector<unsigned long> wcets);
 
-void getOneStageCurve(const vector<unsigned long> &, const vector<unsigned long> &, 
-	const unsigned, const string, const string);
+void getOneStageCurve(const std::vector<unsigned long> &, const std::vector<unsigned long> &, 
+	const unsigned, const std::string, const std::string);
 
 
 

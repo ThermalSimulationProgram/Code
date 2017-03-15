@@ -1,5 +1,5 @@
 #include "Semaphores.h"
-#include <iostream>
+// #include <iostream>
 
 scoped_sem_t Semaphores::print_sem(1);
 scoped_sem_t Semaphores::dispatch_sem(0);

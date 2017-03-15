@@ -4,9 +4,7 @@
 #include <vector>
 #include <semaphore.h>
 
-#include "TimeUtil.h"
 
-using namespace std;
 
 class Job
 {
@@ -19,8 +17,8 @@ protected:
 	unsigned long absDeadline;
 
 	///This attribute indicates the real-cse execution time of each job, unit us 
-	vector<unsigned long> rcet;
-	vector<unsigned long> loads;
+	std::vector<unsigned long> rcet;
+	std::vector<unsigned long> loads;
 	//This variable stores the id of current job
 	unsigned id;
 	///This variable stores the time length for which current job has been executed, unit us 
@@ -43,7 +41,7 @@ public:
 
 	// set and get methods
 
-	int setRCET(vector<unsigned long>, float);
+	int setRCET(std::vector<unsigned long>, float);
 
 	unsigned long getABET();
 

@@ -1,19 +1,14 @@
 #ifndef _DISPATCHER_H
 #define _DISPATCHER_H
 
-
-#include "Pipeline.h"
-#include "Thread.h"
-#include "TimedRunnable.h"
-#include "Job.h"
-
-
-
 #include <vector>
-#include <string>
-#include <time.h>
-#include <pthread.h>
-using namespace std;
+
+
+#include "TimedRunnable.h"
+
+
+class Pipeline;
+class Job;
 
 
 class Dispatcher : public TimedRunnable
@@ -21,10 +16,10 @@ class Dispatcher : public TimedRunnable
 private:
 	//This vector stores the relative release times (in millisecond) of the jobs, loaded from input csv file
 	//relative release time is the time from the beginning  of the simulation, 
-	vector<unsigned long> rl_arrive_times;
+	std::vector<unsigned long> rl_arrive_times;
 
 	//This vector stores all the job objects
-	vector<Job> jobs;
+	std::vector<Job> jobs;
 
 	///This pointer points to the Pipeline object to which this dispatcher is linked
 	Pipeline * pipeline;
@@ -32,7 +27,7 @@ private:
 
 public:
 	///Constructor needs the relative release times of the jobs
-	Dispatcher(vector<unsigned long>, unsigned);
+	Dispatcher(std::vector<unsigned long>, unsigned);
 	~Dispatcher();
 
 	///gives the dispatcher thread the ACTIVE_PR priority
@@ -43,7 +38,7 @@ public:
 
 	///This function statically creates  all the jobs according to given WCETs,
 	/// execution time variation factor, and the relative deadline of the task. 
-	void createJobs(vector<unsigned long>, float, unsigned long);
+	void createJobs(std::vector<unsigned long>, float, unsigned long);
 
 	///The created thread in the object starts execution by invoking this function 
 	void wrapper();

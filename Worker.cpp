@@ -1,21 +1,17 @@
 #include "Worker.h"
+
+#include <iostream>
+
+
 #include "Enumerations.h"
 #include "Semaphores.h"
 #include "TimeUtil.h"
 #include "Operators.h"
 #include "Statistics.h"
 #include "Priorities.h"
-
 #include "Scratch.h"
+#include "Pipeline.h"
 
-
-
-
-#include <cstddef>
-#include <unistd.h>
-#include <iostream>
-#include <semaphore.h>
-#include <math.h>
 
 using namespace std;
 
@@ -73,7 +69,7 @@ void Worker::join(){
 	join2();
 }
 
-void Worker::getAllInfo(double now, workerinfo & ret){
+void Worker::getAllInfo(double now, WorkerInfo & ret){
 	ret.stageId = stageId;
 	struct timespec tmp;
 	

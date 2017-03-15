@@ -1,7 +1,7 @@
 #ifndef _WORKER_H
 #define _WORKER_H
 
-#include "Pipeline.h"
+
 #include "TimeSim.h"
 #include "Job.h"
 #include "Thread.h"
@@ -12,11 +12,11 @@
 #include <deque>
 #include <time.h>
 #include <semaphore.h>
-#include <pthread.h>
+// #include <pthread.h>
 
 
 
-using namespace std;
+class Pipeline;
 
 
 
@@ -32,7 +32,7 @@ protected:
 
 
 	///This vector stores the ids of jobs that are waiting for execution
-	deque<Job *> FIFO;
+	std::deque<Job *> FIFO;
 	Job* current_job;
 
 	unsigned base ;
@@ -78,13 +78,13 @@ public:
 	void setPTM(unsigned long, unsigned long);
 
 
-	void getAllInfo(double, workerinfo &);
+	void getAllInfo(double, WorkerInfo&);
 
 	unsigned long getExecuted();
 
-	vector<unsigned long> getAllAbsDeadline();
+	std::vector<unsigned long> getAllAbsDeadline();
 
-	vector<double> getAllAbsDeadline_ms();
+	std::vector<double> getAllAbsDeadline_ms();
 
 	bool isInitialized();
 

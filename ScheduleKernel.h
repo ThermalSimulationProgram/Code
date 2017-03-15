@@ -3,11 +3,11 @@
 
 #include <vector>
 
-#include "structdef.h"
-#include "Scheduler.h"
 
-using namespace std;
+#include "ScheduleKernelEnumerations.h"
 
+
+class ScheduleKernelAPI;
 
 class ScheduleKernel{
 protected:
@@ -16,22 +16,18 @@ protected:
 	
 	enum _schedule_kernel kernel_type;
 
-	Scheduler *scheduler;
-
-	vector<double> timeExpense;
+	ScheduleKernelAPI* scheduleAPI;
 
 public:
 	ScheduleKernel(unsigned n, enum _schedule_kernel kernel_type);
 	virtual ~ScheduleKernel();
 	
-	void setScheduler(Scheduler*);
+	void setScheduleAPI(ScheduleKernelAPI*);
 
-	void getScheme(vector<double> &, vector<double>&, pipeinfo&);
-	virtual void getScheduleScheme(vector<double> &, vector<double>&, pipeinfo&) = 0;
+	// void getScheme(vector<double> &, vector<double>&);
+	virtual void getScheme(std::vector<double> &, std::vector<double>&) = 0;
 
 
-	double getMaxTimeExpense();
-	double getMeanTimeExpense();
 	
 };
 

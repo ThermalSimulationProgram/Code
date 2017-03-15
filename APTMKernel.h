@@ -4,12 +4,20 @@
 #include <vector>
 
 #include "structdef.h"
-#include "rtc.h"
-#include "Scheduler.h"
 #include "AdaptiveKernel.h"
 
-using namespace std;
 
+
+typedef struct dynamicinfo
+{
+	std::vector<double> rho;
+	std::vector<std::vector<double>> breakToffs;
+	std::vector<std::vector<double>> slopes;
+	std::vector<int> numValidData;
+	std::vector<linearSegs> warmingcurves;
+	std::vector<double> K;
+	
+}dynamicdata;
 
 
 class APTMKernel : public AdaptiveKernel{
@@ -18,13 +26,14 @@ private:
 	
 	thermalProp offlineData;
 
-	vector<double> partTimes;
+	std::vector<double> partTimes;
 	int counter;
 	int block;
 	
 public:
-	APTMKernel(unsigned n, vector<double> wcets, 
-		vector<double> _tbet, double _bcoef, enum _schedule_kernel kernel);
+	APTMKernel(unsigned n, std::vector<double> wcets, 
+		std::vector<double> _tbet, double _bcoef, enum _schedule_kernel kernel,
+		std::vector<unsigned long>& rl_scheduling_times);
 
 	~APTMKernel();
 	
@@ -32,22 +41,23 @@ public:
 	
 	void setBcoef(double);
 	
-	void calcAPTM(vector<double> &, vector<double>&,const pipeinfo&);
+	void calcAPTM(std::vector<double> &, std::vector<double>&, const AdaptInfo&);
 
-	void getPipelineInfo(pipeinfo& config);
+	void getApdatInfo(AdaptInfo& config);
 
-	void getScheduleScheme(vector<double> &, vector<double>&, pipeinfo&);
+	void getScheme(std::vector<double> &, std::vector<double>&);
 
-	void aPTM(double extBound, const vector<int>& index,
-		const vector<double> &tau0, const dynamicdata &d, vector<double>& tinvs, 
-		vector<double>& tvlds);
-	static void assignToffs(vector<double>& extlambda, double, const vector<int> &,
-		const vector<double> &, const vector<vector<double>>&,
-		const vector<vector<double>>&, const vector<int>&, double sumLambda);
+	void aPTM(double extBound, const std::vector<int>& index,
+		const std::vector<double> &tau0, const dynamicdata &d, std::vector<double>& tinvs, 
+		std::vector<double>& tvlds);
 
-	static vector<double> assignTons(double, const vector<double>&,
-		const vector<linearSegs> &,
-		vector<int> &);
+	static void assignToffs(std::vector<double>& extlambda, double, const std::vector<int> &,
+		const std::vector<double> &, const std::vector<std::vector<double>>&,
+		const std::vector<std::vector<double>>&, const std::vector<int>&, double sumLambda);
+
+	static std::vector<double> assignTons(double, const std::vector<double>&,
+		const std::vector<linearSegs> &,
+		std::vector<int> &);
 };
 
 

@@ -6,6 +6,7 @@
 using namespace std;
 
 
+
 JavaVM * rtcjni::jvm;
 JNIEnv * rtcjni::env;
 JavaVMInitArgs rtcjni::vm_args;

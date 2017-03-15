@@ -2,26 +2,26 @@
 #define _SATICKERNEL_H 
 
 
-#include "ScheduleKernel.h"
 
 #include <vector>
 
-using namespace std;
+#include "ScheduleKernel.h"
+#include "ScheduleKernelEnumerations.h"
 
 
 class StaticKernel: public ScheduleKernel{
 protected:
-	vector<double> tons;
-	vector<double> toffs;
+	std::vector<double> tons;
+	std::vector<double> toffs;
 
 public:
 	StaticKernel(unsigned n, enum _schedule_kernel kernel_type);
 
 	~StaticKernel();
 
-	void setStaticScheme(vector<double>, vector<double>);
+	void setStaticScheme(std::vector<double>, std::vector<double>);
 
-	void getScheduleScheme(vector<double> &, vector<double>&, pipeinfo&);
+	void getScheme(std::vector<double> &, std::vector<double>&);
 
 };
 

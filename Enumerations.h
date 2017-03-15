@@ -1,13 +1,7 @@
 #ifndef _ENUMERATIONS_H
 #define _ENUMERATIONS_H
 
-enum _schedule_kernel
-{
-  APTM,
-  BWS,
-  PBOO,
-  GE
-};
+
 
 ///This enumeration describes the two runnable states
 enum _runnable_state 
@@ -26,12 +20,6 @@ enum _sched_type
   rm
 };
 
-//This enumeration describes the different scerver types
-enum _serv_type 
-{
-  cbs,
-  dbs
-};
 
 enum _worker_state{
   _sleep,
@@ -58,20 +46,6 @@ enum _task_action
   active_end
 };
 
-///This enumeration describes the possible loads for a worker
-enum _task_load 
-{
-  busy_wait,
-  video
-};
-
-///This enumeration descibes the possible task models
-enum _task_periodicity 
-{
-  aperiodic,
-  periodic,
-  periodic_jitter
-};
 
 ///This enum describes what thread types can produce traces
 enum _thread_type 

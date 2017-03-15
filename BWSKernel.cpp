@@ -1,16 +1,15 @@
 #include "BWSKernel.h"
 
-#include "Scratch.h"
 #include "vectormath.h"
-#include "Scheduler.h"
-#include "Pipeline.h"
-#include "Parser.h"
+#include "structdef.h"
 
-#define MYINFINITY (90000000)
+
+using namespace std;
 
 BWSKernel::BWSKernel(unsigned _nstages, vector<double> _wcets,
-	vector<double> _tbet, enum _schedule_kernel kernel):
-AdaptiveKernel(_nstages, _wcets, _tbet, kernel){
+	vector<double> _tbet, enum _schedule_kernel kernel,
+	vector<unsigned long>& rl_scheduling_times):
+AdaptiveKernel(_nstages, _wcets, _tbet, kernel, rl_scheduling_times){
 	
 }
 
@@ -18,16 +17,16 @@ BWSKernel::~BWSKernel(){
 	
 }
 
-void BWSKernel::getScheduleScheme(vector<double> & tons, 
-	vector<double>& toffs, pipeinfo& config){
+void BWSKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 
-	getPipelineInfo(config);
+	AdaptInfo config;
+	getAdaptInfo(config);
 
 	calcBWS(tons, toffs, config);
 }
 
 void BWSKernel::calcBWS(vector<double> & tons, 
-	vector<double>& toffs, const pipeinfo& config){
+	vector<double>& toffs, const AdaptInfo& config){
 	
 	int nactiveStage 		= config.activeSet.size();
 	vector<int> Q1_Active 	= vectorExtract(config.Q,
@@ -159,10 +158,14 @@ void BWSKernel::calcBWS(vector<double> & tons,
 
 
 
-void BWSKernel::getPipelineInfo(pipeinfo& config){
+void BWSKernel::getAdaptInfo(AdaptInfo& config){
 	// string callfun = "BWSKernel::getPipelineInfo";
-	int index      = (int)config.adaptionIndex;
-	scheduler->getPipelineInfo(config,  wcets, TBET);
+	// int index      = (int)config.adaptionIndex;
+	// scheduler->getPipelineInfo(config,  wcets, TBET);
+
+	getRawAdaptInfo(config);
+	int index = config.adaptionIndex;
+
 	config.dcs     = vector<double>(nstages, 0);
 	config.rho     = vector<double>(nstages, 0);
 	jobject alpha_f;
@@ -176,17 +179,36 @@ void BWSKernel::getPipelineInfo(pipeinfo& config){
 
 		if (i == 0){
 			alpha_d = rtc::plus(haAlpha[index], alpha_f );
-			if (rtc::eq(alpha_d, curvezero ))
-				 config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
-			bmax = rtc::minbdf_BSF(alpha_d, relativeDeadline, k);
+			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 2000);
+
+			if (rtc::eqZero(alpha_d_data)){
+				config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
+				bmax = std::numeric_limits<double>::infinity();
+			}else{
+				bmax = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, k);
+			} 
+			
+
+			// if (rtc::eq(alpha_d, curvezero )){
+			// 	config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
+			// }	 
+			// bmax = rtc::minbdf_BSF(alpha_d, relativeDeadline, k);
 		}
 		else{
 			alpha_d = alpha_f;
-			if (rtc::eq(alpha_d, curvezero )){
+			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 2000);
+			
+			if (rtc::eqZero(alpha_d_data)){
 				bmax = std::numeric_limits<double>::infinity();
 			}else{
-				bmax = rtc::minbdf_BSF(alpha_d, relativeDeadline, k);
+				bmax = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, k);
 			}
+
+			// if (rtc::eq(alpha_d, curvezero )){
+			// 	bmax = std::numeric_limits<double>::infinity();
+			// }else{
+			// 	bmax = rtc::minbdf_BSF(alpha_d, relativeDeadline, k);
+			// }
 			
 		}
 

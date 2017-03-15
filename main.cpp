@@ -1,4 +1,4 @@
-// #include <iostream>
+#include <iostream>
 // #include <fstream>
 // #include <stdlib.h>
 // #include <pthread.h>
@@ -57,9 +57,9 @@ int main(int argc, char** argv){
 //   getCoolingCurve(4, wcets);
 
  // testrtc();
-// runSimulation( argc, argv);
+runSimulation( argc, argv);
 
-	offlineSimulation();
+	// offlineSimulation();
 	// testStringUtils();
 	// testFileOperator();
 
@@ -104,9 +104,10 @@ void runSimulation(int argc, char** argv){
 	}
 
 	Pipeline *p = new Pipeline(*file);
+	// cout << "begin initialize Pipeline\n";
 	p->initialize();
 
-	//double temp = p->simulate();
+	double temp = p->simulate();
 	// cout << temp << endl;
 	delete p;
 	delete file;

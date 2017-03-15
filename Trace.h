@@ -5,7 +5,6 @@
 
 #include <string>
 
-using namespace std;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -38,7 +37,7 @@ class Trace {
   void setTrace(struct timespec ts, _thread_type tt, unsigned int ti, _task_action ta);
 
   ///This function converts the trace to string for file output
-  string toString();
+  std::string toString();
 
   /*********** GETTER FUNCTIONS ***********/
 

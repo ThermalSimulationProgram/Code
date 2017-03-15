@@ -1,24 +1,15 @@
 #include "Scheduler.h"
-#include "Priorities.h"
-#include "Enumerations.h"
-#include "Semaphores.h"
-#include "Statistics.h"
-#include "vectormath.h"
-#include "Scratch.h"
-#include "APTMKernel.h"
-#include "BWSKernel.h"
-#include "StaticKernel.h"
 
-
-
-
-#include <semaphore.h>
-#include <unistd.h>
 #include <iostream>
-#include <algorithm>
-#include <cmath>
 
-#define _INFO 1
+#include "Priorities.h"
+#include "Semaphores.h"
+#include "Scratch.h"
+#include "ScheduleKernelAPI.h"
+
+using namespace std;
+
+#define _INFO 0
 #define _DEBUG 0;
 
 Scheduler::Scheduler(Pipeline * p, _schedule_kernel _sche_type, \
@@ -37,70 +28,21 @@ Scheduler::Scheduler(Pipeline * p, _schedule_kernel _sche_type, \
 		count                    = count == 0? 1 : count; // at least one adaption at beginning
 	}
 	
-	for (int i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i){
 		rl_scheduling_times.push_back((unsigned long) i*adaption_period);	
+	}
 }
 
 Scheduler::~Scheduler()
 {
-	delete kernel;
-	// cout << "scheduler with id " << id << "is being destructed\n";
+	delete kernelAPI;
 }
 
-
+// note: since this function creates a Java Virtual Machine,
+// this function can only be called by the thread which will use the JVM in future,
+// i.e., the thread created in this class 
 void Scheduler::init(){
-	unsigned nstages = Scratch::getNstage();
-
-	// calculate history aware arrival curves statically for APTM and BWS kernel
-	vector<jobject> haAlpha;
-	if (kernel_type == APTM || kernel_type == BWS){
-		rtc::initialize();
-		long period 	= (long)Scratch::getPeriod()/1000;
-		double jitter 	= (double)Scratch::getJitter()/1000;
-		long delay  	= (long)Scratch::getDistance()/1000;
-		vector<double> rl_job_arrivals = Scratch::getArrivalTimes_ms();
-		vector<double> tmp_scheduling_times = rl_scheduling_times/1000;
-
-		haAlpha = rtc::staticHistoryAwareArrialCurves(rl_job_arrivals,
-	 					tmp_scheduling_times, period, jitter, delay);
-	}
-
-	// get the kernel for different kernel types
-	switch (kernel_type){
-		case APTM : {
-		APTMKernel *tempkernel = new APTMKernel(nstages, Scratch::getDwcets(),
-				vector<double>(nstages, 2), Scratch::getBFactor(), kernel_type);
-
-			tempkernel->setHaAlpha(haAlpha, Scratch::getRltDeadline_ms());
-			tempkernel->setOfflineData(Scratch::getOfflineData());
-			kernel = (ScheduleKernel*) tempkernel;
-			break;
-		}
-		case BWS: {
-			BWSKernel *tempkernel = new BWSKernel(nstages, Scratch::getDwcets(),
-				vector<double>(nstages, 2), kernel_type);
-			tempkernel->setHaAlpha(haAlpha, Scratch::getRltDeadline_ms());
-			kernel = (ScheduleKernel*) tempkernel;
-			break;
-		}
-		case PBOO:{
-			StaticKernel *tempkernel = new StaticKernel(nstages, kernel_type);
-			ptmspec p = Scratch::getPTMValues();
-			tempkernel->setStaticScheme( p.tons, p.toffs);
-			kernel = (ScheduleKernel*) tempkernel;
-			break;
-		}
-		case GE:{
-			StaticKernel *tempkernel = new StaticKernel(nstages, kernel_type);
-			ptmspec p = Scratch::getPTMValues();
-			tempkernel->setStaticScheme( p.tons, p.toffs);
-			kernel = (ScheduleKernel*) tempkernel;
-			break;
-		}
-
-	}
-	kernel -> setScheduler(this);
-	
+	kernelAPI = new ScheduleKernelAPI(this, kernel_type, rl_scheduling_times);
 	// all initialized, post the semaphore to signal main thread scheduler is ready
 	Semaphores::rtcinit_sem.post_sem();
 }
@@ -136,13 +78,9 @@ void Scheduler::wrapper(){
 	///wait for the simulation start
 	while(!Pipeline::isSimulating()){};
 
-	timedRun();
 
-	// if (kernel_type == APTM || kernel_type == BWS){
-	//	cout << "Scheduler:: kernel max time expense: " << kernel->getMaxTimeExpense()<< endl;
-	//	cout << "Scheduler:: kernel mean time expense: " << kernel->getMeanTimeExpense()<< endl;
-	// }	
-	
+	// this function is inherited from TimedRunable class
+	timedRun();
 
 	#if _INFO == 1
 	Semaphores::print_sem.wait_sem();
@@ -160,11 +98,10 @@ void Scheduler::timedJob(unsigned _index){
 	vector<unsigned long> ton, toff;
 	vector<double> tons2;
 	vector<double> toffs2;
+	// cout << "Inside scheduler: going to run kernel\n";
 
-	pipeinfo config;
-	config.adaptionIndex = _index;
-	kernel->getScheme(tons2, toffs2, config);
-	
+	kernelAPI->runKernel(tons2, toffs2);
+
 	if (tons2.size()!=n || toffs2.size()!= n){
 		cerr << "Scheduler::timedJob:wrong scheduling scheme from the kernel " << endl;
 		exit(2);
@@ -180,17 +117,23 @@ void Scheduler::timedJob(unsigned _index){
 
 
 /// Just an interface function needed by APTM and BWS kernel
-void Scheduler::getPipelineInfo(pipeinfo& config,
-const vector<double>& wcets, const vector<double>& TBET){
+// void Scheduler::getPipelineInfo(pipeinfo& config,
+// const vector<double>& wcets, const vector<double>& TBET){
 
-	pipeline->getInfo(config, wcets, TBET, kernel_type);
+// 	pipeline->getInfo(config, wcets, TBET, kernel_type);
 	
-}
+// }
 	
 
 vector<double> Scheduler::getKernelTime(){
 	vector<double> ret;
-	ret.push_back(kernel->getMaxTimeExpense());
-	ret.push_back(kernel->getMeanTimeExpense());
+	ret.push_back(kernelAPI->getMaxTimeExpense());
+	ret.push_back(kernelAPI->getMeanTimeExpense());
 	return ret;
 }
+
+
+Pipeline* Scheduler::getPipelinePointer(){
+	return pipeline;
+}
+

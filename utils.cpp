@@ -6,6 +6,8 @@ string formatString(const string& base){
 	std::replace(ret.begin(), ret.end(), '{', ' ');
 	std::replace(ret.begin(), ret.end(), '}', ' ');
 	std::replace(ret.begin(), ret.end(), ',', ' ');
+	std::replace(ret.begin(), ret.end(), '(', ' ');
+	std::replace(ret.begin(), ret.end(), ')', ' ');
 
 	return ret;
 }

@@ -1,8 +1,6 @@
 #include "Parser.h"
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <string>
 #include <algorithm>
 
@@ -13,6 +11,7 @@
 #include "warmingCurve.h"
 #include "vectormath.h"
 #include "FileOperator.h"
+
 
 
 using namespace pugi;
@@ -271,9 +270,9 @@ pipeinfo loadPipeInfo(unsigned nstage){
 }
 
 // This function is used for debugging. Not used in real program
-vector<workerinfo> loadWorkerInfo(unsigned nstage){
+vector<WorkerInfo> loadWorkerInfo(unsigned nstage){
 	
-	vector<workerinfo> ret;
+	vector<WorkerInfo> ret;
 
 	vector<int> allnfifijobs     = loadVectorFromFile<int>(
 		"allnFIFOJobs.csv");
@@ -288,7 +287,7 @@ vector<workerinfo> loadWorkerInfo(unsigned nstage){
 
 	for (int i = 0; i < (int)nstage; ++i)
 	{
-		workerinfo tmp;
+		WorkerInfo tmp;
 		tmp.stageId   = i;
 		tmp.nFIFOJobs = allnfifijobs[i];
 		tmp.executed  = allexecuteds[i];

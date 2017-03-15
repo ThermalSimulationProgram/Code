@@ -2,21 +2,16 @@
 #define _PIPELINE_H
 
 #include <vector>
-#include <time.h>
-#include <pthread.h>
 #include <string>
 
-#include "Enumerations.h"
-#include "Job.h"
-#include "warmingCurve.h"
 #include "structdef.h"
 
-using namespace std;
 
 class Worker;
 class Dispatcher;
 class Scheduler;
 class TempWatcher;
+class Job;
 
 
 class Pipeline{
@@ -34,11 +29,11 @@ protected:
 	int n_cpus;
 
 	// This vector stores the cpu core ids corresponding to each stage
-	vector<unsigned> worker_cpu;
+	std::vector<unsigned> worker_cpu;
 
 	// This vector stores pointers to workers. Each worker represents 
 	// a stage.
-	vector<Worker*> workers;
+	std::vector<Worker*> workers;
 
 	// Dispatcher release jobs to Pipeline
 	Dispatcher 	*dispatcher;
@@ -56,7 +51,7 @@ protected:
 public:
 
 	// Constructor needs the xml file path
-	Pipeline(string);
+	Pipeline(std::string);
 
 	~Pipeline();
 
@@ -65,7 +60,7 @@ public:
 	void initialize();
 
 	// explicitly set the CPUs to which the workers are attached 
-	void setWorkerCPU(vector<unsigned>);
+	void setWorkerCPU(std::vector<unsigned>);
 
 	// Start the simulation, the duration is loaded from Scratch class
 	double simulate();
@@ -95,23 +90,30 @@ public:
 
 	// This function is called by the scheduler to apply new schedule scheme to 
 	// each stage
-	void setPTMs(vector<unsigned long>, vector<unsigned long>);
+	void setPTMs(std::vector<unsigned long>, std::vector<unsigned long>);
+
+	// This function collects all the information of the pipeline
+	// in the simulation
+	void getAllPipelineInfo(PipelineInfo& p);
+
+
+
+
+
 
 	/************** Functions for APTM and BWS kernels ************/
 	// This function collects the dynamic information of the pipeline
 	// in the simulation, and save it in config		
-	void getInfo(pipeinfo&, const vector<double>&, const vector<double>&, 
-		enum _schedule_kernel kernel);
+	// void getInfo(pipeinfo&, const vector<double>&, const vector<double>&, 
+	// 	enum _schedule_kernel kernel);
+
+
 
 	// This function is used for debugging, not used in real program
-	static void loadInfoFromFile(pipeinfo&, const vector<double>&, 
-		const vector<double>&, enum _schedule_kernel kernel);
+	// static void loadInfoFromFile(pipeinfo&, const vector<double>&, 
+	// 	const vector<double>&, enum _schedule_kernel kernel);
 
-	// get the curve data required to construct the arrival curve of the jobs
-	// in ith FIFO
-	static vector<double> getFIFODemands(const double&, 
-		const vector<double>&, const int&, 
-		const double&, const double&, enum _schedule_kernel kernel);
+
 };
 
 

@@ -9,10 +9,10 @@
 
 
 template <typename T>
-vector<int> sort_indexes(const vector<T> &v) {
+std::vector<int> sort_indexes(const std::vector<T> &v) {
 
   // initialize original index locations
-  vector<int> idx(v.size());
+  std::vector<int> idx(v.size());
   iota(idx.begin(), idx.end(), 0);
 
   // sort indexes based on comparing values in v
@@ -23,8 +23,8 @@ vector<int> sort_indexes(const vector<T> &v) {
 
 
 
-template<typename T> vector<T> singlesVector(unsigned _length, T sample){
-	vector<T> ret(_length, sample);
+template<typename T> std::vector<T> singlesVector(unsigned _length, T sample){
+	std::vector<T> ret(_length, sample);
 	return ret;
 }
 

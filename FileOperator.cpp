@@ -3,8 +3,8 @@
 FileOperator::FileOperator(const string& _filename, 
 	int _mode):filename(_filename), mode(_mode){
 	// default values
-	iFile = ifstream();
-	oFile = ofstream();
+	// iFile = ifstream();
+	// oFile = ofstream();
 	is_input_active = false;
 	isOpen = false;
 	isSaved = true;
