@@ -27,6 +27,7 @@ double linearSegs::getValue(double x) const {
 
 warmingCurves::warmingCurves(unsigned _step){
 	if(step==0){
+		cout << _step << endl;
 		cerr<<"Invalid step\n";
 		exit(1);
 	}
