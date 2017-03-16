@@ -26,7 +26,7 @@ protected:
 
 public:
 	///Constructor needs nothing
-	TimedRunnable(unsigned);
+	explicit TimedRunnable(unsigned);
 	virtual ~TimedRunnable();
 
 	///gives the  thread the ACTIVE priority

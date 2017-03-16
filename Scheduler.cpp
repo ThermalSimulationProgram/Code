@@ -18,6 +18,7 @@ Scheduler::Scheduler(Pipeline * p, _schedule_kernel _sche_type, \
 	pipeline                      = p;
 	thread_type                   = scheduler;
 	kernel_type                   = _sche_type;
+	kernelAPI 					  = NULL;
 	
 	/// set relative scheduling time instances
 	unsigned long adaption_period = Scratch::getAdaptionPeriod();

@@ -180,11 +180,12 @@ double rtc::minbdf_BSF(const vector<double>& beta, double deadline, double k){
 	unsigned nsegments = beta.size()/segmentLength;
 	
 	double tau = deadline;
-	int segmentStartId;
+	
 	double x, y, tempslope, curtau;
 
 	for (int i = 0; i < (int)nsegments; ++i)
 	{	
+		int segmentStartId;
 		segmentStartId = i*segmentLength;
 		x = beta[segmentStartId];
 		y = beta[segmentStartId + 1];

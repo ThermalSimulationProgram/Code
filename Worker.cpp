@@ -25,6 +25,7 @@ Worker::Worker(int _stageId, int _id) : Thread(_id){
 	next        = NULL;
 	thread_type = worker;
 	current_job = NULL;
+	state 		= _active;
 
 	base        = 100;
 	ton         = 100000; // default value, unit us 

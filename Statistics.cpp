@@ -153,7 +153,7 @@ void Statistics::initialize() {
 }
 
 ///This function saves to custom csv file
-void Statistics::toFile(string filePrefix) {  
+void Statistics::toFile(const string& filePrefix) {  
   ofstream file;
 
   /************ SAVING MISSED DEADLINES *********/

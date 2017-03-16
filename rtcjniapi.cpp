@@ -66,8 +66,8 @@ jmethodID rtcjni::_trimLT;
 
 
 void rtcjni::initialize(){
-	JavaVMOption *options;
-	options = new JavaVMOption[1];
+	JavaVMOption *options = new JavaVMOption[1];
+	//options = new JavaVMOption[1];
 	options[0].optionString = const_cast<char*> (".");
 	int res;
 
@@ -87,7 +87,7 @@ void rtcjni::initialize(){
 		#endif
 	}
 		
-	delete options;
+	delete options[];
 
 	_Curve        = findclass("ch/ethz/rtc/kernel/Curve");
 	_CurveFactory = findclass("ch/ethz/rtc/kernel/CurveFactory");

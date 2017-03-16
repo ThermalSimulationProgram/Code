@@ -100,7 +100,7 @@ class Statistics {
   static void initialize();
 
   ///This function saves all results to a custom csv file
-  static void toFile(std::string filePrefix);
+  static void toFile(const std::string& filePrefix);
   
 
 };

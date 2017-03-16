@@ -10,6 +10,7 @@ ScheduleKernel::ScheduleKernel(unsigned n,
 	enum _schedule_kernel _kernel_type){
 	nstages = n;
 	kernel_type = _kernel_type;
+	scheduleAPI = NULL;
 }
 
 ScheduleKernel::~ScheduleKernel(){

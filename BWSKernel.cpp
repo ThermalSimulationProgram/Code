@@ -6,8 +6,8 @@
 
 using namespace std;
 
-BWSKernel::BWSKernel(unsigned _nstages, vector<double> _wcets,
-	vector<double> _tbet, enum _schedule_kernel kernel,
+BWSKernel::BWSKernel(unsigned _nstages, const vector<double>& _wcets,
+	const vector<double>& _tbet, enum _schedule_kernel kernel,
 	vector<unsigned long>& rl_scheduling_times):
 AdaptiveKernel(_nstages, _wcets, _tbet, kernel, rl_scheduling_times){
 	

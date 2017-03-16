@@ -14,8 +14,8 @@ private:
 	
 
 public:
-	BWSKernel(unsigned n, std::vector<double> wcets, 
-		std::vector<double> _tbet, enum _schedule_kernel kernel,
+	BWSKernel(unsigned n, const std::vector<double>& wcets, 
+		const std::vector<double>& _tbet, enum _schedule_kernel kernel,
 		std::vector<unsigned long>& rl_scheduling_times);
 
 	~BWSKernel();

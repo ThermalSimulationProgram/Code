@@ -54,7 +54,13 @@ FileOperator::FileOperator(const string& _filename,
 	}
 }
 
-FileOperator::FileOperator(const FileOperator& f){}
+FileOperator::FileOperator(const FileOperator& f):
+filename(f.filename){
+	is_input_active = f.is_input_active;
+	isOpen = f.isOpen;
+	isSaved = f.isSaved;
+	mode = f.mode;
+}
 FileOperator::~FileOperator(){
 	if (!isSaved){
 		save();
@@ -133,16 +139,16 @@ void FileOperator::changePermission(const string & permission){
 }
 
 
-double loadDoubleFromFile(string filename){
+double loadDoubleFromFile(const string& filename){
 	FileOperator file = FileOperator(filename, FSTREAM_IN);
 	return file.readDouble();
 }
 
-void saveContentToNewFile(const string filename, const vector<string>& data){
+void saveContentToNewFile(const string& filename, const vector<string>& data){
 	FileOperator file = FileOperator (filename, (int)(FSTREAM_OUT|FSTREAM_TRUNC));
 	file.write(data);
 }
-void appendContentToFile(const string filename, const vector<string>& data){
+void appendContentToFile(const string& filename, const vector<string>& data){
 	FileOperator file = FileOperator (filename, (int)(FSTREAM_OUT|FSTREAM_APP));
 	file.write(data);
 }

@@ -85,11 +85,11 @@ std::vector<std::vector<T>> FileOperator::readMatrix(){
 }
 
 // read a csv file and save the first numbers as double
-double loadDoubleFromFile(const std::string  filename);
+double loadDoubleFromFile(const std::string&  filename);
 
 
 template<typename T>
-std::vector<T> loadVectorFromFile(const std::string  filename){
+std::vector<T> loadVectorFromFile(const std::string& filename){
 
 	FileOperator file = FileOperator(filename, (int)FSTREAM_IN);
 	
@@ -97,33 +97,33 @@ std::vector<T> loadVectorFromFile(const std::string  filename){
 }
 
 template<typename T>
-std::vector<std::vector<T> > loadMatrixFromFile(const std::string filename){
+std::vector<std::vector<T> > loadMatrixFromFile(const std::string& filename){
 	FileOperator file = FileOperator(filename, (int)FSTREAM_IN);
 	
 	return file.readMatrix<T>();
 }
 
-void saveContentToNewFile(const std::string filename, const std::vector<std::string>&data);
-void appendContentToFile(const std::string filename, const std::vector<std::string>&data);
+void saveContentToNewFile(const std::string& filename, const std::vector<std::string>&data);
+void appendContentToFile(const std::string& filename, const std::vector<std::string>&data);
 
 template<typename T>
-void saveToNewFile(const std::string filename,  const std::vector<T>& data){
+void saveToNewFile(const std::string& filename,  const std::vector<T>& data){
 	saveContentToNewFile(filename, std::vector<std::string>(1, vectorTostring(data)));
 }
 
 template<typename T>
-void saveToNewFile(const std::string filename,  const std::vector<std::vector<T>>& data){
+void saveToNewFile(const std::string& filename,  const std::vector<std::vector<T>>& data){
 	saveContentToNewFile(filename, matrixTostring(data));
 }
 
 
 template<typename T>
-void appendToFile(const std::string filename,  const std::vector<T>& data){
+void appendToFile(const std::string& filename,  const std::vector<T>& data){
 	appendContentToFile(filename, std::vector<std::string>(1, vectorTostring(data)));
 }
 
 template<typename T>
-void appendToFile(const std::string filename,  const std::vector<std::vector<T>>&data){
+void appendToFile(const std::string& filename,  const std::vector<std::vector<T>>&data){
 	appendContentToFile(filename, matrixTostring(data));
 }
 

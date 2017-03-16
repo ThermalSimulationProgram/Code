@@ -10,6 +10,8 @@ Job::Job(unsigned _nstage, unsigned _id, unsigned long _rltDeadline){
 	id          = _id;
 	cstage      = 0;
 	abet        = 0;
+	releaseTime = -1;
+	absDeadline = -1;
 	rltDeadline = _rltDeadline;
 	sem_init(&state_sem, 0, 1);
 }
@@ -28,11 +30,12 @@ int Job::setRCET(vector<unsigned long> wcets, float exe_factor){
 	sem_wait(&state_sem);
 	rcet.clear();
 	loads.clear();
-	unsigned long r;
+	
 	for (unsigned i = 0; i < wcets.size(); ++i){
 		float min    = ((float)wcets[i]) * exe_factor;
 		float max    = (float)wcets[i];
 		float lambda = ((double) rand()/ (RAND_MAX));
+		unsigned long r;
 		r            =  (unsigned long) (min  * lambda + max * (1-lambda) + 0.5);
 		rcet.push_back(r);
 		loads.push_back(r);

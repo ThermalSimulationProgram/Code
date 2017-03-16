@@ -51,7 +51,7 @@ class Thread {
   /*********** CONSTRUCTOR ***********/
 
   ///Constructor needs nothing to create thread (with inactive priotity);
-  Thread(unsigned int _id);
+  explicit Thread(unsigned int _id);
   virtual ~Thread();
 
   ///This function creates a real thread, should be called imediately after construction

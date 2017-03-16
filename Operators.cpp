@@ -30,36 +30,36 @@ struct timespec operator *(double a, struct timespec b) {
 
 
 struct timespec operator +(struct timespec a, struct timespec b) {
-  struct timespec *x = (struct timespec*) malloc(sizeof(struct timespec));
-  x->tv_sec = a.tv_sec + b.tv_sec;
-  x->tv_nsec = a.tv_nsec + b.tv_nsec;
+  struct timespec x;
+  x.tv_sec = a.tv_sec + b.tv_sec;
+  x.tv_nsec = a.tv_nsec + b.tv_nsec;
 
-  if(x->tv_nsec > 999999999) {
-    x->tv_sec ++;
-    x->tv_nsec = x->tv_nsec - 1000000000;
+  if(x.tv_nsec > 999999999) {
+    x.tv_sec ++;
+    x.tv_nsec = x.tv_nsec - 1000000000;
   }
-  else if (x->tv_nsec < 0) {
-    x->tv_sec --;
-    x->tv_nsec = x->tv_nsec + 1000000000;
+  else if (x.tv_nsec < 0) {
+    x.tv_sec --;
+    x.tv_nsec = x.tv_nsec + 1000000000;
   }
 
-  return *x;
+  return x;
 }
 
 
 struct timespec operator -(struct timespec a, struct timespec b) {
-  struct timespec *x = (struct timespec*) malloc(sizeof(struct timespec));
-  x->tv_sec = a.tv_sec - b.tv_sec;
+  struct timespec x;
+  x.tv_sec = a.tv_sec - b.tv_sec;
 
-  if (  a.tv_nsec <  b.tv_nsec && x->tv_sec > 0) {
-    x->tv_sec = x->tv_sec-1;
-    x->tv_nsec = a.tv_nsec - b.tv_nsec + 1000000000; 
+  if (  a.tv_nsec <  b.tv_nsec && x.tv_sec > 0) {
+    x.tv_sec = x.tv_sec-1;
+    x.tv_nsec = a.tv_nsec - b.tv_nsec + 1000000000; 
   }
   else {
-    x->tv_nsec = a.tv_nsec - b.tv_nsec;
+    x.tv_nsec = a.tv_nsec - b.tv_nsec;
   }
 
-  return *x;
+  return x;
 }
 
 bool operator <(struct timespec a, struct timespec b) {

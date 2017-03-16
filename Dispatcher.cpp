@@ -19,10 +19,10 @@ using namespace std;
 
 
 ///Constructor needs the relative release times of the jobs
-Dispatcher::Dispatcher(vector<unsigned long> _rl_arrive_times, 
-	unsigned _id): TimedRunnable(_id) {
+Dispatcher::Dispatcher(const vector<unsigned long>& _rl_arrive_times, 
+	unsigned _id): TimedRunnable(_id), rl_arrive_times(_rl_arrive_times) {
 	thread_type = dispatcher;
-	rl_arrive_times = _rl_arrive_times;
+	//rl_arrive_times = _rl_arrive_times;
 }	
 
 

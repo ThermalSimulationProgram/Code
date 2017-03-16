@@ -21,7 +21,7 @@ class Parser{
 private:
 	std::string xml_path;
 public:
-	Parser(std::string);
+	explicit Parser(std::string);
 
 	// This function parse the file pointed by xml_path, and then 
 	// save all necessary data required by the simulation in Scratch class.
@@ -41,7 +41,7 @@ public:
 };
 
 
-template<typename T> T formatTimeMicros(double v, std::string unit){
+template<typename T> T formatTimeMicros(double v, const std::string& unit){
 	T r;
 	if (unit == "sec")
 		r = (T) (v*1000000);
@@ -57,7 +57,7 @@ template<typename T> T formatTimeMicros(double v, std::string unit){
 }
 
 template<typename T> std::vector<T> formatTimeMicros(const std::vector<double>& v, 
-std::string unit){
+const std::string& unit){
 	std::vector<T> ret;
 	for (int i = 0; i < (int) v.size(); ++i)
 		ret.push_back(formatTimeMicros<T>(v[i], unit));

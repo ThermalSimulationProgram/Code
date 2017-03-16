@@ -27,7 +27,7 @@ private:
 
 public:
 	///Constructor needs the relative release times of the jobs
-	Dispatcher(std::vector<unsigned long>, unsigned);
+	Dispatcher(const std::vector<unsigned long>&, unsigned);
 	~Dispatcher();
 
 	///gives the dispatcher thread the ACTIVE_PR priority
