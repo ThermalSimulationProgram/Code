@@ -169,7 +169,7 @@ vector<double> AdaptiveKernel::getFIFODemands(
 			cout << "timeToDeadline0:  " << timeToDeadline0 << endl;
 			cout << "Pipeline::getFIFODemands: Warning: Current event deadline miss happened!"<<endl;
 			// exit(1);
-			curvedata[1] = curvedata[1] ;
+			curvedata[1] = 1 ;
 		}else{
 			if (abs(timeToDeadline - timeToDeadline0)<0.000001){
 				curvedata[1] = curvedata[1] + 1;

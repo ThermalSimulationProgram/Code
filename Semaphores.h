@@ -10,7 +10,7 @@ private:
 	sem_t sem;
 
 public:
-	scoped_sem_t(int);
+	explicit scoped_sem_t(int);
 	~scoped_sem_t();
 
 	int wait_sem();

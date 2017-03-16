@@ -25,7 +25,7 @@ public:
 	double step;
 	unsigned maxSize;
 
-	warmingCurves(unsigned);
+	explicit warmingCurves(unsigned);
 
 	void insert(linearSegs);
 

@@ -283,8 +283,7 @@ const std::vector<int>& ids){
 	if (nrows == 0 )
 		return ret;
 	int ncols = (int)a[0].size();
-	int numel = nrows*ncols;
-	int rowid, colid;
+	int numel = nrows * ncols;
 	ret.reserve(ids.size());
 	for (unsigned i = 0; i < ids.size(); ++i)
 	{
@@ -296,6 +295,7 @@ const std::vector<int>& ids){
 			std::cerr<<"vectormath::vectorExtract: Input index is negative\n";
 			exit(1);
 		}
+		int rowid, colid;
 		colid = ids[i] / nrows;
 		rowid = ids[i] % nrows;
 		ret.push_back(a[rowid][colid]);	

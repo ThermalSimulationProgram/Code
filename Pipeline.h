@@ -51,7 +51,7 @@ protected:
 public:
 
 	// Constructor needs the xml file path
-	Pipeline(std::string);
+	explicit Pipeline(std::string);
 
 	~Pipeline();
 

@@ -65,7 +65,7 @@ void dumpMatrix(std::vector<std::vector<T>> a){
 }
 
 template<typename T> 
-void dumpMatrix(std::vector<T> a){
+void dumpMatrix(const std::vector<T>& a){
 	std::cout << "[";
 	dumpVector(a);
 	std::cout << "]" << std::endl ;
@@ -73,13 +73,13 @@ void dumpMatrix(std::vector<T> a){
 }
 
 template<typename T> 
-void displayvector(std::vector<T> a, std::string name){
+void displayvector(const std::vector<T>& a, const std::string& name){
 	std::cout << name << ": \n";
 	dumpMatrix(a);
 }
 
 template<typename T> 
-void displayvector(std::vector<std::vector<T>> a, std::string name){
+void displayvector(const std::vector<std::vector<T>>& a, const std::string& name){
 	std::cout << name << ": \n";
 	dumpMatrix(a);
 }

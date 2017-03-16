@@ -19,12 +19,13 @@ using namespace std;
 
 
 
-APTMKernel::APTMKernel(unsigned _nstages, vector<double> _wcets,
-	vector<double> _tbet, double _bcoef, enum _schedule_kernel kernel,
+APTMKernel::APTMKernel(unsigned _nstages, const vector<double>& _wcets,
+	const vector<double>& _tbet, double _bcoef, enum _schedule_kernel kernel,
 	vector<unsigned long>& rl_scheduling_times):
-AdaptiveKernel(_nstages, _wcets, _tbet, kernel, rl_scheduling_times){
+AdaptiveKernel(_nstages, _wcets, _tbet, kernel, rl_scheduling_times),
+partTimes(10, 0){
 	bcoef 	= _bcoef;
-	partTimes = vector<double>(10, 0);
+	//partTimes = vector<double>(10, 0);
 	counter = 0;
 	block = 20;
 }
@@ -596,10 +597,10 @@ void APTMKernel::getApdatInfo(AdaptInfo& config){
 	double time212  = 0;
 	double time213  = 0;
 	#endif
+	double maxPreRho = 0;
 	for (int i = 0; i < (int)nstages; ++i){
 		double minDSC    = minDSCs[i];
 		double k         = minALLKs[i];
-		double maxPreRho = 0;
 		
 		if (i == 0){
 			#if _PROFILE == 1
