@@ -463,7 +463,7 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 	}
 	#endif
 
-	vector<bool> validId (nindex, true);
+	vector<bool> validId = vectorLess(lambdaExt, breakToffs[0]);
 	while (sumLambda < upBound){
 		vector<double> nextBreakPoints = vectorExtract(breakToffs,
 			segementId);
@@ -482,16 +482,33 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 		vector<double> dist2nextBp  = nextBreakPoints - tmptmp;
 		vector<double> currentSlope = vectorExtract(slopes, segementId);
 		vector<double> newslopes    = vectorExtract(currentSlope, validId);
-		currentSlope                = newslopes;
-		if (vectorAny(currentSlope == 0)){
+		
+		if (vectorAny(newslopes == 0)){
+			displayvector(slopes, "slopes");
+			displayvector(validId, "validId");
+			displayvector(lambdaExt, "lambdaExt");
+			displayvector(segementId, "segementId");
+			displayvector(breakToffs, "breakToffs");
 			displayvector(currentSlope, "currentSlope");
 			cout << nindex << endl;
 			cerr << "APTMKernel::assignToffs:currentSlope has zero element\n";
 			exit(1);
 		}
+		currentSlope                = newslopes;
 		vector<double> K            = vecsum(currentSlope) / currentSlope;
 		vector<bool> tmpvalid       = vecAbs(dist2nextBp) > 0.000001;
-
+		
+		if(tmpvalid.size()<1){
+			displayvector(slopes, "slopes");
+			displayvector(validId, "validId");
+			displayvector(lambdaExt, "lambdaExt");
+			displayvector(segementId, "segementId");
+			displayvector(breakToffs, "breakToffs");
+			displayvector(breakToffs[0], "breakToffs[0]");
+			displayvector(currentSlope, "currentSlope");
+			exit(1);
+		}
+		
 		double validDist = minElement(
 			vectorExtract(dist2nextBp, tmpvalid) * vectorExtract(K, tmpvalid));
 
@@ -505,6 +522,7 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 			
 			vector<bool> atBreakPointId = vectorEqual(lambdaExt, 
 			vectorExtract(breakToffs, segementId));
+			
 			
 			vector<bool> feasible       = vectorLess(segementId, segmentIdLim);
 			

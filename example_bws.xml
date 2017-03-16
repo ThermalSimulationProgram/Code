@@ -16,7 +16,7 @@
 
    <scheduler>
       <kernel type="BWS">
-         <period value="30" units="ms"/>
+         <period value="50" units="ms"/>
          <offlinedata>
             <prefix path="./csv_data/Dell9020ThermalProp"/>
          </offlinedata>

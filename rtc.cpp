@@ -143,7 +143,7 @@ double rtc::minbdf_BSF(jobject beta, double deadline, double k){
 	}
 	double MAX = deadline;
 	double MIN = 0;
-	double epsilon = 0.0001;
+	double epsilon = 0.01;
 	bool stop = false;
 	double tau; 
 	vector<double> tempdata = {0, 0, 0, 0, 0, k};
