@@ -4,28 +4,28 @@
 
 using namespace std;
 
-struct timespec operator *(double a, struct timespec b) {
-  struct timespec *x = (struct timespec*) malloc(sizeof(struct timespec));
+struct timespec operator * (double a, struct timespec b) {
+  struct timespec x;
   
-  if (a<0) {
-     x->tv_sec = a * b.tv_sec;
-     x->tv_nsec = -1*a * b.tv_nsec;  
+  if ( a < 0 ) {
+     x.tv_sec = a * b.tv_sec;
+     x.tv_nsec = -1*a * b.tv_nsec;  
      
      if(b.tv_sec == 0) {
-        x->tv_nsec = -1 * x->tv_nsec;
+        x.tv_nsec = -1 * x.tv_nsec;
      }
   }
   else {
-     x->tv_sec = a * b.tv_sec;
-     x->tv_nsec = a * b.tv_nsec;
+     x.tv_sec = a * b.tv_sec;
+     x.tv_nsec = a * b.tv_nsec;
   }
   
-  while(x->tv_nsec > 999999999) {
-     x->tv_sec ++;
-     x->tv_nsec = x->tv_nsec - 1000000000;
+  while(x.tv_nsec > 999999999) {
+     x.tv_sec ++;
+     x.tv_nsec = x.tv_nsec - 1000000000;
   }
   
-  return *x;
+  return x;
 }
 
 

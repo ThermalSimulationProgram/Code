@@ -87,7 +87,7 @@ void rtcjni::initialize(){
 		#endif
 	}
 		
-	delete options[];
+	delete options;
 
 	_Curve        = findclass("ch/ethz/rtc/kernel/Curve");
 	_CurveFactory = findclass("ch/ethz/rtc/kernel/CurveFactory");
