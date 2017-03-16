@@ -6,7 +6,7 @@ scoped_sem_t Semaphores::dispatch_sem(0);
 scoped_sem_t Semaphores::rtcinit_sem(0);
 
 
-explicit scoped_sem_t::scoped_sem_t(int v){
+scoped_sem_t::scoped_sem_t(int v){
 	sem_init(&sem, 0, v);
 }
 

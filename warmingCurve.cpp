@@ -25,7 +25,7 @@ double linearSegs::getValue(double x) const {
 	return temps.back();
 }
 
-explicit warmingCurves::warmingCurves(unsigned _step){
+warmingCurves::warmingCurves(unsigned _step){
 	if(step==0){
 		cerr<<"Invalid step\n";
 		exit(1);

@@ -31,8 +31,8 @@ private:
 	int block;
 	
 public:
-	APTMKernel(unsigned n, std::vector<double> wcets, 
-		std::vector<double> _tbet, double _bcoef, enum _schedule_kernel kernel,
+	APTMKernel(unsigned n, const std::vector<double>& wcets, 
+		const std::vector<double>& _tbet, double _bcoef, enum _schedule_kernel kernel,
 		std::vector<unsigned long>& rl_scheduling_times);
 
 	~APTMKernel();

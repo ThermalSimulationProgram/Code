@@ -33,7 +33,7 @@ bool Pipeline::initialized = false;
 bool Pipeline::simulating  = false;
 
 // Constructor needs the xml file path
-explicit Pipeline::Pipeline(string xml_path)
+Pipeline::Pipeline(string xml_path)
 {
 	Parser* p = new Parser(xml_path);
 	if (p->parseFile()!=0){
