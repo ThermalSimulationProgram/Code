@@ -12,7 +12,7 @@
 #include "utils.h"
 
 
-using namespace pugi;
+// using namespace pugi;
 
 
 
@@ -27,8 +27,8 @@ public:
 	// save all necessary data required by the simulation in Scratch class.
 	int parseFile();
 
-	struct timespec parseTime(xml_node n);
-	unsigned long parseTimeMircroSecond(xml_node n);
+	struct timespec parseTime(pugi::xml_node n);
+	unsigned long parseTimeMircroSecond(pugi::xml_node n);
 
 		
 	// This function loads warming curves of the processor from csv files
@@ -56,7 +56,8 @@ template<typename T> T formatTimeMicros(double v, std::string unit){
 	return r;
 }
 
-template<typename T> vector<T> formatTimeMicros(const vector<double>& v, string unit){
+template<typename T> std::vector<T> formatTimeMicros(const std::vector<double>& v, 
+std::string unit){
 	std::vector<T> ret;
 	for (int i = 0; i < (int) v.size(); ++i)
 		ret.push_back(formatTimeMicros<T>(v[i], unit));
@@ -65,7 +66,7 @@ template<typename T> vector<T> formatTimeMicros(const vector<double>& v, string 
 }
 
 
-template<typename T> vector<T> parseTimeVectorMicro(xml_node n){
+template<typename T> std::vector<T> parseTimeVectorMicro(pugi::xml_node n){
 	std::vector<double> initvalues = stringToVector<double>(n.attribute("value").value());
 
 	std::string unit = n.attribute("units").value();
@@ -78,7 +79,7 @@ template<typename T> vector<T> parseTimeVectorMicro(xml_node n){
 // This function is used for debugging. Not used in real program
 pipeinfo loadPipeInfo(unsigned nstage);
 // This function is used for debugging. Not used in real program
-vector<WorkerInfo> loadWorkerInfo(unsigned nstage);
+std::vector<WorkerInfo> loadWorkerInfo(unsigned nstage);
 
 
 

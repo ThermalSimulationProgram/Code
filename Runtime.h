@@ -6,7 +6,7 @@
 #include <string>
 #include <time.h>
 
-using namespace std;
+// using namespace std;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -37,7 +37,7 @@ class Runtime {
   void setRuntime(enum _thread_type _type, unsigned int _id, struct timespec _rt);
 
   ///This function converts the runtime statistic to a string,
-  string toString();
+  std::string toString();
 
   /*********** GETTER FUNCTIONS ***********/  
   

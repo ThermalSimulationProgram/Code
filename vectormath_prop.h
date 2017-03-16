@@ -181,7 +181,7 @@ const std::vector<std::vector<T>> & a){
 template<typename T> std::vector<bool> vecIsInf(const std::vector<T> & a){
 	std::vector<bool> ret;
 	for (int i = 0; i < (int)a.size(); ++i)
-		ret.push_back(isinf((long double)a[i]));
+		ret.push_back(std::isinf((long double)a[i]));
 	
 	return ret;
 }

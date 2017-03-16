@@ -1,9 +1,10 @@
 #include "Runtime.h"
 
-#include "TimeUtil.h"
-
 #include <sstream>
 
+#include "TimeUtil.h"
+
+using namespace std;
 /********************* MEMBER FUNCTIONS *********************/
 
 ///This sets the thread type, id, and runtime of trace

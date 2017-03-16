@@ -1,10 +1,11 @@
 #include "FileOperator.h"
 
+
+using namespace std;
+
 FileOperator::FileOperator(const string& _filename, 
 	int _mode):filename(_filename), mode(_mode){
 	// default values
-	// iFile = ifstream();
-	// oFile = ofstream();
 	is_input_active = false;
 	isOpen = false;
 	isSaved = true;
@@ -15,12 +16,15 @@ FileOperator::FileOperator(const string& _filename,
 		iFile = ifstream(filename, std::ofstream::in);
 		is_input_active = true;
 	}
-	else if (mode == FSTREAM_OUT)
+	else if (mode == FSTREAM_OUT){
 		oFile = ofstream(filename, std::ofstream::out);
-	else if (mode == (FSTREAM_OUT | FSTREAM_TRUNC))
+	}
+	else if (mode == (FSTREAM_OUT | FSTREAM_TRUNC)){
 		oFile = ofstream(filename, std::ofstream::out | std::ofstream::trunc);
-	else if (mode == (FSTREAM_OUT | FSTREAM_APP))
+	}
+	else if (mode == (FSTREAM_OUT | FSTREAM_APP)){
 		oFile = ofstream(filename, std::ofstream::out | std::ofstream::app);
+	}
 	else{
 		cerr << "FileOperator::FileOperator: invalid mode! Failed to open file: \n"
 		<< filename << "\n with mode: " << mode << endl;
@@ -28,10 +32,12 @@ FileOperator::FileOperator(const string& _filename,
 	}
 
 	//check if the file is open
-	if (is_input_active)
+	if (is_input_active){
 		isOpen = iFile.is_open();
-	else
+	}
+	else{
 		isOpen = oFile.is_open();
+	}
 
 	if (!isOpen){
 		cerr << "FileOperator::FileOperator: failed to open given file named: '" << 
@@ -42,15 +48,17 @@ FileOperator::FileOperator(const string& _filename,
 	//read content
 	if (is_input_active){
 		std::string line;
-		while(std::getline(iFile, line))
+		while(std::getline(iFile, line)){
 			content.push_back(line);
+		}
 	}
 }
 
 FileOperator::FileOperator(const FileOperator& f){}
 FileOperator::~FileOperator(){
-	if (!isSaved)
+	if (!isSaved){
 		save();
+	}
 	close();
 }
 
@@ -79,8 +87,9 @@ void FileOperator::write(const vector<string>& lines){
 
 void FileOperator::save(){
 	if((!is_input_active) && isOpen){
-		for (int i = 0; i < (int)content.size(); ++i)
+		for (int i = 0; i < (int)content.size(); ++i){
 			oFile << content[i] << endl;
+		}
 
 		isSaved = true;
 		content.clear();

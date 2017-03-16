@@ -1,11 +1,13 @@
 #ifndef _VECTORMATH_H
 #define _VECTORMATH_H
 
+#include <algorithm>
 
 #include "vectormath_util.h"
 #include "vectormath_calc.h"
 #include "vectormath_prop.h"
 #include "vectormath_access.h"
+
 
 
 template <typename T>

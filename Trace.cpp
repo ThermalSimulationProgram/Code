@@ -1,12 +1,14 @@
 #include "Trace.h"
+
+#include <sstream>
+
 #include "Statistics.h"
 #include "TimeUtil.h"
 #include "Operators.h"
 #include "Semaphores.h"
 
-#include <sstream>
 
-
+using namespace std;
 /***************************************
  *        CLASS DEFINITION             * 
  ***************************************/

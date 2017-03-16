@@ -9,10 +9,10 @@
 #include <sstream>
 #include <iterator>
 
-using namespace std;
+// using namespace std;
 
-string formatString(const string& base);
-istringstream stringToiss(const string& base);
+std::string formatString(const std::string& base);
+std::istringstream stringToiss(const std::string& base);
 
 
 // This function converts a string to a double vector. The  string should be 
@@ -29,7 +29,7 @@ std::vector<T> stringToVector(std::string const& pointLine)
 }
 
 template<typename T> 
-void appStringToVector(std::string const& pointLine, vector<T>& data)
+void appStringToVector(std::string const& pointLine, std::vector<T>& data)
 {
 	std::istringstream iss = stringToiss(pointLine);
 
@@ -44,19 +44,21 @@ template<typename T>
 void dumpVector(std::vector<T> a){
 	for (int i = 0; i < int(a.size()); ++i){
 		std::cout << a[i];
-		if (i < int(a.size())-1)
+		if (i < int(a.size())-1){
 			std::cout << "\t";
+		}
 	}
 }
 
 
 template<typename T> 
-void dumpMatrix(std::vector<vector<T>> a){
+void dumpMatrix(std::vector<std::vector<T>> a){
 	std::cout << "[";
 	for (int i = 0; i < int(a.size()); ++i){
 		dumpVector(a[i]);
-		if (i < int(a.size())-1)
+		if (i < int(a.size())-1){
 			std::cout << std::endl ;
+		}
 	}
 	std::cout << "]" << std::endl;
 	dumpLinesSeperator();
@@ -77,14 +79,14 @@ void displayvector(std::vector<T> a, std::string name){
 }
 
 template<typename T> 
-void displayvector(std::vector<vector<T>> a, std::string name){
+void displayvector(std::vector<std::vector<T>> a, std::string name){
 	std::cout << name << ": \n";
 	dumpMatrix(a);
 }
 
 template<typename T>
-string vectorTostring(const vector<T>& data){
-	stringstream out;
+std::string vectorTostring(const std::vector<T>& data){
+	std::stringstream out;
 	for(int i = 0; i < (int)data.size(); i++) {
 		if ( i != (int)data.size()-1 )
 			out << (double)data[i] << ", " ;
@@ -95,11 +97,12 @@ string vectorTostring(const vector<T>& data){
 }
 
 template<typename T>
-vector<string> matrixTostring(const vector<vector<T>>& data){
-	vector<string> ret;
+std::vector<std::string> matrixTostring(const std::vector<std::vector<T>>& data){
+	std::vector<std::string> ret;
 
-	for (int i = 0; i < (int)data.size(); ++i)
+	for (int i = 0; i < (int)data.size(); ++i){
 		ret.push_back(vectorTostring(data[i]));
+	}
 
 	return ret;
 }

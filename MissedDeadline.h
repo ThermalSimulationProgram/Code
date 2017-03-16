@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-using namespace std;
+// using namespace std;
 
 /***************************************
  *        CLASS DECLARATION            * 
@@ -40,7 +40,7 @@ class MissedDeadline {
   void setMissedDeadline(unsigned int ti, struct timespec at, struct timespec dl, struct timespec ft);
 
   ///This function converts the trace to string for file output
-  string toString();
+  std::string toString();
 
   /*********** GETTER FUNCTIONS ***********/
 

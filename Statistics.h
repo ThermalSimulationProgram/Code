@@ -44,16 +44,16 @@ class Statistics {
 
 
   ///This vector holds all of the missed deadlines
-  static vector<MissedDeadline> missedDeadlines;
+  static std::vector<MissedDeadline> missedDeadlines;
 
   ///This vector holds all of the simulation's runtime statistics
-  static vector<Runtime> runtimes;
+  static std::vector<Runtime> runtimes;
 
   ///This vector holds alll of the time traces
-  static vector<Trace> traces;
+  static std::vector<Trace> traces;
 
   //This vector holds the thread id's of all workers
-  static vector<unsigned int> workerId;
+  static std::vector<unsigned int> workerId;
 
   ///This variable holds the state. When active, calling the ``add'' functions will add to statistics vector. Otherwise, traces will not be saved
   static int state;
@@ -100,7 +100,7 @@ class Statistics {
   static void initialize();
 
   ///This function saves all results to a custom csv file
-  static void toFile(string filePrefix);
+  static void toFile(std::string filePrefix);
   
 
 };

@@ -1,6 +1,8 @@
 #include "utils.h"
 
 #include <algorithm>
+
+using namespace std;
 string formatString(const string& base){
 	string ret = base;
 	std::replace(ret.begin(), ret.end(), '{', ' ');

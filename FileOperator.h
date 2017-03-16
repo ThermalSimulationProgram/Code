@@ -16,13 +16,13 @@
 #define FSTREAM_TRUNC (0x1)
 #define FSTREAM_APP (0x2)
 
-using namespace std;
+
 
 
 class FileOperator{
 private:
-	ifstream iFile;
-	ofstream oFile;
+	std::ifstream iFile;
+	std::ofstream oFile;
 
 	bool is_input_active;
 
@@ -30,40 +30,40 @@ private:
 
 	bool isSaved;
 
-	string filename;
+	std::string filename;
 
-	vector<string> content;
+	std::vector<std::string> content;
 
 	int mode;
 
 public:
-	FileOperator(const string&, int);
+	FileOperator(const std::string&, int);
 	FileOperator(const FileOperator&);
 	~FileOperator();
 
 	double readDouble();
 	
 	template<typename T> 
-	vector<T> readVector();
+	std::vector<T> readVector();
 
 	template<typename T>
-	vector<vector<T>> readMatrix();
+	std::vector<std::vector<T>> readMatrix();
 
-	void write(const string &);
+	void write(const std::string &);
 
-	void write(const vector<string>& );
+	void write(const std::vector<std::string>& );
 
 	void save();
 
 	void close();
 
 	void changePermission();
-	void changePermission(const string&);
+	void changePermission(const std::string&);
 };
 
 template<typename T> 
-vector<T> FileOperator::readVector(){
-	vector<T> ret;
+std::vector<T> FileOperator::readVector(){
+	std::vector<T> ret;
 	if ((!is_input_active) && isOpen)
 		return ret;
 	for (int i = 0; i < (int) content.size(); ++i)
@@ -73,8 +73,8 @@ vector<T> FileOperator::readVector(){
 }
 
 template<typename T>
-vector<vector<T>> FileOperator::readMatrix(){
-	vector<vector<T>> ret;
+std::vector<std::vector<T>> FileOperator::readMatrix(){
+	std::vector<std::vector<T>> ret;
 	if ((!is_input_active) && isOpen)
 		return ret;
 	ret.reserve( content.size());
@@ -85,11 +85,11 @@ vector<vector<T>> FileOperator::readMatrix(){
 }
 
 // read a csv file and save the first numbers as double
-double loadDoubleFromFile(const string  filename);
+double loadDoubleFromFile(const std::string  filename);
 
 
 template<typename T>
-vector<T> loadVectorFromFile(const string  filename){
+std::vector<T> loadVectorFromFile(const std::string  filename){
 
 	FileOperator file = FileOperator(filename, (int)FSTREAM_IN);
 	
@@ -97,33 +97,33 @@ vector<T> loadVectorFromFile(const string  filename){
 }
 
 template<typename T>
-vector<vector<T> > loadMatrixFromFile(const string filename){
+std::vector<std::vector<T> > loadMatrixFromFile(const std::string filename){
 	FileOperator file = FileOperator(filename, (int)FSTREAM_IN);
 	
 	return file.readMatrix<T>();
 }
 
-void saveContentToNewFile(const string filename, const vector<string>&data);
-void appendContentToFile(const string filename, const vector<string>&data);
+void saveContentToNewFile(const std::string filename, const std::vector<std::string>&data);
+void appendContentToFile(const std::string filename, const std::vector<std::string>&data);
 
 template<typename T>
-void saveToNewFile(const string filename,  const vector<T>& data){
-	saveContentToNewFile(filename, vector<string>(1, vectorTostring(data)));
+void saveToNewFile(const std::string filename,  const std::vector<T>& data){
+	saveContentToNewFile(filename, std::vector<std::string>(1, vectorTostring(data)));
 }
 
 template<typename T>
-void saveToNewFile(const string filename,  const vector<vector<T>>& data){
+void saveToNewFile(const std::string filename,  const std::vector<std::vector<T>>& data){
 	saveContentToNewFile(filename, matrixTostring(data));
 }
 
 
 template<typename T>
-void appendToFile(const string filename,  const vector<T>& data){
-	appendContentToFile(filename, vector<string>(1, vectorTostring(data)));
+void appendToFile(const std::string filename,  const std::vector<T>& data){
+	appendContentToFile(filename, std::vector<std::string>(1, vectorTostring(data)));
 }
 
 template<typename T>
-void appendToFile(const string filename,  const vector<vector<T>>&data){
+void appendToFile(const std::string filename,  const std::vector<std::vector<T>>&data){
 	appendContentToFile(filename, matrixTostring(data));
 }
 

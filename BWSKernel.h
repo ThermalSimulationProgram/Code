@@ -6,7 +6,7 @@
 #include "AdaptiveKernel.h"
 
 
-using namespace std;
+
 
 
 class BWSKernel:public AdaptiveKernel{
