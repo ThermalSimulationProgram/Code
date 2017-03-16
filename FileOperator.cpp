@@ -4,7 +4,9 @@
 using namespace std;
 
 FileOperator::FileOperator(const string& _filename, 
-	int _mode):filename(_filename), mode(_mode){
+	int _mode):filename(_filename), mode(_mode),
+iFile(), oFile(){
+	
 	// default values
 	is_input_active = false;
 	isOpen = false;
@@ -13,17 +15,17 @@ FileOperator::FileOperator(const string& _filename,
 
 	// construct ifsteam and ofstream object
 	if (mode == FSTREAM_IN){
-		iFile = ifstream(filename, std::ofstream::in);
+		iFile.open(filename, std::ofstream::in);
 		is_input_active = true;
 	}
 	else if (mode == FSTREAM_OUT){
-		oFile = ofstream(filename, std::ofstream::out);
+		oFile.open(filename, std::ofstream::out);
 	}
 	else if (mode == (FSTREAM_OUT | FSTREAM_TRUNC)){
-		oFile = ofstream(filename, std::ofstream::out | std::ofstream::trunc);
+		oFile.open(filename, std::ofstream::out | std::ofstream::trunc);
 	}
 	else if (mode == (FSTREAM_OUT | FSTREAM_APP)){
-		oFile = ofstream(filename, std::ofstream::out | std::ofstream::app);
+		oFile.open(filename, std::ofstream::out | std::ofstream::app);
 	}
 	else{
 		cerr << "FileOperator::FileOperator: invalid mode! Failed to open file: \n"
@@ -54,13 +56,7 @@ FileOperator::FileOperator(const string& _filename,
 	}
 }
 
-FileOperator::FileOperator(const FileOperator& f):
-filename(f.filename){
-	is_input_active = f.is_input_active;
-	isOpen = f.isOpen;
-	isSaved = f.isSaved;
-	mode = f.mode;
-}
+
 FileOperator::~FileOperator(){
 	if (!isSaved){
 		save();
@@ -140,16 +136,16 @@ void FileOperator::changePermission(const string & permission){
 
 
 double loadDoubleFromFile(const string& filename){
-	FileOperator file = FileOperator(filename, FSTREAM_IN);
+	FileOperator file (filename, FSTREAM_IN);
 	return file.readDouble();
 }
 
 void saveContentToNewFile(const string& filename, const vector<string>& data){
-	FileOperator file = FileOperator (filename, (int)(FSTREAM_OUT|FSTREAM_TRUNC));
+	FileOperator file (filename, (int)(FSTREAM_OUT|FSTREAM_TRUNC));
 	file.write(data);
 }
 void appendContentToFile(const string& filename, const vector<string>& data){
-	FileOperator file = FileOperator (filename, (int)(FSTREAM_OUT|FSTREAM_APP));
+	FileOperator file (filename, (int)(FSTREAM_OUT|FSTREAM_APP));
 	file.write(data);
 }
 

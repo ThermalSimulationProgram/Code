@@ -57,11 +57,11 @@ int main(int argc, char** argv){
 //   getCoolingCurve(4, wcets);
 
  // testrtc();
-runSimulation( argc, argv);
+// runSimulation( argc, argv);
 
 	// offlineSimulation();
 	// testStringUtils();
-	// testFileOperator();
+	testFileOperator();
 
 	//testParser("example.xml");
 }

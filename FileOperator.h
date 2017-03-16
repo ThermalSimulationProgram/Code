@@ -21,8 +21,7 @@
 
 class FileOperator{
 private:
-	std::ifstream iFile;
-	std::ofstream oFile;
+
 
 	bool is_input_active;
 
@@ -32,13 +31,17 @@ private:
 
 	std::string filename;
 
+	int mode;
+
 	std::vector<std::string> content;
 
-	int mode;
+	std::ifstream iFile;
+	std::ofstream oFile;
+
+	
 
 public:
 	FileOperator(const std::string&, int);
-	FileOperator(const FileOperator&);
 	~FileOperator();
 
 	double readDouble();
@@ -91,14 +94,14 @@ double loadDoubleFromFile(const std::string&  filename);
 template<typename T>
 std::vector<T> loadVectorFromFile(const std::string& filename){
 
-	FileOperator file = FileOperator(filename, (int)FSTREAM_IN);
+	FileOperator file(filename, (int)FSTREAM_IN);
 	
 	return file.readVector<T>();
 }
 
 template<typename T>
 std::vector<std::vector<T> > loadMatrixFromFile(const std::string& filename){
-	FileOperator file = FileOperator(filename, (int)FSTREAM_IN);
+	FileOperator file (filename, (int)FSTREAM_IN);
 	
 	return file.readMatrix<T>();
 }
