@@ -268,12 +268,20 @@ bool Pipeline::isSimulating(){
 
 
 // This function is called by the end stage to announce a job is finished
-void Pipeline::finishedJob(Job* j, unsigned long t){
+void Pipeline::finishedJob(Job* j){
 	// let the job self-check if it is real finished
 	if (j->isFinalFinished()){
 		Semaphores::print_sem.wait_sem();
+		double now = Statistics::getRelativeTime_ms();
+		double deadline = (double)j->getRltDeadline()/1000;
 		cout << "Job with id: " << j->getId() << " finishes at time: " 
-		<< (Statistics::getRelativeTime_ms()) << " millisecond!"  << endl;
+		<< now << " millisecond "  << "with deadline: " << deadline << ". ";
+
+		if (now > deadline+5){
+			cout << "A deadline miss happened!";
+		}
+
+		cout << endl;
 		Semaphores::print_sem.post_sem();
 	}
 	else{

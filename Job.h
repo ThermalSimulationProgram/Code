@@ -14,6 +14,7 @@ protected:
 
 	unsigned long releaseTime;
 	unsigned long rltDeadline;
+	unsigned long deadline;
 	unsigned long absDeadline;
 
 	///This attribute indicates the real-cse execution time of each job, unit us 
@@ -27,7 +28,7 @@ protected:
 	sem_t state_sem;
 
 public:
-	Job(unsigned, unsigned, unsigned long);
+	Job(unsigned, unsigned, unsigned long, unsigned long);
 
 	void release(unsigned long );
 
@@ -50,6 +51,8 @@ public:
 	unsigned long getLoad();
 
 	unsigned long getAbsDeadline();
+
+	unsigned long getRltDeadline();
 };
 
 

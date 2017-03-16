@@ -291,8 +291,7 @@ void Worker::finishedJob()
 	if (next != NULL)
 		next->newJob(current_job);	
 	else{
-		unsigned long now = TimeUtil::convert_ms(TimeUtil::getTime());
-		pipeline->finishedJob(current_job, now);
+		pipeline->finishedJob(current_job);
 	}
 	sem_wait(&FIFO_sem);
     FIFO.pop_front(); 	//Erase old arrival time

@@ -86,7 +86,7 @@ public:
 	static bool isSimulating();
 
 	// This function is called by the end stage to announce a job is finished
-	void finishedJob(Job*, unsigned long);
+	void finishedJob(Job*);
 
 	// This function is called by the scheduler to apply new schedule scheme to 
 	// each stage
