@@ -184,6 +184,8 @@ double Pipeline::simulate(){
 		saveToNewFile(tempSaveName, tempwatcher->getMeanTemp());
 		double maxTemp = tempwatcher->getMaxTemp();
 		appendToFile(tempSaveName, vector<double>(1, maxTemp));
+		double MeanMaxTemp = tempwatcher->getMeanMaxTemp();
+		appendToFile(tempSaveName, vector<double>(1, MeanMaxTemp));
 
 		appendToFile(tempSaveName, scheduler->getKernelTime());
 	}
