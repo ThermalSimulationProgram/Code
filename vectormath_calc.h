@@ -2,7 +2,7 @@
 #define _VECTORMATHCALC_H
 
 #include "vectormath_util.h"
-
+// #include "utils.h"
 
 #include <vector>
 #include <cmath>
@@ -46,7 +46,7 @@ inline void __times(_Iter __a, _Iter2 __b, _Iter3 __c){
 
 template<typename _Iter, typename _Iter2, typename _Iter3> 
 inline void __divide(_Iter __a, _Iter2 __b, _Iter3 __c){
-if (abs((*__b)) <= 0.000001){
+if (std::abs((*__b)) <= EPSILON){
 	std::cout << "__a:" << *__a << std::endl;
 	std::cout << "__b:" << *__b << std::endl;
 	std::cerr << "vectormath::__divided:divided by zero\n";
@@ -67,24 +67,25 @@ inline void __lessthan(_Iter __a, _Iter2 __b, _Iter3 __c){
 
 template<typename _Iter, typename _Iter2, typename _Iter3> 
 inline void __equalwith(_Iter __a, _Iter2 __b, _Iter3 __c){
-	*__c = abs((double)(*__a) - (double)(*__b)) < 0.000001;
+	
+	*__c = (std::abs((double)(*__a) - (double)(*__b)) < EPSILON);
 }
 
 template<typename _Iter, typename _Iter2, typename _Iter3> 
 inline void __lessequal(_Iter __a, _Iter2 __b, _Iter3 __c){
 	*__c = ((double)(*__a) < (double)(*__b)) || 
-	(abs((double)(*__a) - (double)(*__b)) < 0.000001);
+	(std::abs((double)(*__a) - (double)(*__b)) < EPSILON);
 }
 
 template<typename _Iter, typename _Iter2, typename _Iter3> 
 inline void __largerequal(_Iter __a, _Iter2 __b, _Iter3 __c){
 	*__c = ((double)(*__a) > (double)(*__b)) || 
-	(abs((double)(*__a) - (double)(*__b)) < 0.000001);
+	(std::abs((double)(*__a) - (double)(*__b)) < EPSILON);
 }
 
 template<typename _Iter, typename _Iter2, typename _Iter3> 
 inline void __noteq(_Iter __a, _Iter2 __b, _Iter3 __c){
-	*__c = (abs((double)(*__a) - (double)(*__b)) >= 0.000001);
+	*__c = (std::abs((double)(*__a) - (double)(*__b)) >= EPSILON);
 }
 
 template<typename _Iter, typename _Iter2, typename _Iter3> 
@@ -108,8 +109,8 @@ enum _vector_operator __operation, _Iter3 __result){
 		std::cerr << "vectormath::vectorOperationCore:vector dimensions does not match\n";
 		exit(1);
 	}
-	_Iter __temp1 =__start1; 
-	_Iter2 __temp2 =__start2;
+	_Iter __temp1 = __start1; 
+	_Iter2 __temp2 = __start2;
 	switch (__operation){
 		case  __vominus:{
 			for (; __temp1!=__end1; ++__temp1, ++__temp2,++__result)
@@ -167,7 +168,9 @@ template<typename _Iter, typename _T1, typename _Iter2>
  void __vectorScalarOperationCore(
 _Iter __start, _Iter __end, _T1 __b, enum _vector_operator __operation, 
 _Iter2 __result){
+
 	std::vector<_T1> temp(std::distance(__start, __end), __b);
+
 	__vectorsOperationCore(__start, __end, temp.begin(),
 		temp.end(), __operation, __result);
 }
@@ -176,6 +179,7 @@ template<typename _Iter, typename _T1, typename _Iter2>
  void __vectorScalarOperationCore(
 _T1 __b, _Iter __start, _Iter __end, enum _vector_operator __operation, 
 _Iter2 __result){
+
 	std::vector<_T1> temp(std::distance(__start, __end), __b);
 	__vectorsOperationCore(temp.begin(), temp.end(), __start, 
 		__end,  __operation, __result);
@@ -211,7 +215,6 @@ std::vector<_T> operator +(const std::vector<_T> & __a, _T1 __b ){
 	__vectorScalarOperationCore(__a.begin(), __a.end(), __b, 
 		__voplus, back_inserter(ret));
 	return ret;
-	// return __a;
 }
 
 template<typename _T, typename _T1> 
@@ -285,7 +288,6 @@ std::vector<bool> operator >(const std::vector<_T> &__a, _T1 __b ){
 	__vectorScalarOperationCore(__a.begin(), __a.end(), __b, 
 		__volarger, back_inserter(ret));
 	return ret;
-	// return __a;
 }
 
 template<typename _T, typename _T1> 
@@ -329,11 +331,13 @@ std::vector<bool> vectorLess(const std::vector<_T> &__a, const std::vector<_T1> 
 }
 
 template<typename _T, typename _T1> 
-std::vector<bool> operator ==(const std::vector<_T> &__a,
+std::vector<bool> operator ==(const std::vector<_T> & __a,
 _T1 __b ){
 	std::vector<bool> ret;
 	__vectorScalarOperationCore(__a.begin(), __a.end(), __b, 
 		__voequal, back_inserter(ret));
+	// dumpMatrix(ret);
+
 	return ret;
 }
 
@@ -420,7 +424,7 @@ template<typename T> std::vector<double> vecFloor(const std::vector<T> &a){
 	std::vector<double> ret;
 	for (unsigned i = 0; i < a.size(); ++i)
 	{
-		ret.push_back((double)floor(a[i]));
+		ret.push_back((double)std::floor(a[i]));
 	}
 	return ret;
 }

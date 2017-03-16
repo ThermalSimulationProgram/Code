@@ -4,7 +4,7 @@
 #include "vectormath_util.h"
 
 #include <vector>
-//#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <algorithm>
 
@@ -101,8 +101,9 @@ int e){
 template<typename T> std::vector<int> equalIndex(const std::vector<T> &a, T b){
 	std::vector<int> ret;
 	for (int i = 0; i < (int)a.size(); ++i){
-		if(a[i] == b)
+		if(std::abs(a[i] - b) < EPSILON){
 			ret.push_back(i);
+		}
 	}
 	return ret;
 }
@@ -190,7 +191,7 @@ template<typename T> std::vector<std::vector<T>> vecAbs(const std::vector<std::v
 	std::vector<std::vector<T>> ret = a;
 	for (int i = 0; i < (int)a.size(); ++i){
 		for (int j = 0; j < (int) a[i].size(); ++j){
-			ret[i][j] = abs(ret[i][j]);
+			ret[i][j] = std::abs(ret[i][j]);
 		}
 	}
 	return ret;
@@ -199,8 +200,10 @@ template<typename T> std::vector<std::vector<T>> vecAbs(const std::vector<std::v
 template<typename T> std::vector<T> vecAbs(const std::vector<T> & a){
 	std::vector<T> ret = a;
 	ret.reserve(a.size());
-	for (int i = 0; i < (int)a.size(); ++i)
-			ret[i] = abs(ret[i]);
+	for (int i = 0; i < (int)a.size(); ++i){
+		ret[i] = std::abs(ret[i]);
+	}
+			
 	return ret;
 }
 
@@ -208,8 +211,9 @@ template<typename T> std::vector<T> vecAbs(const std::vector<T> & a){
 
 template<typename T> std::vector<bool> vecNot(const std::vector<T> & a){
 	std::vector<bool> ret;
-	for (int i = 0; i < (int)a.size(); ++i)
+	for (int i = 0; i < (int)a.size(); ++i){
 		ret.push_back(!(bool)(a[i]));
+	}
 	
 	return ret;
 }
@@ -217,8 +221,9 @@ template<typename T> std::vector<bool> vecNot(const std::vector<T> & a){
 template<typename T> std::vector<int> vecFind(const std::vector<T> & a){
 	std::vector<int> ret;
 	for (int i = 0; i < (int)a.size(); ++i){
-		if (a[i])
+		if (a[i]){
 			ret.push_back(i);
+		}
 	}
 	return ret;
 }

@@ -40,7 +40,7 @@ const std::vector<bool> & logicalIds, const std::vector<T1>& values){
 	unsigned counter = 0;
 	for (unsigned i = 0; i < logicalIds.size(); ++i)
 	{
-		if (i>=numel)
+		if (i >= numel)
 			break;
 		
 		if (logicalIds[i]){

@@ -1,6 +1,6 @@
 <simulation name="example">
 
-   <duration value="20" units="sec"/>
+   <duration value="25" units="sec"/>
 
    <pipeline stagenumber="4"/>
 

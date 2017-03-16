@@ -365,6 +365,9 @@ void APTMKernel::aPTM(double extBound, const vector<int>& index,
 
 	if (vectorAny(k > 1) || vectorAny(k == 0)){
 		cerr<<"APTM::APTM:wrong slopes input"<<endl;
+		dumpMatrix(k);
+		dumpMatrix(k>1);
+		dumpMatrix(k==0);
 		exit(1);
 	}
 	vector<double> basetinvs = partwcets * ((1-k)/k);
@@ -597,11 +600,11 @@ void APTMKernel::getApdatInfo(AdaptInfo& config){
 	double time212  = 0;
 	double time213  = 0;
 	#endif
-	double maxPreRho = 0;
+	
 	for (int i = 0; i < (int)nstages; ++i){
 		double minDSC    = minDSCs[i];
 		double k         = minALLKs[i];
-		
+		double maxPreRho = 0;
 		if (i == 0){
 			#if _PROFILE == 1
 			timein = (double)Statistics::getRelativeTime_ms();

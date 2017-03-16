@@ -30,10 +30,12 @@ INCLUDE := -I/usr/lib/jvm/java-8-openjdk-amd64/include -I/usr/lib/jvm/java-8-ope
 LIBPATH := 
 LIBS    := -ldl -lpthread -lrt -ljvm -lm
 
-#FLAGS    := -O3 -Wall -g 
-FLAGS    := -Wall -g 
+FLAGSNO    := -Wall -g 
+FLAGS    :=  -Wall -g 
 CCFLAGS  := $(FLAGS)
 CXXFLAGS := $(FLAGS) -std=c++11 -lrt -ljvm
+CCFLAGSNO  := $(FLAGSNO)
+CXXFLAGSNO := $(FLAGSNO) -std=c++11 -lrt -ljvm
 
 GENCODE_FLAGS := 
 NVCCFLAGS     := 
@@ -48,8 +50,11 @@ f1:$(SOURCES)
 f2:
 	@echo $(OBJECTS)
 
-all: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $(OBJECTS) -o $(APPNAME) $(LIBPATH) $(LIBS)
+Worker:Worker.h  Worker.cpp
+	$(CXX) $(CXXFLAGSNO) $(INCLUDE) -c Worker.cpp -o Worker.o
+
+all: $(OBJECTS)  Worker
+	$(CXX) $(CCFLAGSNO) $(INCLUDE) $(OBJECTS) -o $(APPNAME) $(LIBPATH) $(LIBS)
 
 # warming: $(OBJECTS)
 # 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(OBJECTS) -o $warming $(LIBPATH) $(LIBS)
