@@ -19,9 +19,10 @@ using namespace std;
 
 
 ///Constructor needs the relative release times of the jobs
-Dispatcher::Dispatcher(const vector<unsigned long>& _rl_arrive_times, 
+Dispatcher::Dispatcher(Pipeline* p, const vector<unsigned long>& _rl_arrive_times, 
 	unsigned _id): TimedRunnable(_id), rl_arrive_times(_rl_arrive_times) {
 	thread_type = dispatcher;
+	pipeline = p;
 	//rl_arrive_times = _rl_arrive_times;
 }	
 
@@ -84,10 +85,10 @@ void Dispatcher::timedJob(unsigned index){
 	#endif
 }
 
-void Dispatcher::setPipeline(Pipeline * p){
-	pipeline = p;
+// void Dispatcher::setPipeline(Pipeline * p){
+// 	pipeline = p;
 	
-}
+// }
 
 void Dispatcher::createJobs(vector<unsigned long> wcets, float factor,
 	unsigned long _rltDeadline){

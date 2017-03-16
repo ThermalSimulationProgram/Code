@@ -280,9 +280,6 @@ void Worker::newJob(Job * j)
 
 void Worker::finishedJob()
 {
-	// if( !Pipeline::isSimulating() ) {
- //    return;
- //  }
 
 	#if _DEBUG == 1
   	Semaphores::print_sem.wait_sem();

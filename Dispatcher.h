@@ -27,7 +27,7 @@ private:
 
 public:
 	///Constructor needs the relative release times of the jobs
-	Dispatcher(const std::vector<unsigned long>&, unsigned);
+	Dispatcher(Pipeline* ,const std::vector<unsigned long>&, unsigned);
 	~Dispatcher();
 
 	///gives the dispatcher thread the ACTIVE_PR priority
@@ -51,7 +51,7 @@ public:
 	void setAbsReleaseTimes(unsigned long);
 
 	///This function links the dispatcher to a Pipeline object
-	void setPipeline(Pipeline*);
+	// void setPipeline(Pipeline*);
 
 };
 

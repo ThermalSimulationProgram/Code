@@ -5,6 +5,7 @@
 #include "Priorities.h"
 #include "Semaphores.h"
 #include "Scratch.h"
+#include "Pipeline.h"
 #include "ScheduleKernelAPI.h"
 
 using namespace std;

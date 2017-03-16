@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-#include "Pipeline.h"
+// #include "Pipeline.h"
 #include "Thread.h"
 #include "Enumerations.h"
 #include "TimeUtil.h"
@@ -17,6 +17,7 @@
 
 
 class ScheduleKernelAPI;
+class Pipeline;
 
 class Scheduler : public TimedRunnable
 {

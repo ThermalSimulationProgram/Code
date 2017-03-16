@@ -55,7 +55,7 @@ Pipeline::Pipeline(string xml_path)
 	
 	n_stages        = _n_stages;
 	// create a Dispatcher and a Scheduler
-	dispatcher      = new Dispatcher(Scratch::getArrivalTimes(), 17);
+	dispatcher      = new Dispatcher(this, Scratch::getArrivalTimes(), 17);
 
 	scheduler       = new Scheduler(this, Scratch::getKernel(), 99);
 	
@@ -109,7 +109,6 @@ void Pipeline::initialize(){
 	
 	
 	vector<unsigned long> wcets = Scratch::getWcets();
-	dispatcher->setPipeline(this);
 	dispatcher->createJobs(wcets, Scratch::getExeFactor(), Scratch::getRltDeadline());
 	dispatcher->trigger();
 
