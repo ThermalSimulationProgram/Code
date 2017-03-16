@@ -14,12 +14,12 @@ string formatString(const string& base){
 	return ret;
 }
 
-istringstream stringToiss(const string& base){
-	std::string fstring = formatString(base);
+// istringstream stringToiss(const string& base){
+// 	std::string fstring = formatString(base);
 
-	std::istringstream iss(fstring);
-	return iss;
-}
+// 	std::istringstream iss(fstring);
+// 	return iss;
+// }
 
 void dumpLinesSeperator(){
 	std::cout << "***********************************************" << std::endl;

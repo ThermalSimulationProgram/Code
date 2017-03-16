@@ -12,7 +12,7 @@
 // using namespace std;
 
 std::string formatString(const std::string& base);
-std::istringstream stringToiss(const std::string& base);
+// std::istringstream stringToiss(const std::string& base);
 
 
 // This function converts a string to a double vector. The  string should be 
@@ -20,7 +20,7 @@ std::istringstream stringToiss(const std::string& base);
 template<typename T> 
 std::vector<T> stringToVector(std::string const& pointLine)
 {
-	std::istringstream iss = stringToiss(pointLine);
+	std::istringstream iss (formatString(pointLine));
 
 	return std::vector<T>{ 
 		std::istream_iterator<T>(iss),
@@ -31,7 +31,7 @@ std::vector<T> stringToVector(std::string const& pointLine)
 template<typename T> 
 void appStringToVector(std::string const& pointLine, std::vector<T>& data)
 {
-	std::istringstream iss = stringToiss(pointLine);
+	std::istringstream iss (formatString(pointLine));
 
 	data.insert(data.end(), std::istream_iterator<T>(iss), 
 		std::istream_iterator<T>());
