@@ -20,7 +20,7 @@ using namespace std;
 
 
 
-Worker::Worker(int _stageId, int _id) : Thread(_id){
+Worker::Worker(int _stageId, int _id) : Thread(_id), load(){
 	stageId     = _stageId; 
 	next        = NULL;
 	thread_type = worker;
@@ -224,7 +224,8 @@ void Worker::wrapper(){
 					Statistics::addTrace(thread_type, id, active_end);
 					break;
 				}
-				Load::consume_us(base);
+				// Load::consume_us(base);
+				load.consume_us_benchmarks(base);
 				end = TimeUtil::convert_us(TimeUtil::getTime());
 				exedSlice = end - start;
 				total_exed = total_exed + exedSlice;

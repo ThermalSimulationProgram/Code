@@ -3,10 +3,23 @@
 
 #include <math.h>
 #include <iostream>
+#include <sys/time.h>
+#include <unistd.h>
+#include <cstring>
 
-#define GAMMA 	(0.57721566490153286060651209008240243104215933593992L)
-#define OMEGA	(0.56714329040978387299996866221035554975381578718651L)
-#define PSI	(3.359885666243177553172011302918927179688905133732L)
+#if defined(__GNUC__) && defined(__linux__)
+#include <malloc.h>
+#endif
+
+#include "MWC.h"
+
+uint64_t opt_flags = PR_ERROR | PR_INFO | OPT_FLAGS_MMAP_MADVISE;
+
+
+
+// #define GAMMA 	(0.57721566490153286060651209008240243104215933593992L)
+// #define OMEGA	(0.56714329040978387299996866221035554975381578718651L)
+// #define PSI	(3.359885666243177553172011302918927179688905133732L)
 
 /* Some awful *BSD math lib workarounds */
 #if defined(__NetBSD__)
@@ -35,6 +48,17 @@
 #define cabsl	cabs
 #endif
 
+MWC RND = MWC();
+
+void uint64_put(const uint64_t a)
+{
+	
+}
+
+void double_put(const double a)
+{
+	
+}
 
 
 /*
@@ -64,10 +88,10 @@ void stress_cpu_queens(const char *name)
 
 	for (int i = 0; i < 7; ++i)
 	{
-		uint32_t solutions = queens_try(0, 0, 0, all);
+		queens_try(0, 0, 0, all);
 		// printf("%d %d\n", all, solutions);
 		all = (all + all) + 1;
-		uint64_put(solutions);
+		// uint64_put(solutions);
 	}
 	// 
 	
@@ -107,18 +131,10 @@ uint32_t queens_try(
 void HOT stress_cpu_sqrt(const char *name)
 {
 	int i;
-
 	//for (i = 0; i < 16384; i++) {
 	for (i = 0; i < 256; i++) {
-		uint64_t rnd = mwc32();
+		uint64_t rnd = RND.mwc32();
 		double r = sqrt((double)rnd) * sqrt((double)rnd);
-		// std::cout << rnd << " " << r << std::endl;
-		// if ((opt_flags & OPT_FLAGS_VERIFY) &&
-		// 	(uint64_t)rint(r) != rnd) {
-
-		// 	if (!opt_do_run)
-		// 		break;
-		// }
 		double_put(r);
 	}
 	
@@ -128,21 +144,21 @@ void HOT stress_cpu_sqrt(const char *name)
 void stress_cpu_loop(const char *name)
 {
 	uint32_t i, i_sum = 0;
-	const uint32_t sum = 134209536UL;
+	// const uint32_t sum = 134209536UL;
 
 	for (i = 0; i < 1500; i++) {
 		i_sum += i;
 		FORCE_DO_NOTHING();
 	}
-	uint64_put(sum);
+	// uint64_put(sum);
 }
 
 
 void HOT OPTIMIZE3 stress_cpu_gcd(const char *name)
 {
 	uint32_t  i_sum = 0;
-	static uint32_t i = 0;
-	const uint32_t sum = 63000868UL;
+	uint32_t i = 0;
+	// const uint32_t sum = 63000868UL;
 
 	for (i = 0; i < 512; i++) {
 		register uint32_t a = i, b = i % (3 + (1997 ^ i));
@@ -159,7 +175,7 @@ void HOT OPTIMIZE3 stress_cpu_gcd(const char *name)
 			i = 0;
 		}
 	}
-	uint64_put(sum);
+	// uint64_put(sum);
 }
 
 
@@ -172,7 +188,7 @@ void HOT OPTIMIZE3 stress_cpu_bitops(const char *name)
 {
 	uint32_t i_sum = 0;
 	uint32_t i = 0;
-	const uint32_t sum = 0x8aadcaab;
+	// const uint32_t sum = 0x8aadcaab;
 
 	for (i = 0; i < 128; i++) {
 		{
@@ -221,7 +237,7 @@ void HOT OPTIMIZE3 stress_cpu_bitops(const char *name)
 		// if(i > 16384){
 		// 	i = 0;
 		// }
-	uint64_put(sum);
+	// uint64_put(sum);
 }
 
 
@@ -314,10 +330,9 @@ void HOT OPTIMIZE3 stress_cpu_rand(const char *name)
 	uint32_t i_sum = 0;
 	// const uint32_t sum = 0xc253698c;
 
-	MWC_SEED();
 	// for (i = 0; i < 16384; i++)
 	for (i = 0; i < 16; i++){
-		i_sum += mwc32();
+		i_sum += RND.mwc32();
 	}
 
 }
@@ -389,8 +404,8 @@ void HOT OPTIMIZE3 stress_cpu_phi(const char *name)
 	int i;
 
 	/* Pick any two starting points */
-	a = mwc64() % 99;
-	b = mwc64() % 99;
+	a = RND.mwc64() % 99;
+	b = RND.mwc64() % 99;
 
 	/* Iterate until we approach overflow */
 	for (i = 0; (i < 64) && !((a | b) & mask); i++) {
@@ -491,7 +506,7 @@ void random_buffer(uint8_t *data, const size_t len)
 	size_t i;
 
 	for (i = 0; i < len / 4; i++) {
-		uint32_t v = mwc32();
+		uint32_t v = RND.mwc32();
 
 		*data++ = v;
 		v >>= 8;
@@ -517,7 +532,6 @@ void stress_cpu_hash_generic(
 	size_t i;
 	uint32_t i_sum = 0;
 
-	MWC_SEED();
 	random_buffer((uint8_t *)buffer, sizeof(buffer));
 	/* Make it ASCII range ' '..'_' */
 	for (i = 0; i < sizeof(buffer); i++)
@@ -527,9 +541,6 @@ void stress_cpu_hash_generic(
 		buffer[i] = '\0';
 		i_sum += hash_func(buffer);
 	}
-	if ((opt_flags & OPT_FLAGS_VERIFY) && (i_sum != result))
-		cout << " error detected, failed hash sum "
-			<< *name << *hash_name << endl;
 }
 
 
@@ -568,7 +579,6 @@ void stress_cpu_jenkin(const char *name)
 	uint32_t i_sum = 0;
 	// const uint32_t sum = 0x96673680;
 
-	MWC_SEED();
 	random_buffer(buffer, sizeof(buffer));
 	for (i = 0; i < sizeof(buffer); i++){
 		i_sum += jenkin(buffer, sizeof(buffer));
@@ -724,17 +734,17 @@ void HOT OPTIMIZE3 stress_cpu_idct(const char *name)
 			idct[i][j] = 0.25 * sum;
 		}
 	}
-	/* Final output should be a 8x8 matrix of values 255 */
-	for (i = 0; i < sz; i++) {
-		for (j = 0; j < sz; j++) {
-			if (((int)idct[i][j] != 255) &&
-			    (opt_flags & OPT_FLAGS_VERIFY)) {
-				cout << " IDCT error detected " << endl;
-			}
-			if (!opt_do_run)
-				return;
-		}
-	}
+	// /* Final output should be a 8x8 matrix of values 255 */
+	// for (i = 0; i < sz; i++) {
+	// 	for (j = 0; j < sz; j++) {
+	// 		if (((int)idct[i][j] != 255) &&
+	// 		    (opt_flags & OPT_FLAGS_VERIFY)) {
+	// 			cout << " IDCT error detected " << endl;
+	// 		}
+	// 		if (!opt_do_run)
+	// 			return;
+	// 	}
+	// }
 }
 
 
@@ -761,8 +771,9 @@ stress_cpu_int_unit<uint8_t>(
 
 
 void stress_cpu_fp (const char* name){
-	int i;						
-	double a = 0.18728, b = mwc32(), c = mwc32(), d;	
+	int i;	
+					
+	double a = 0.18728, b = RND.mwc32(), c = RND.mwc32(), d;	
 							
 	(void)name;					
 							
@@ -774,14 +785,7 @@ void stress_cpu_fp (const char* name){
 
 
 
-// stress_cpu_fp(float, float, sinf, cosf)
-// stress_cpu_fp(double, double, sin, cos)
-// stress_cpu_fp(long double, longdouble, sinl, cosl)
-// #if defined(HAVE_FLOAT_DECIMAL) && !defined(__clang__)
-// stress_cpu_fp(_Decimal32, decimal32, sinf, cosf)
-// stress_cpu_fp(_Decimal64, decimal64, sin, cos)
-// stress_cpu_fp(_Decimal128, decimal128, sinl, cosl)
-// #endif
+
 
 /*
  *  stress_cpu_matrix_prod(void)
@@ -797,11 +801,11 @@ void HOT OPTIMIZE3 stress_cpu_matrix_prod(const char *name)
 	long double sum = 0.0;
 
 	(void)name;
-
+	
 	for (i = 0; i < n; i++) {
 		for (j = 0; j < n; j++) {
-			a[i][j] = (long double)mwc32() * v;
-			b[i][j] = (long double)mwc32() * v;
+			a[i][j] = (long double)RND.mwc32() * v;
+			b[i][j] = (long double)RND.mwc32() * v;
 			r[i][j] = 0.0;
 		}
 	}
@@ -1025,7 +1029,6 @@ void stress_cpu_crc16(const char *name)
 	uint8_t buffer[16];
 	size_t i;
 
-	(void)name;
 
 	random_buffer(buffer, sizeof(buffer));
 	for (i = 0; i < sizeof(buffer); i++)
@@ -1051,7 +1054,7 @@ void HOT OPTIMIZE3 stress_cpu_correlate(const char *name)
 
 	/* Generate some random data */
 	for (i = 0; i < data_len; i++) {
-		data[i] = mwc64();
+		data[i] = RND.mwc64();
 		data_average += data[i];
 	}
 	data_average /= (double)data_len;
@@ -1303,7 +1306,7 @@ void stress_cpu_union(const char *name)
 
 /*
  *  stress_cpu_all()
- *	iterate over all cpu stressors
+ *	iterate over all cpu stressors, only for single thread
  */
 HOT OPTIMIZE3 void stress_cpu_all(const char *name)
 {
@@ -1314,3 +1317,25 @@ HOT OPTIMIZE3 void stress_cpu_all(const char *name)
 	if (!cpu_methods[i].func)
 		i = 1;
 }
+
+
+
+CPUStressor::CPUStressor(){
+	for (int i = 0; i < 100; ++i)
+	{
+		if(!methods[i].func){
+			numberStressor = i-1;
+			break;
+		}
+	}
+	index = 1;
+}
+
+void CPUStressor::stressOnce(){
+	const char* name = "";
+	methods[index].func(name);
+	index++;
+	if (!methods[index].func)
+		index = 1;
+}
+

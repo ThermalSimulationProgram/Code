@@ -55,6 +55,8 @@ protected:
 	///signal semaphore, unblock worker from sleeping and running 
 	sem_t schedule_sem;
 
+	Load load;
+
 public:
 	Worker(int, int);
 	~Worker();

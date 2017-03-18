@@ -2,10 +2,63 @@
 #define TESTLIB_H 
 
 
-#include "stress-ng.h"
+// #include "stress-ng.h"
 #include <complex.h>
+#include <cstdint>
 
-#define LOOPFACTOR (1.2)
+
+#include "MWC.h"
+
+#define OPT_FLAGS_NO_RAND_SEED	0x2000000000000ULL	/* --no-rand-seed */
+/* debug output bitmasks */
+#define OPT_FLAGS_MMAP_MADVISE	0x0000000004000ULL	/* enable random madvise settings */
+#define PR_ERROR		0x0000000000001ULL 	/* Print errors */
+#define PR_INFO			0x0000000000002ULL 	/* Print info */
+#define PR_DEBUG		0x0000000000004ULL 	/* Print debug */
+#define PR_FAIL			0x0000000000008ULL 	/* Print test failure message */
+#define PR_ALL			(PR_ERROR | PR_INFO | PR_DEBUG | PR_FAIL)
+
+#define _VER_(major, minor, patchlevel)			\
+	((major * 10000) + (minor * 100) + patchlevel)
+
+#if defined(__GNUC__) && defined(__GNUC_MINOR__)
+#if defined(__GNUC_PATCHLEVEL__)
+#define NEED_GNUC(major, minor, patchlevel) 			\
+	_VER_(major, minor, patchlevel) <= _VER_(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
+#else
+#define NEED_GNUC(major, minor, patchlevel) 			\
+	_VER_(major, minor, patchlevel) <= _VER_(__GNUC__, __GNUC_MINOR__, 0)
+#endif
+#else
+#define NEED_GNUC(major, minor, patchlevel) 	(0)
+#endif
+
+
+#if defined(__GNUC__) && NEED_GNUC(4,6,0)
+#define HOT __attribute__ ((hot))
+#else
+#define HOT
+#endif
+#define OPTIMIZE3
+
+
+
+#if defined(__GNUC__) || defined(__clang__)
+#define FORCE_DO_NOTHING() __asm__ __volatile__("")
+#else
+#define FORCE_DO_NOTHING() while (0)
+#endif
+
+extern MWC RND; 
+
+static volatile uint64_t uint64_val;
+static volatile double   double_val;
+
+void uint64_put(const uint64_t a);
+
+void double_put(const double a);
+
+#define FFT_SIZE		(8)
 
 /*
  *  the CPU stress test has different classes of cpu stressor
@@ -17,10 +70,7 @@ typedef struct {
 	const stress_cpu_func	func;	/* the stressor function */
 } stress_cpu_stressor_info_t;
 
-int pr_msg(
-	FILE *fp,
-	const uint64_t flag,
-	const char *const fmt, ...);
+
 
 /*
  *  stress_cpu_queens
@@ -220,10 +270,10 @@ void HOT OPTIMIZE3 stress_cpu_idct(const char *name);
 		b <<= 2;		\
 		a |= 1;			\
 		b |= 3;			\
-		a *= mwc32();		\
-		b ^= mwc32();		\
-		a += mwc32();		\
-		b -= mwc32();		\
+		a *= RND.mwc32();		\
+		b ^= RND.mwc32();		\
+		a += RND.mwc32();		\
+		b -= RND.mwc32();		\
 		a /= 7;			\
 		b /= 9;			\
 		a |= (c2);		\
@@ -247,9 +297,9 @@ void HOT OPTIMIZE3 stress_cpu_int_unit(T _a, T _b, T _c1, T _c2, T _c3){
 	register T a, b;					
 	int i;							
 								
-	MWC_SEED();						
-	a = mwc32();						
-	b = mwc32();						
+							
+	a = RND.mwc32();						
+	b = RND.mwc32();						
 								
 	for (i = 0; i < 80; i++) {				
 		int_ops(a, b, c1, c2, c3)		
@@ -467,5 +517,57 @@ const stress_cpu_stressor_info_t cpu_methods[100] = {
 };
 
 
+// cpu stressor, for signle thread
+class CPUStressor{
+private:
+/*
+ * Table of cpu stress methods
+ */
+	const stress_cpu_stressor_info_t methods[100]= {
+	{ "all",		stress_cpu_all },	/* Special "all test */
+
+	{ "ackermann",		stress_cpu_ackermann },
+	{ "bitops",		stress_cpu_bitops },
+	{ "correlate",		stress_cpu_correlate },
+	{ "crc16",		stress_cpu_crc16 },
+	{ "djb2a",		stress_cpu_djb2a },
+	{ "euler",		stress_cpu_euler },
+	{ "explog",		stress_cpu_explog },
+	{ "fft",		stress_cpu_fft },
+	{ "fibonacci",		stress_cpu_fibonacci },
+	{ "float", 		stress_cpu_fp },
+	{ "fnv1a",		stress_cpu_fnv1a },
+	{ "gcd",		stress_cpu_gcd },
+	{ "hamming",		stress_cpu_hamming },
+	{ "hyperbolic",		stress_cpu_hyperbolic },
+	{ "idct",		stress_cpu_idct },
+	{ "int", 		stress_cpu_int },
+	{ "jenkin",		stress_cpu_jenkin },
+	{ "jmp",		stress_cpu_jmp },
+	{ "ln2",		stress_cpu_ln2 },
+	{ "loop",		stress_cpu_loop },
+	{ "matrixprod",		stress_cpu_matrix_prod },
+	{ "nsqrt",		stress_cpu_nsqrt },
+	{ "omega",		stress_cpu_omega },
+	{ "phi",		stress_cpu_phi },
+	{ "pi",			stress_cpu_pi },
+	{ "pjw",		stress_cpu_pjw },
+	{ "prime",		stress_cpu_prime },
+	{ "psi",		stress_cpu_psi },
+	{ "queens",		stress_cpu_queens },
+	{ "rand48",		stress_cpu_rand48 },
+	{ "sdbm",		stress_cpu_sdbm },
+	{ "sqrt", 		stress_cpu_sqrt },
+	{ "trig",		stress_cpu_trig },
+	{ "union",		stress_cpu_union },
+	{ NULL,			NULL }
+};
+	int numberStressor;
+	int index;
+public:
+	CPUStressor();
+	void stressOnce();
+
+};
 
 #endif
