@@ -63,7 +63,7 @@ void stress_cpu_queens(const char *name)
 {
 	 uint32_t all = 1;
 
-	for (int i = 0; i < 6; ++i)
+	for (int i = 0; i < 7; ++i)
 	{
 		uint32_t solutions = queens_try(0, 0, 0, all);
 		// printf("%d %d\n", all, solutions);
@@ -454,20 +454,21 @@ void HOT stress_cpu_fft(const char *name)
  */
 void HOT OPTIMIZE3 stress_cpu_euler(const char *name)
 {
-	long double e = 1.0, last_e;
-	long double fact = 1.0;
-	long double precision = 1.0e-20;
-	int n = 1;
-
 	
+
+	for (int i = 0; i < 25; ++i)
+	{
+		long double e = 1.0, last_e;
+		long double fact = 1.0;
+		long double precision = 1.0e-20;
+		int n = 1;
 		do {
 			last_e = e;
 			fact *= n;
 			n++;
 			e += (1.0 / fact);
-		} while ((n < 25) && (fabsl(e - last_e) > precision));
-	
-	
+		} while ((n < i) && (fabsl(e - last_e) > precision));
+	}
 
 }
 
@@ -1121,19 +1122,23 @@ void HOT OPTIMIZE3 stress_cpu_pi(const char *name)
  */
 void HOT OPTIMIZE3 stress_cpu_omega(const char *name)
 {
-	long double omega = 0.5, last_omega = 0.0;
-	const long double precision = 1.0e-20;
-	const int max_iter = 20;
-	int n = 0;
+	for (int i = 0; i < 15; ++i)
+	{
+		long double omega = 0.5, last_omega = 0.0;
+		const long double precision = 1.0e-20;
+		const int max_iter = i;
+		int n = 0;
 
 	/* Omega converges very quickly */
-	do {
-		last_omega = omega;
-		omega = (1 + omega) / (1 + expl(omega));
-		n++;
-	} while ((n < max_iter) && (fabsl(omega - last_omega) > precision));
+		do {
+			last_omega = omega;
+			omega = (1 + omega) / (1 + expl(omega));
+			n++;
+		} while ((n < max_iter) && (fabsl(omega - last_omega) > precision));
 
-	double_put(omega);
+		double_put(omega);
+	}
+	
 }
 
 #define HAMMING(G, i, nybble, code) 			\
