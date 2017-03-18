@@ -759,7 +759,37 @@ void HOT OPTIMIZE3 stress_cpu_idct(const char *name)
 // stress_cpu_int(uint8_t, 8, \
 // 	0x12, 0x1a,
 // 	C1, C2, C3)
+void stress_cpu_int(const char* name){
 
+stress_cpu_int_unit<uint64_t>( 
+	0x013f7f6dc1d79197cULL, 0x01863d2c6969a51ceULL,
+	(uint64_t)C1, (uint64_t)C2, (uint64_t)C3);
+
+stress_cpu_int_unit<uint32_t>( 
+	0x1ce9b547UL, 0xa24b33aUL,
+	(uint32_t)C1, (uint32_t)C2, (uint32_t)C3);
+
+stress_cpu_int_unit<uint16_t> ( 
+	0x1871, 0x07f0,
+	(uint16_t)C1, (uint16_t)C2, (uint16_t)C3);
+
+stress_cpu_int_unit<uint8_t>(
+	0x12, 0x1a,
+	(uint8_t)C1, (uint8_t)C2, (uint8_t)C3);
+}
+
+
+void stress_cpu_fp (const char* name){
+	int i;						
+	double a = 0.18728, b = mwc32(), c = mwc32(), d;	
+							
+	(void)name;					
+							
+	for (i = 0; i < 10; i++) {			
+		float_ops<double>( a, b, c, d);			
+	}						
+	double_put(a + b + c + d);
+}
 
 
 // stress_cpu_fp(float, float, sinf, cosf)

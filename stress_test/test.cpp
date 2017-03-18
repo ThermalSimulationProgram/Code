@@ -1,6 +1,7 @@
 
 #include "testlib.h"
 #include "TimeUtil.h"
+#include "utils.h"
 
 #include <vector>
 // #include <cstdint>
@@ -46,6 +47,19 @@ void mwc_reseed(void)
 
 const char *app_name = "stress-ng";	
 
+unsigned long waste_time(unsigned long length){
+	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
+	unsigned long realLength = 0;
+	const char* name  = "test";
+	do{
+		stress_cpu_all(name);
+		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
+	}while(realLength < length);
+	return realLength;
+}
+
+using namespace std;
+
 int main(){
 	const char* name = "testfunc";
 	
@@ -60,33 +74,46 @@ int main(){
 		}
 	}
 
-	std::vector<unsigned long> exe_times(100, 0);
+	vector<vector<unsigned long>> realtimes;
 
-	int num_loops = 20;
-	for (int j = 0; j < num_loops; ++j)
-	{
-		unsigned long timein, timeout;
-		for (int i = 0; i < stress_func_number; ++i)
+	for (unsigned long length = 50; length <= 200; length += 10)
+	{	
+		vector<unsigned long> tmp;
+		for (int i = 0; i < 20; ++i)
 		{
-			timein = TimeUtil::convert_us(TimeUtil::getTime());
-			stress_cpu_all(name);
-			timeout = TimeUtil::convert_us(TimeUtil::getTime());
-			exe_times[i] = exe_times[i] + timeout - timein;
+			tmp.push_back(waste_time(length));
 		}
-	}
-	std::cout << (int) (112*1.3) << std::endl;
-	unsigned long alltime = 0;
-	for (int i = 0; i < (int)exe_times.size(); ++i)
-	{
-		alltime = alltime + exe_times[i];
+		realtimes.push_back(tmp);
 	}
 
-	for (int i = 0; i < stress_func_number; ++i)
-	{
-		std::cout << cpu_methods[i+1].name << "\t\t" 
-		<< ((double)exe_times[i])/ num_loops << "\t\t" << 
-		((double)exe_times[i])/alltime * 100 << std::endl;
-	}
+	dumpMatrix(realtimes);
+	// std::vector<unsigned long> exe_times(100, 0);
+
+	// int num_loops = 20;
+	// for (int j = 0; j < num_loops; ++j)
+	// {
+	// 	unsigned long timein, timeout;
+	// 	for (int i = 0; i < stress_func_number; ++i)
+	// 	{
+	// 		timein = TimeUtil::convert_us(TimeUtil::getTime());
+	// 		stress_cpu_all(name);
+	// 		timeout = TimeUtil::convert_us(TimeUtil::getTime());
+	// 		exe_times[i] = exe_times[i] + timeout - timein;
+	// 	}
+	// }
+	// std::cout << stress_func_number << std::endl;
+	// unsigned long alltime = 0;
+	// for (int i = 0; i < (int)exe_times.size(); ++i)
+	// {
+	// 	alltime = alltime + exe_times[i];
+	// }
+
+	// for (int i = 0; i < stress_func_number; ++i)
+	// {
+	// 	std::cout << cpu_methods[i+1].name << "\t\t" 
+	// 	<< ((double)exe_times[i])/ num_loops << "\t\t" << 
+	// 	((double)exe_times[i])/alltime * 100 << std::endl;
+	// }
 	
 // 	stress_cpu_queens(name);
 // 	stress_cpu_sqrt(name);

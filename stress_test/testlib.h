@@ -237,7 +237,7 @@ void HOT OPTIMIZE3 stress_cpu_idct(const char *name);
 
 
 template<typename T>
-void HOT OPTIMIZE3 stress_cpu_int(T _a, T _b, T _c1, T _c2, T _c3){
+void HOT OPTIMIZE3 stress_cpu_int_unit(T _a, T _b, T _c1, T _c2, T _c3){
 	const T mask = ~0;					
 	const T a_final = _a;				
 	const T b_final = _b;				
@@ -251,11 +251,15 @@ void HOT OPTIMIZE3 stress_cpu_int(T _a, T _b, T _c1, T _c2, T _c3){
 	a = mwc32();						
 	b = mwc32();						
 								
-	for (i = 0; i < 1000; i++) {				
+	for (i = 0; i < 80; i++) {				
 		int_ops(a, b, c1, c2, c3)		
 	}							
 							
 }
+
+void stress_cpu_int(const char* name);
+
+
 template<typename T>
 void float_ops(T&  a, T&  b, T&  c, T&  d){
 	a = a + b;				
@@ -276,18 +280,8 @@ void float_ops(T&  a, T&  b, T&  c, T&  d){
 	b = d - (T)1.0;
 }
 
-template<typename T>
-void stress_cpu_fp (char* name){
-	int i;						
-	T a = 0.18728, b = mwc32(), c = mwc32(), d;	
-							
-	(void)name;					
-							
-	for (i = 0; i < 1000; i++) {			
-		float_ops<T>( a, b, c, d);			
-	}						
-	double_put(a + b + c + d);
-}
+//template<typename T>
+void stress_cpu_fp (const char* name);
 	
 void HOT OPTIMIZE3 stress_cpu_matrix_prod(const char *name);
 
@@ -444,11 +438,13 @@ const stress_cpu_stressor_info_t cpu_methods[100] = {
 	{ "explog",		stress_cpu_explog },
 	{ "fft",		stress_cpu_fft },
 	{ "fibonacci",		stress_cpu_fibonacci },
+	{ "float", 		stress_cpu_fp },
 	{ "fnv1a",		stress_cpu_fnv1a },
 	{ "gcd",		stress_cpu_gcd },
 	{ "hamming",		stress_cpu_hamming },
 	{ "hyperbolic",		stress_cpu_hyperbolic },
 	{ "idct",		stress_cpu_idct },
+	{ "int", 		stress_cpu_int },
 	{ "jenkin",		stress_cpu_jenkin },
 	{ "jmp",		stress_cpu_jmp },
 	{ "ln2",		stress_cpu_ln2 },
