@@ -4,7 +4,7 @@
 #include "utils.h"
 
 #include <vector>
-// #include <cstdint>
+
 
 int32_t opt_sequential = DEFAULT_SEQUENTIAL;	/* Number of sequential workers */
 int32_t opt_all = 0;				/* Number of concurrent workers */

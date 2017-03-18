@@ -2,7 +2,7 @@
 #define _WORKER_H
 
 
-#include "TimeSim.h"
+#include "Load.h"
 #include "Job.h"
 #include "Thread.h"
 #include "structdef.h"
