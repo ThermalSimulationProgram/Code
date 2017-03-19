@@ -16,8 +16,8 @@
 
    <scheduler>
       <kernel type="PBOO">
-         <ton value="{10,10,10,10}" units="ms"/>
-         <toff value="{30,20,20,20}" units="ms"/>
+         <ton value="{152 100 460 670}" units="ms"/>
+         <toff value="{120 120 120 120}" units="us"/>
       </kernel>
    </scheduler>
 

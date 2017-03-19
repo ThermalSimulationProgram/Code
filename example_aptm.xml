@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<simulation name="example">
+<simulation name="example_aptm">
 
    <duration units="sec" value="30" />
 
@@ -17,7 +17,7 @@
 
    <scheduler>
       <kernel type="APTM">
-         <period units="ms" value="10" />
+         <period units="ms" value="20" />
          <b_factor value="0.93" />
          <offlinedata>
             <prefix path="./csv_data/Dell9020ThermalProp" />
