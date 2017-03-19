@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-  
-
+# python2.7
 import os
-  
+from Config import Config  
 from xml.etree.ElementTree import ElementTree,Element  
   
 def read_xml(in_path):  
@@ -119,268 +119,234 @@ def make_dir(dir_name):
 	if not os.path.exists(dir_name):
 		os.mkdir(dir_name)
 	else:
-		pass
+		print('{dir} exists ...'.format(dir=dir_name))
 		# delete_file_folder(dir_name)
 		# os.mkdir(dir_name)
-def change_filename(tree,new_filepath,new_filename,kernel_type):
+def make_dirs(dir_name):
+	if not os.path.exists(dir_name):
+		os.makedirs(dir_name)
+	else:
+		print('{dir} exists ...'.format(dir=dir_name))
+def change_filename(config,tree,new_filepath,new_filename):
 	# print(new_filename)
-	base_path = 'result/csv/'
-	new_filename = base_path+new_filename
+	base_path = config.get_write_file_path()
+	new_filename = ''.join([base_path,'/',new_filename])
 	tree_root = tree.getroot()
 	# print tree_root.attrib
 	tree_root.set('name',new_filename)
  	
- 	nodes = find_nodes(tree, "scheduler/kernel") 
-	result_nodes = get_node_by_keyvalue(nodes, {"type":"APTM"}) 
-	change_node_properties(result_nodes, {"type": kernel_type})
+ # 	nodes = find_nodes(tree, "scheduler/kernel") 
+	# result_nodes = get_node_by_keyvalue(nodes, {"type":"APTM"}) 
+	# change_node_properties(result_nodes, {"type": kernel_type})
 	# print(new_filepath)
 	write_xml(tree,"".join([new_filepath,'.xml']))
 
+def get_abs_path_and_filename(config,curr_dir):
+	
+	kernel_type     = config.get_kernel_type()	
+	xml_path        = config.get_read_file_path()
+	read_filepath   = ''.join([config.get_read_file_path(),'/','event/'])
+	read_filename   = ''.join([read_filepath,'example_',kernel_type.lower(),'.xml'])
+	base_filename   = ''.join([curr_dir,'_',kernel_type,'_'])
+	write_xml_path  = ''.join([xml_path,'/',curr_dir,'/'])
+	return read_filename,base_filename,write_xml_path
 
-def change_relative_deadline(kernel_type):
-	base_value = 80
-	read_filename = "".join(['result/xml/event/','example_',kernel_type.lower()])
-	filename = "".join(['relative_deadline_',kernel_type,'_'])
-	make_dir('result/csv/relative_deadline')
-	# filepath = "".join(['./',filename,'.xml'])
-	dirname = 'result/xml/relative_deadline/'
-	make_dir(dirname)
-	tree = read_xml("".join([read_filename,'.xml']))  
+def exe_command(command):
+	command_exe = 'sudo ./main '+command
+	print command_exe
+	if not no_command:
+		os.system(command_exe)
 
-	nodes = find_nodes(tree, "events/relative_deadline") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":str(base_value)})  
+def change_init(config,curr_dir):
+	''' base arg :filename ,path and ...'''
 
-	#new_value = base_value
-	for x in range(0,10):
-		new_value = base_value+x*10
-		new_filename = filename+str(new_value)
-		new_filepath = "".join([dirname,new_filename])
-		print(new_filepath)
-		change_filename(tree,new_filepath, "".join(["relative_deadline/",new_filename]),kernel_type)
-		change_node_properties(result_nodes, {"value": str(new_value)})  
+	read_filename,base_filename,xml_path = get_abs_path_and_filename(config,curr_dir)
+
+	''' xml tree'''
+	tree = read_xml(read_filename)  
+	if curr_dir == 'relative_deadline':
+		base_value = config.get_relative_deadline()
+		nodes = find_nodes(tree, "".join(["events/",curr_dir])) 
+	elif curr_dir == 'exe_factor':
+		base_value = config.get_exe_factor()
+		nodes = find_nodes(tree, "".join(["events/",curr_dir])) 
+	elif curr_dir == 'period':
+		base_value = config.get_kernel_period()
+		nodes = find_nodes(tree, "".join(["scheduler/kernel/",curr_dir])) 
+	elif curr_dir == 'b_factor':
+		base_value = config.get_b_factor()
+		nodes = find_nodes(tree, "".join(["scheduler/kernel/",curr_dir])) 
+	elif curr_dir == 'ton':
+		base_value = config.get_kernel_ton()
+		nodes = find_nodes(tree, "".join(["scheduler/kernel/",curr_dir])) 
+ 	elif curr_dir == 'toff':
+		base_value = config.get_kernel_toff()
+		nodes = find_nodes(tree, "".join(["scheduler/kernel/",curr_dir])) 
+	else:
+		print('dir name error ...')
+		return False
+	
+	result_nodes = get_node_by_keyvalue(nodes, {"value":base_value})  
+	
+	return read_filename,base_filename,xml_path,tree,result_nodes
+def change_exe(config,new_value,base_filename,xml_path,curr_dir,tree,result_nodes):
+	''' change arg 
+	    write to result dir
+	    execute'''
+
+	new_filename = base_filename+str(new_value)
+	new_filepath = "".join([xml_path,new_filename])
+	change_filename(config,tree,new_filepath,"".join([curr_dir, "/",new_filename]))
+	change_node_properties(result_nodes, {"value": str(new_value)})  
 		
-		new_filename = "".join([dirname,'relative_deadline_',kernel_type,'_',str(new_value),'.xml'])
-		write_xml(tree,new_filename)
+	write_filename = "".join([new_filepath,'.xml'])
+	write_xml(tree,write_filename)
+	exe_command(write_filename)
 
-		command_exe = 	'sudo ./main '+new_filename
-		print command_exe
-		if not no_command:
-			os.system(command_exe)
-def change_exe_factor(kernel_type):
-	base_value = 0.1
-	read_filename = "".join(['result/xml/event/','example_',kernel_type.lower()])
-	filename = "".join(['exe_factor_',kernel_type,'_'])
-	# filepath = "".join(['./',filename,'.xml'])
-	make_dir('result/csv/exe_factor')
-	dirname = 'result/xml/exe_factor/'
-	make_dir(dirname)
-	tree = read_xml("".join([read_filename,'.xml']))  
+def change_relative_deadline(config):
 
-	nodes = find_nodes(tree, "events/exe_factor") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":str(0.9)})  
+	curr_dir = 'relative_deadline'
+	read_filename,base_filename,xml_path,tree,result_nodes=change_init(config,curr_dir)
+	
+	new_value = base_value = 120
+	for x in range(0,1):
+		new_value = new_value+x*10
+		change_exe(config,new_value,base_filename,xml_path,curr_dir,tree,result_nodes)
 
-	new_value = base_value
+def change_exe_factor(config):
+	curr_dir = 'exe_factor'
+	read_filename,base_filename,xml_path,tree,result_nodes=change_init(config,curr_dir)
+
+	new_value = base_value = 0.1
 	for x in range(0,10):
 		new_value = base_value+x*0.1
-		new_filename = filename+str(new_value)
-		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,"".join(["exe_factor/",new_filename]),kernel_type)
-		change_node_properties(result_nodes, {"value": str(new_value)})  
-		
-		new_filename = "".join([dirname,'exe_factor_',kernel_type,'_',str(new_value),'.xml'])
-		write_xml(tree,new_filename)
+		change_exe(config,new_value,base_filename,xml_path,curr_dir,tree,result_nodes)
 
-		command_exe = 	'sudo ./main '+new_filename
-		print command_exe
-		if not no_command:
-			os.system(command_exe)
-def change_event_each(kernel_type,eventname,event_period,event_jitter,event_distance,event_wcets):
-	read_filename = "".join(['example_',kernel_type])
-	base_period = "100"
-	base_jitter = "150"
-	base_distance = "0"
-	base_wcets = "{14.2 9 3.6 5.7}"
-	dirname = 'result/xml/event/'
-	make_dir(dirname)
+def change_kernel_period(config):
 
-	tree = read_xml("".join([read_filename,'.xml']))  
-	nodes = find_nodes(tree, "events/period") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":base_period})  
-	change_node_properties(result_nodes, {"value": str(event_period)})
-	write_xml(tree,"".join([dirname,eventname,".xml"]))
+	curr_dir = 'period'
+	read_filename,base_filename,xml_path,tree,result_nodes=change_init(config,curr_dir)
 
-	read_filename = "".join([dirname,eventname])
-	tree = read_xml("".join([read_filename,'.xml']))  
-	nodes = find_nodes(tree,"events/jitter")
-	result_nodes = get_node_by_keyvalue(nodes, {"value":base_jitter})  
-	change_node_properties(result_nodes, {"value": str(event_jitter)})
-	write_xml(tree,"".join([read_filename,".xml"]))
-
-	tree = read_xml("".join([read_filename,'.xml']))  
-	nodes = find_nodes(tree,"events/distance")
-	result_nodes = get_node_by_keyvalue(nodes, {"value":base_distance})  
-	change_node_properties(result_nodes, {"value": str(event_distance)})
-	write_xml(tree,"".join([read_filename,".xml"]))
-
-	tree = read_xml("".join([read_filename,'.xml']))  
-	nodes = find_nodes(tree,"events/wcets")
-	result_nodes = get_node_by_keyvalue(nodes, {"value":base_wcets})  
-	change_node_properties(result_nodes, {"value": str(event_wcets)})
-	write_xml(tree,"".join([read_filename,".xml"]))
-	
-	write_xml(tree,"".join([dirname,"example_",kernel_type,".xml"]))
-
-def change_event(eventname,event_period,event_jitter,event_distance,event_wcets):
-
-	read_filename = 'aptm'
-	change_event_each(read_filename,eventname,event_period,event_jitter,event_distance,event_wcets)
-	read_filename = 'bws'
-	change_event_each(read_filename,eventname,event_period,event_jitter,event_distance,event_wcets)
-	read_filename = 'pboo'
-	change_event_each(read_filename,eventname,event_period,event_jitter,event_distance,event_wcets)
-
-def change_kernel_period(kernel_type):
-	base_value = 10
-	read_filename = "".join(['result/xml/event/','example_',kernel_type.lower()])
-	filename = "".join(['kernel_period_',kernel_type,'_'])
-	# filepath = "".join(['./',filename,'.xml'])
-	make_dir('result/csv/kernel_period')
-	dirname = 'result/xml/kernel_period/'
-	make_dir(dirname)
-	tree = read_xml("".join([read_filename,'.xml']))  
-
-	nodes = find_nodes(tree, "scheduler/kernel/period") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":str(base_value)})  
-
-	new_value = base_value
+	new_value = base_value = 10
 	for x in range(0,10):
 		new_value = base_value+ x*10
-		new_filename = filename+str(new_value)
-		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,"".join(["kernel_period/",new_filename]),kernel_type)
-		change_node_properties(result_nodes, {"value": str(new_value)})  
-		
-		new_filename = "".join([dirname,'kernel_period_',kernel_type,'_',str(new_value),'.xml'])
-		write_xml(tree,new_filename)
+		change_exe(config,new_value,base_filename,xml_path,curr_dir,tree,result_nodes)
+def change_kernel_factor(config):
+	
+	curr_dir = 'b_factor'
+	read_filename,base_filename,xml_path,tree,result_nodes=change_init(config,curr_dir) 
 
-		command_exe = 	'sudo ./main '+new_filename
-		print command_exe
-		if not no_command:
-			os.system(command_exe)
-def change_kernel_factor(kernel_type):
-	base_value = 0.6
-	read_filename = "".join(['result/xml/event/','example_',kernel_type.lower()])
-	filename = "".join(['kernel_factor_',kernel_type,'_'])
-	make_dir('result/csv/kernel_factor')
-	# filepath = "".join(['./',filename,'.xml'])
-	dirname = 'result/xml/kernel_factor/'
-	make_dir(dirname)
-	tree = read_xml("".join([read_filename,'.xml']))  
-
-	nodes = find_nodes(tree, "scheduler/kernel/b_factor") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":str(0.93)})  
-
-	new_value = base_value
+	new_value = base_value = 0.6
 	for x in range(61,97):
 		new_value = x*0.01
-		new_filename = filename+str(new_value)
-		new_filepath = "".join([dirname,new_filename])
-		change_filename(tree,new_filepath,"".join(["kernel_factor/",new_filename]),kernel_type)
-		print new_value
-		change_node_properties(result_nodes, {"value": str(new_value)})  
-		
-		new_filename = "".join([dirname,'kernel_factor_',kernel_type,'_',str(new_value),'.xml'])
-		write_xml(tree,new_filename)
-		command_exe = 	'sudo ./main '+new_filename
-		print command_exe
-		if not no_command:
-			os.system(command_exe)
+		change_exe(config,new_value,base_filename,xml_path,curr_dir,tree,result_nodes)
 
-def change_kernel_ton(kernel_type,new_value):
-	base_value = "{10,10,10,10}"
-	read_filename = "".join(['result/xml/event/','example_',kernel_type.lower()])
-	filename = "".join(['kernel_ton_',kernel_type,'_'])
-	make_dir('result/csv/kernel_ton')
-	# filepath = "".join(['./',filename,'.xml'])
-	dirname = 'result/xml/kernel_ton/'
-	make_dir(dirname)
-	tree = read_xml("".join([read_filename,'.xml']))  
+def change_kernel_ton(config,new_value):
+	curr_dir = 'ton'
 
-	nodes = find_nodes(tree, "scheduler/kernel/ton") 
+	read_filename,base_filename,xml_path,tree,result_nodes=change_init(config,curr_dir)
+	change_exe(config,new_value,base_filename,xml_path,curr_dir,tree,result_nodes)
+
+def change_kernel_toff(config,new_value):
+	curr_dir = 'toff'
+
+	read_filename,base_filename,xml_path,tree,result_nodes=change_init(config,curr_dir)
+	change_exe(config,new_value,base_filename,xml_path,curr_dir,tree,result_nodes)
+
+def change_event_each_arg(config,arg,new_value,eventname):
+
+	kernel_type = config.get_kernel_type()
+	read_filepath = config.get_read_file_path()
+	read_filename = "".join([read_filepath,'/event/example_',kernel_type, '.xml'])
+	write_filename = read_filename
+	if arg == 'period':
+		base_value = config.get_event_period()
+	elif arg == 'jitter':
+		base_value = config.get_event_jitter()
+	elif arg == 'distance':
+		base_value = config.get_event_distance()
+	elif arg == 'wcets':
+		base_value = config.get_event_wcets()
+	else:
+		print('init event ... ')
+		read_filename = "".join(['example_',kernel_type, '.xml'])
+		# write_filename = "".join([config.get_read_file_path,'/event/',read_filename])
+		tree = read_xml(read_filename) 
+		write_xml(tree,write_filename)
+		return True
+
+	tree = read_xml(read_filename)  
+	nodes = find_nodes(tree,"events/"+arg)
 	result_nodes = get_node_by_keyvalue(nodes, {"value":base_value})  
-
-	change_node_properties(result_nodes, {"value": new_value})
-	new_filename = "".join([dirname,'kernel_ton_',kernel_type,'_',str(new_value),'.xml'])
-	write_xml(tree,new_filename)
+	change_node_properties(result_nodes, {"value": str( new_value)})
+	write_xml(tree,write_filename)
+	write_xml(tree,"".join([read_filepath,'/event/',eventname,'.xml']))
+def change_event_each_type(config,eventname,event_period,event_jitter,event_distance,event_wcets):
 	
-	command_exe = 	'sudo ./main '+new_filename
-	print command_exe
-	if not no_command:
-		os.system(command_exe)
-
-def change_kernel_toff(kernel_type,new_value):
-	base_value = "{30,20,20,20}"
-	read_filename = "".join(['result/xml/event/','example_',kernel_type.lower()])
-	filename = "".join(['kernel_toff_',kernel_type,'_'])
-	make_dir('result/csv/kernel_toff')
-	# filepath = "".join(['./',filename,'.xml'])
-	dirname = 'result/xml/kernel_toff/'
-	make_dir(dirname)
-	tree = read_xml("".join([read_filename,'.xml']))  
-
-	nodes = find_nodes(tree, "scheduler/kernel/toff") 
-	result_nodes = get_node_by_keyvalue(nodes, {"value":base_value})  
-
-	change_node_properties(result_nodes, {"value": new_value})
-	new_filename = "".join([dirname,'kernel_toff_',kernel_type,'_',str(new_value),'.xml'])
-	write_xml(tree,new_filename)
+	change_event_each_arg(config,"","","")
+	change_event_each_arg(config,"period",event_period,eventname)
+	change_event_each_arg(config,"jitter",event_jitter,eventname)
+	change_event_each_arg(config,"distance",event_distance,eventname)
+	change_event_each_arg(config,"wcets",event_wcets,eventname)
 	
-	command_exe = 	'sudo ./main '+new_filename
-	print command_exe
-	if not no_command:
-		os.system(command_exe)
 
-def test_different_relative_deadline():
-	change_relative_deadline("APTM")
-	change_relative_deadline("BWS")
-	change_relative_deadline("PBOO")	
+def change_event(config,eventname,event_period,event_jitter,event_distance,event_wcets):
 
-def test_different_exe_factor():
-	change_exe_factor("APTM")
-	change_exe_factor("BWS")
-	change_exe_factor("PBOO")
+	change_event_each_type(config,eventname,event_period,event_jitter,event_distance,event_wcets)
+	
+def test_different_relative_deadline(config_aptm,config_bws,config_pboo):
 
+	change_relative_deadline(config_aptm)
+	change_relative_deadline(config_bws)
+	change_relative_deadline(config_pboo)	
 
+def test_different_exe_factor(config_aptm,config_bws,config_pboo):
+	change_exe_factor(config_aptm)
+	change_exe_factor(config_bws)
+	change_exe_factor(config_pboo)
 
+def prepare_dir():
 
-
-
-
+	xml_path = config.get_read_file_path()
+	csv_path = config.get_write_file_path()
+	make_dirs(xml_path)
+	make_dirs(csv_path)	
+	function_dirs = ['relative_deadline','exe_factor','period','b_factor','ton','toff','event']
+	for function_dir in function_dirs:
+		xml_dir = ''.join([xml_path,'/',function_dir])
+		csv_dir = ''.join([csv_path,'/',function_dir])
+		make_dirs(xml_dir)
+		make_dirs(csv_dir)
 
 if __name__ == "__main__": 
-	make_dir('result')
-	make_dir('result/xml')
-	make_dir('result/csv')
 	global event 
 	event = "event1"
 	
 	global no_command
 	no_command = False
+	no_command = True
 
-	change_event(event,120,151,1,"{14.2 10 3.6 5.7}")
+	config = Config('global')
+	config_aptm = Config('APTM')
+	config_bws = Config('BWS')
+	config_pboo = Config('PBOO')
+	prepare_dir()
+	change_event(config_aptm, event,120,151,1,"{14.2 10 3.6 5.7}")
+	change_event(config_bws, event,120,151,1,"{14.2 10 3.6 5.7}")
+	change_event(config_pboo, event,120,151,1,"{14.2 10 3.6 5.7}")
 
-	test_different_relative_deadline()
-	# test_different_exe_factor()
+	test_different_relative_deadline(config_aptm,config_bws,config_pboo)
+	test_different_exe_factor(config_aptm,config_bws,config_pboo)
 
-	# change_kernel_period("APTM")
-	# change_kernel_period("BWS")
+	change_kernel_period(config_aptm)
+	change_kernel_period(config_bws)
 	
 
-	# change_kernel_factor("APTM")
+	change_kernel_factor(config_aptm)
 	
-	# change_kernel_ton("PBOO","{10,10,10,10}")
+	change_kernel_ton(config_pboo,"{10,10,10,10}")
 
-	# change_kernel_toff("PBOO","{10,10,10,10}")
+	change_kernel_toff(config_pboo,"{10,10,10,10}")
 
 
 

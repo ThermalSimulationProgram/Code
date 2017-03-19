@@ -1,0 +1,28 @@
+<config name="example">
+
+    <path>
+      <readFilePath value="result/xml"/>
+      <writeFilePath value="result/csv"/>
+      <filename value="example_aptm.xml"/>
+      <filepath value=""/>
+   </path>
+
+   <arg>
+      <relativeDeadline value="120" />
+      <exeFactor value="0.9" />
+      <kernelPeriod value="10" />
+      <bFactor value="0.93" />
+      <ton value="{10,10,10,10}"/>
+      <toff value="{30,20,20,20}"/>
+    </arg>
+
+    <event>
+       <eventPeriod value="100"/>
+       <eventJitter   value="150"/>
+       <eventDistance value="0"/>
+       <eventWcets value="{14.2 9 3.6 5.7}"/>
+    </event>
+
+</config>
+
+

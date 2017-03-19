@@ -1,11 +1,11 @@
-<simulation name="example_pboo">
+<simulation name="warming_curve">
 
-   <duration value="60" units="sec"/>
+   <duration value="130" units="sec"/>
 
    <pipeline stagenumber="4"/>
 
    <events>
-      <csv_path value="./csv_data/event_trace_60s.csv" units="ms"/>
+      <csv_path value="" units="ms"/>
       <period value="100" units="ms"/>
       <jitter value="150" units="ms"/>
       <distance value="0" units="ms"/>
@@ -16,8 +16,8 @@
 
    <scheduler>
       <kernel type="PBOO">
-         <ton value="{15.2 10 4.6 6.7}" units="ms"/>
-         <toff value="{6.5 12.6 11.1 9.6}" units="ms"/>
+         <ton value="{10,10,10,10}" units="ms"/>
+         <toff value="{30,20,20,20}" units="ms"/>
       </kernel>
    </scheduler>
 
