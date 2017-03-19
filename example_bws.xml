@@ -1,4 +1,4 @@
-<simulation name="example">
+<simulation name="example_bws">
 
    <duration value="60" units="sec"/>
 
