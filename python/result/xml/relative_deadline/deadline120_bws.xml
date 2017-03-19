@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<simulation name="result/csv/ deadline120_bws">
+	<duration unit="sec" value="62"/>
+	<pipeline stagenumber="4"/>
+	<events>
+		<csv_path value="./csv_data/event_trace_60s.csv"/>
+		<period unit="ms" value="100"/>
+		<jitter unit="ms" value="150"/>
+		<distance unit="ms" value="0"/>
+		<wcets unit="ms" value="{14.2 9 3.6 5.7}"/>
+		<relative_deadline unit="ms" value="120"/>
+		<exe_factor value="0.9"/>
+	</events>
+	<scheduler>
+		<kernel type="BWS">
+			<period unit="ms" value="10"/>
+		</kernel>
+	</scheduler>
+</simulation>

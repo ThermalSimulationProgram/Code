@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<simulation name="testxml2">
+	<duration unit="ms" value="70"/>
+	<pipeline stagenumber="70"/>
+	<events>
+		<csv_path value="70"/>
+		<period unit="ms" value="70"/>
+		<jitter unit="ms" value="70"/>
+		<distance unit="ms" value="70"/>
+		<wcets unit="ms" value="70"/>
+	</events>
+</simulation>
