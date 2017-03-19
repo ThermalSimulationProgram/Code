@@ -148,10 +148,16 @@ void BWSKernel::calcBWS(vector<double> & tons,
 			SSS1                           = newSSS1;
 		}
 
-		toffs = tau0 + taue;
+		toffs = tau0 + taue - 1;
 	}else{
 		toffs = vector<double>(nstages, 0);
 		
+	}
+	for (int i = 0; i < (int) toffs.size(); ++i)
+	{
+		if (toffs[i] < 0){
+			toffs[i] = 0;
+		}
 	}
 	tons = vector<double>(nstages, 10000);	
 }
