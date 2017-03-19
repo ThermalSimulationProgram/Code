@@ -62,6 +62,7 @@ FileOperator::~FileOperator(){
 		save();
 	}
 	close();
+	changePermission();
 }
 
 double FileOperator::readDouble(){
