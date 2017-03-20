@@ -69,7 +69,7 @@ const std::string& unit){
 template<typename T> std::vector<T> parseTimeVectorMicro(pugi::xml_node n){
 	std::vector<double> initvalues = stringToVector<double>(n.attribute("value").value());
 
-	std::string unit = n.attribute("units").value();
+	std::string unit = n.attribute("unit").value();
 	std::vector<T> ret = formatTimeMicros<T>(initvalues, unit);
 
 	return ret;	

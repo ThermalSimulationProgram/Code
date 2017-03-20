@@ -11,7 +11,7 @@
   </simulation>
 
   <events>
-    <csv_path value="./csv_data/event_trace_60s.csv"/>
+    <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>
     <eventPeriod value="100" unit="ms"/>
     <eventJitter   value="150" unit="ms"/>
     <eventDistance value="0" unit="ms"/>

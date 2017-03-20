@@ -48,7 +48,7 @@ int Parser::parseFile(){
 	vector<unsigned long> rl_release_times;
 	xml_node event_node     = sim_node.child("events");
 	string arrival_csv_path = event_node.child("csv_path").attribute("value").value();
-	string unit             = event_node.child("csv_path").attribute("units").value();
+	string unit             = event_node.child("csv_path").attribute("unit").value();
 	
 	if(arrival_csv_path.length() > 0){
 		vector<double> initv = loadVectorFromFile<double> (arrival_csv_path);
@@ -224,7 +224,7 @@ unsigned long Parser::parseTimeMircroSecond(xml_node n){
 
 struct timespec Parser::parseTime(xml_node n) {
 	int time     = n.attribute("value").as_int();
-	string units = n.attribute("units").value();
+	string units = n.attribute("unit").value();
 	struct timespec ret;
 
 	if(units == "sec") {

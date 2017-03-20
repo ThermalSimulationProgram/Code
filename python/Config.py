@@ -64,6 +64,7 @@ class Config(object):
 			self.__csv_path.set_file_name(same_filename)
 		else:
 			print "Illegal kernel type input!"
+
 	'''***********************************************'''
 
 	def save_to_xml(self):
@@ -84,12 +85,12 @@ class Config(object):
 		simulation.append(pipeline)
 
 		events = create_node('events', {}, "")
-		csv_path = create_node('csv_path', {'value':self.__event_csv_path}, "")
-		period = create_time_node('period', self.__event_period_value, self.__event_period_unit);
-		distance = create_time_node('distance', self.__event_distance_value, self.__event_distance_unit);
-		jitter = create_time_node('jitter', self.__event_jitter_value,self. __event_jitter_unit);
-		wcets = create_time_node('wcets', self.__event_wcets_value, self.__event_wcets_unit);
-		deadline = create_time_node('relative_deadline', self.__relative_deadline_value, self.__relative_deadline_unit);
+		csv_path = create_time_node('csv_path', self.__event_csv_path, self.__event_csv_path_unit)
+		period = create_time_node('period', self.__event_period_value, self.__event_period_unit)
+		distance = create_time_node('distance', self.__event_distance_value, self.__event_distance_unit)
+		jitter = create_time_node('jitter', self.__event_jitter_value,self. __event_jitter_unit)
+		wcets = create_time_node('wcets', self.__event_wcets_value, self.__event_wcets_unit)
+		deadline = create_time_node('relative_deadline', self.__relative_deadline_value, self.__relative_deadline_unit)
 		exe_factor = create_node('exe_factor', {'value':str(self.__exe_factor)}, "")
 		events.append(csv_path)
 		events.append(period)
@@ -171,7 +172,7 @@ class Config(object):
 
 		## event setting
 		nodes = find_nodes(tree, "events/csv_path")
-		self.__event_csv_path = nodes[0].attrib['value']
+		(self.__event_csv_path, self.__event_csv_path_unit) = parseTimeNode(nodes[0])
 
 		# deadline
 		nodes = find_nodes(tree, "events/relativeDeadline")
