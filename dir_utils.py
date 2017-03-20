@@ -27,7 +27,9 @@ def exe_command(command, no_command = False):
 
 def make_dir(dir_name):
     command = 'mkdir -p ' + dir_name
+    changepermission = 'chmod 666 ' + dir_name
     os.system(command)
+    #os.system(changepermission)
 
 def make_dirs(dir_name):
     if not os.path.exists(dir_name):
