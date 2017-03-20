@@ -1,27 +1,34 @@
-<config name="example">
+<config name="ExperimentSetup">
 
-    <path>
-      <readFilePath value="result/xml"/>
-      <writeFilePath value="result/csv"/>
-      <filename value="example_aptm.xml"/>
-      <filepath value=""/>
-   </path>
+  <path>
+    <xml_root_path value="result/xml/"/>
+    <csv_root_path value="result/csv/"/>
+  </path>
 
-   <arg>
-      <relativeDeadline value="120" />
-      <exeFactor value="0.9" />
-      <kernelPeriod value="10" />
-      <bFactor value="0.93" />
-      <ton value="{10,10,10,10}"/>
-      <toff value="{30,20,20,20}"/>
-    </arg>
+  <simulation name="example">
+    <duration value="62" unit="sec"/>
+    <pipeline stagenumber="4"/>
+  </simulation>
 
-    <event>
-       <eventPeriod value="100"/>
-       <eventJitter   value="150"/>
-       <eventDistance value="0"/>
-       <eventWcets value="{14.2 9 3.6 5.7}"/>
-    </event>
+  <events>
+    <csv_path value="../csv_data/event_trace_60s.csv" unit="ms"/>
+    <eventPeriod value="100" unit="ms"/>
+    <eventJitter   value="150" unit="ms"/>
+    <eventDistance value="0" unit="ms"/>
+    <eventWcets value="{14.2 9 3.6 5.7}" unit="ms"/>
+    <relativeDeadline value="120"  unit="ms"/>
+    <exeFactor value="0.9" />
+  </events>
+
+  <all_kernel_args>
+    <kernelPeriod value="10" unit="ms"/>
+    <bFactor value="0.93" />
+    <offlinedata>
+      <prefix value="./csv_data/Dell9020ThermalProp" />
+    </offlinedata>
+    <ton value="{10,10,10,10}" unit="ms"/>
+    <toff value="{30,20,20,20}" unit="ms"/>
+  </all_kernel_args>
 
 </config>
 

@@ -18,8 +18,8 @@ def delete_file_folder(src):
             pass 
 
 
-def exe_command(command, no_command = True):
-	command_exe = 'sudo ./main '+ command
+def exe_command(command, no_command = False):
+	command_exe = 'sudo ../main '+ command
 	print command_exe
 	if not no_command:
 		os.system(command_exe)
