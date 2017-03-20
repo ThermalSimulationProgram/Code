@@ -26,7 +26,7 @@ def exe_command(command, no_command = False):
 
 
 def make_dir(dir_name):
-    command = 'mkdir -p ' + dir_name
+    command = 'sudo -u long mkdir -p ' + dir_name
     changepermission = 'chmod 666 ' + dir_name
     os.system(command)
     #os.system(changepermission)

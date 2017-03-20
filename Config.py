@@ -42,6 +42,9 @@ class FilePath():
 	def get_final_path(self):
 		return self.finalPath
 
+	def get_filename(self):
+		return self.filename
+
 
 
 
@@ -234,8 +237,8 @@ class Config(object):
 	def get_write_file_path(self):
 		return self.__write_file_path
 
-	def get_filename(self):
-		return self.__filename
+	def get_csv_filepath(self):
+		return self.__csv_path.get_final_path()
 
 	def get_filepath(self):
 		return self.__filepath

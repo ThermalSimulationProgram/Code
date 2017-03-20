@@ -5,6 +5,7 @@ from Config import Config
 from xml_api import * 
  
 import time
+import csv
 
 def run_all_kernels(config):
 	sleep_length = 1
@@ -48,17 +49,36 @@ def change_exe_factor():
 		config.set_xml_csv_file_prefix('exe_factor' + str(new_value))
 		run_all_kernels(config)
 
+def readcsv(name):
+	tempdata = []
+	with open(name, 'rb') as csvfile:
+		r = csv.reader(csvfile, delimiter = ',')
+		for row in r:
+			for d in row:
+				tempdata.append(float(d))
+	return tempdata
+
 def get_best_bfactor(config):
 	config.set_xml_csv_sub_dir('bfactor_temp/')
 	config.set_simulation_duration(20)
+	T = []
+	bestT = 200
+	bestb = 0.9
 	for b in range(50, 98, 2):
 		config.set_b_factor(b*0.01)
 		config.set_xml_csv_file_prefix('bfactor' + str(b))
 		config.set_kernel('aptm')
 		config.run()
 		time.sleep(5)
+		csvfile_name = config.get_csv_filepath() + '_result.csv'
+		tempdata = readcsv(csvfile_name)
+		thisT = tempdata[5]
+		T.append(thisT)
+		if (thisT < bestT):
+			bestT = thisT
+			bestb = b
 
-
+	return (bestb, bestT, T)
 # def change_exe_factor(config):
 # 	curr_dir = 'exe_factor'
 # 	read_filename,base_filename,xml_path,tree,result_nodes=change_init(config,curr_dir)
@@ -157,7 +177,10 @@ if __name__ == "__main__":
 	#change_relative_deadline()
 	#change_exe_factor()
 	config = Config()
-	get_best_bfactor(config)
+	(b, t, T) = get_best_bfactor(config)
+	print b
+	print t
+	print T
 
 
 
