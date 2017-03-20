@@ -1,7 +1,5 @@
 #coding:utf-8
 
-<config name="example">
-
 
 import os
 import copy
@@ -132,7 +130,7 @@ class Config(object):
 
 	def run(self):
 		self.save_to_xml()
-		exe_command(self.__xml_path.get_final_path())
+		exe_command(self.__xml_path.get_final_path(), False)
 		
 
 	def __load_xml_config(self, xml_path = 'Config.xml'):

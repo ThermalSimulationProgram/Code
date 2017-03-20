@@ -2,7 +2,7 @@
 
   <path>
     <xml_root_path value="result/xml/"/>
-    <csv_root_path value="result/csv/"/>
+    <csv_root_path value="../result/csv/"/>
   </path>
 
   <simulation name="example">

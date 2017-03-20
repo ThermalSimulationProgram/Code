@@ -15,9 +15,6 @@ def run_all_kernels(config):
 		time.sleep(sleep_length)
 
 
-
-
-
 def change_relative_deadline():
 
 	config = Config()
@@ -26,7 +23,7 @@ def change_relative_deadline():
 
 	
 	base_value = 120
-	for x in range(0,1):
+	for x in range(0, 1):
 		new_value = base_value + x*10
 		# change the value
 		config.set_relative_deadline(new_value)
