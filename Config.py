@@ -1,28 +1,235 @@
 #coding:utf-8
 
-from xml.etree.ElementTree import ElementTree,Element
+
 import os
+import copy
+
+  
+from xml_api import *
+from dir_utils import *
+
+
+
+	
+class FilePath():
+	def __init__(self, root_path, sub_dir = ' ', filename = ' '):
+		self.rootPath = root_path
+		self.subDir = sub_dir
+		self.filename = filename
+		self.update_final_path()
+
+	def update_final_path(self):
+		self.finalPath = self.rootPath + self.subDir + self.filename
+
+	def set_root_path(self, path):
+		self.rootPath = path
+		self.update_final_path()
+
+	def set_sub_dir(self, subdir):
+		self.subDir = subdir
+		self.update_final_path()
+
+	def set_file_name(self, name):
+		self.filename = name
+		self.update_final_path()
+
+	def get_root_path(self):
+		return self.rootPath
+
+	def get_sub_dir_path(self):
+		return self.rootPath + self.subDir
+
+	def get_final_path(self):
+		return self.finalPath
+
+
+
 
 class Config(object):
 	"""docstring for config"""
-	def __init__(self,kernel_type):
+	def __init__(self, xml_path='Config.xml'):
 		super(Config, self).__init__()
-		# self.arg = arg
-		# self.__kernel_type = 'APTM'
-		# self.__read_file_path = ''
-		# self.__write_file_path = ''
-		# self.__filename = ''
-		# self.__filepath = ''
-		self.__kernel_type = kernel_type
-		self.__load_xml_config()
+		self.__load_xml_config(xml_path)
+
+
+	def set_kernel(self, kernel_type):
+
+		kernel_type_lower = kernel_type.lower()
+
+		legal_kernels = ['aptm', 'bws', 'pboo', 'ge']
+		if kernel_type_lower in legal_kernels:
+			self.__kernel_type = kernel_type_lower
+			same_filename = self.__xmlfileprefix + '_' + kernel_type_lower
+			self.__xml_path.set_file_name(same_filename)
+			self.__csv_path.set_file_name(same_filename)
+		else:
+			print "Illegal kernel type input!"
 
 	'''***********************************************'''
+
+	def save_to_xml(self):
+		legal_kernels = ['aptm', 'bws', 'pboo', 'ge']
+		if not self.__kernel_type in legal_kernels:
+			print "kernel type has not been set yet!"
+			return
+
+		make_dir(self.__xml_path.get_root_path())
+		make_dir(self.__xml_path.get_sub_dir_path())
+		make_dir(self.__csv_path.get_root_path())
+		make_dir(self.__csv_path.get_sub_dir_path())
+
+		tree = ElementTree()
+		simulation = create_node('simulation', { 'name': self.__csv_path.get_final_path() }, "")
+
+		duration = create_time_node('duration', self.__duration_value, self.__duration_unit);
+		pipeline = create_node('pipeline', {'stagenumber':str(self.__stage_number)}, "")
+		simulation.append(duration)
+		simulation.append(pipeline)
+
+		events = create_node('events', {}, "")
+		csv_path = create_time_node('csv_path', self.__event_csv_path, self.__event_csv_path_unit)
+		period = create_time_node('period', self.__event_period_value, self.__event_period_unit)
+		distance = create_time_node('distance', self.__event_distance_value, self.__event_distance_unit)
+		jitter = create_time_node('jitter', self.__event_jitter_value,self. __event_jitter_unit)
+		wcets = create_time_node('wcets', self.__event_wcets_value, self.__event_wcets_unit)
+		deadline = create_time_node('relative_deadline', self.__relative_deadline_value, self.__relative_deadline_unit)
+		exe_factor = create_node('exe_factor', {'value':str(self.__exe_factor)}, "")
+		events.append(csv_path)
+		events.append(period)
+		events.append(jitter)
+		events.append(distance)
+		events.append(wcets)
+		events.append(deadline)
+		events.append(exe_factor)
+		simulation.append(events)
+
+		scheduler = create_node('scheduler', {}, "")
+		kernel = create_node('kernel', {'type':self.__kernel_type.upper()}, "")
+		if ((self.__kernel_type == 'pboo') or (self.__kernel_type == 'ge')):
+			ton = create_time_node('ton', self.__kernel_ton_value, self.__kernel_ton_unit)
+			toff = create_time_node('toff', self.__kernel_toff_value, self.__kernel_toff_unit)
+			kernel.append(ton)
+			kernel.append(toff)
+		else:
+			kernel_period = create_time_node('period', self.__kernel_period_value, self.__kernel_period_unit)
+			kernel.append(kernel_period)
+			if self.__kernel_type == 'aptm':
+				bfactor = create_node('b_factor', {'value':str(self.__kernel_b_factor)},"")
+				offlinedata = create_node('offlinedata', {}, "")
+				prefix = create_node('prefix', {'path':self.__kernel_offline_prefix}, "")
+				offlinedata.append(prefix)
+
+				kernel.append(bfactor)
+				kernel.append(offlinedata)
+
+		scheduler.append(kernel)
+		simulation.append(scheduler)
+
+		tree._setroot(simulation)
+
+		saved_xml_name = self.__xml_path.get_final_path() + '.xml'
+		pretty_write_xml(tree, saved_xml_name)
+
+	def run(self):
+		self.save_to_xml()
+		main_to_xml_path = './' + self.__xml_path.get_final_path()
+		exe_command(main_to_xml_path, False)
+		
+
+	def __load_xml_config(self, xml_path = 'Config.xml'):
+		tree = ElementTree()
+		tree.parse(xml_path)
+
+		## xml file saving path setting, csv result saving path setting
+		nodes = find_nodes(tree,"path/xml_root_path")
+		xmlpath = nodes[0].attrib['value']
+		self.__xml_path = FilePath(xmlpath)
+
+		nodes = find_nodes(tree,"path/csv_root_path")
+		csvpath = nodes[0].attrib['value']
+		self.__csv_path = FilePath(csvpath)
+		
+		
+		self.__xmlfilename = ''
+		self.__xmlfileprefix = ''
+
+		self.__csvfilename = ''
+		self.__csvfileprefix = ''
+
+
+		
+		
+		## simulation platform setting
+		# simulation name
+		nodes = find_nodes(tree, "simulation")
+		self.__name  = nodes[0].attrib['name']
+
+		# simulation duration
+		nodes = find_nodes(tree,"simulation/duration")
+		(self.__duration_value, self.__duration_unit) = parseTimeNode(nodes[0])
+
+		# pipeline stage number
+		nodes = find_nodes(tree,"simulation/pipeline")
+		self.__stage_number = nodes[0].attrib['stagenumber']
+
+
+		## event setting
+		nodes = find_nodes(tree, "events/csv_path")
+		(self.__event_csv_path, self.__event_csv_path_unit) = parseTimeNode(nodes[0])
+
+		# deadline
+		nodes = find_nodes(tree, "events/relativeDeadline")
+		(self.__relative_deadline_value, self.__relative_deadline_unit) = parseTimeNode(nodes[0])
+
+		# exefactor
+		nodes = find_nodes(tree,"events/exeFactor")
+		self.__exe_factor = nodes[0].attrib['value']
+
+		# period
+		nodes = find_nodes(tree,"events/eventPeriod")
+		(self.__event_period_value, self.__event_period_unit) = parseTimeNode(nodes[0])
+		
+		#jitter
+		nodes = find_nodes(tree,"events/eventJitter")
+		(self.__event_jitter_value, self.__event_jitter_unit) = parseTimeNode(nodes[0])
+
+		# minimal interval distance
+		nodes = find_nodes(tree,"events/eventDistance")
+		(self.__event_distance_value, self.__event_distance_unit) = parseTimeNode(nodes[0])
+
+		# wcets
+		nodes = find_nodes(tree,"events/eventWcets")
+		(self.__event_wcets_value, self.__event_wcets_unit) = parseTimeNode(nodes[0])
+
+		## load default arguments for all types of kernels
+		# adaption period, for APTM and BWS
+		nodes = find_nodes(tree,"all_kernel_args/kernelPeriod")
+		(self.__kernel_period_value, self.__kernel_period_unit) = parseTimeNode(nodes[0])
+
+		# static ton, for PBOO 
+		nodes = find_nodes(tree,"all_kernel_args/ton")
+		(self.__kernel_ton_value, self.__kernel_ton_unit) = parseTimeNode(nodes[0])
+
+		# static toff, for PBOO
+		nodes = find_nodes(tree,"all_kernel_args/toff")
+		(self.__kernel_toff_value, self.__kernel_toff_unit) = parseTimeNode(nodes[0])
+
+		# b factor, for APTM
+		nodes = find_nodes(tree,"all_kernel_args/bFactor")
+		self.__kernel_b_factor = nodes[0].attrib['value']
+
+		# offline data path and filename prefix, for APTM
+		nodes = find_nodes(tree,"all_kernel_args/offlinedata/prefix")
+		self.__kernel_offline_prefix = nodes[0].attrib['value']
+
+
+		print('init config end ...')
+
+
 
 	def get_kernel_type (self):
 		return	self.__kernel_type.lower()
 
-	def get_read_file_path(self):
-		return self.__read_file_path
 
 	def get_write_file_path(self):
 		return self.__write_file_path
@@ -34,151 +241,104 @@ class Config(object):
 		return self.__filepath
 
 	def get_relative_deadline(self):
-		return self.__relative_deadline
+		return self.__relative_deadline_value
 
 	def get_exe_factor(self):
 		return self.__exe_factor
 
 	def get_kernel_period(self):
-		return self.__kernel_period
+		return self.__kernel_period_value
 
 	def get_b_factor(self):
-		return self.__b_factor
+		return self.__kernel_b_factor
 
 	def get_kernel_ton(self):
-		return self.__kernel_ton
+		return self.__kernel_ton_value
 
 	def get_kernel_toff(self):
-		return self.__kernel_toff
+		return self.__kernel_toff_value
 
 	def get_event_period(self):
-		return self.__event_period
+		return self.__event_period_value
 
 	def get_event_jitter(self):
-		return self.__event_jitter
+		return self.__event_jitter_value
 
 	def get_event_distance(self):
-		return self.__event_distance
+		return self.__event_distance_value
 
 	def get_event_wcets(self):
-		return self.__event_wcets
+		return self.__event_wcets_value
 
 	'''***********************************************'''
+	def set_simulation_duration(self, duration):
+		self.__duration_value = duration
+
+	def set_xml_csv_file_prefix(self, prefix):
+		self.__xmlfileprefix = prefix
+		self.__csvfileprefix = prefix
 
 	def set_kernel_type(self, kernel_type):
-		self.__kernel_type = kernel_type
+		self.set_kernel(kernel_type)
 
-	def set_read_file_path(self, read_file_path):
-		self.__read_file_path = read_file_path
+	def set_xml_csv_sub_dir(self, subdir):
+		self.set_xml_sub_dir(subdir)
+		self.set_csv_sub_dir(subdir)
 
-	def set_write_file_path(self, write_file_path):
-		self.__write_file_path = write_file_path
+	def set_xml_sub_dir(self, subdir):
+		self.__xml_path.set_sub_dir(subdir)
 
-	def set_filename(self, filename):
-		self.__filename = filename
+	def set_csv_sub_dir(self, subdir):
+		self.__csv_path.set_sub_dir(subdir)
 
-	def set_filepath(self, filepath):
-		self.__filepath = filepath
+	def set_xml_filename(self, filename):
+		self.__xml_path.set_file_name(filename)
+
+	def set_csv_filename(self, filename):
+		self.__csv_path.set_file_name(filename)
 
 	def set_relative_deadline(self, relative_deadline):
-		self.__relative_deadline = relative_deadline
+		self.__relative_deadline_value = relative_deadline
 
 	def set_exe_factor(self, exe_factor):
 		self.__exe_factor = exe_factor
 
 	def set_kernel_period(self, kernel_period):
-		self.__kernel_period = kernel_period
+		self.__kernel_period_value = kernel_period
 
 	def set_b_factor(self,b_factor):
-		self.__b_factor = b_factor
+		self.__kernel_b_factor = b_factor
 
 	def set_kernel_ton(self,ton):
-		self.__kernel_ton = ton
+		self.__kernel_ton_value = ton
 
 	def set_kernel_toff(self,toff):
-		self.__kernel_toff = toff
+		self.__kernel_toff_value = toff
 
 	def set_event_period(self,event_period):
-		self.__event_period = event_period
+		self.__event_period_value = event_period
 
 	def set_event_jitter(self,event_jitter):
-		 self.__event_jitter = event_jitter
+		 self.__event_jitter_value = event_jitter
 
 	def set_event_distance(self,event_distance):
-		 self.__event_distance = event_distance
+		 self.__event_distance_value = event_distance
 
 	def set_event_wcets(self,event_wcets):
-		 self.__event_wcets = event_wcets
-
-	'''***********************************************'''
+		 self.__event_wcets_value = event_wcets
 
 
-	def __find_nodes(self,tree, path):  
-	    '''''查找某个路径匹配的所有节点 
-	       tree: xml树 
-	       path: 节点路径'''  
-	    return tree.findall(path) 
-
-	def __get_node_by_keyvalue(self,nodelist, kv_map):  
-	    '''''根据属性及属性值定位符合的节点，返回节点 
-	       nodelist: 节点列表 
-	       kv_map: 匹配属性及属性值map'''  
-	    result_nodes = []  
-	    for node in nodelist:  
-	        if if_match(node, kv_map):  
-	            result_nodes.append(node)  
-	    return result_nodes  
-
-	'''***********************************************'''
-
-
-	def __load_xml_config(self, xml_path='Config.xml'):
-		tree = ElementTree()
-		tree.parse(xml_path)
-		nodes = self.__find_nodes(tree,"path/readFilePath")
-		self.__read_file_path = nodes[0].attrib['value']
-
-		nodes = self.__find_nodes(tree,"path/writeFilePath")
-		self.__write_file_path = nodes[0].attrib['value']
-		
-		nodes = self.__find_nodes(tree,"path/filename")
-		self.__filename = nodes[0].attrib['value']
-		
-		nodes = self.__find_nodes(tree,"path/filepath")
-		self.__filepath = nodes[0].attrib['value']
-		
-		# nodes = self.__find_nodes(tree,"arg/kernelType")
-		# self.__kernel_type = nodes[0].attrib['value']
-		
-		nodes = self.__find_nodes(tree, "arg/relativeDeadline")
-		self.__relative_deadline = nodes[0].attrib['value']
-
-		nodes = self.__find_nodes(tree,"arg/exeFactor")
-		self.__exe_factor = nodes[0].attrib['value']
-
-		nodes = self.__find_nodes(tree,"arg/kernelPeriod")
-		self.__kernel_period = nodes[0].attrib['value']
-
-		nodes = self.__find_nodes(tree,"arg/bFactor")
-		self.__b_factor = nodes[0].attrib['value']
-
-		nodes = self.__find_nodes(tree,"arg/ton")
-		self.__kernel_ton = nodes[0].attrib['value']
-
-		nodes = self.__find_nodes(tree,"arg/toff")
-		self.__kernel_toff = nodes[0].attrib['value']
-
-		nodes = self.__find_nodes(tree,"event/eventPeriod")
-		self.__event_period = nodes[0].attrib['value']
-		nodes = self.__find_nodes(tree,"event/eventJitter")
-		self.__event_jitter = nodes[0].attrib['value']
-		nodes = self.__find_nodes(tree,"event/eventDistance")
-		self.__event_distance = nodes[0].attrib['value']
-		nodes = self.__find_nodes(tree,"event/eventWcets")
-		self.__event_wcets = nodes[0].attrib['value']
-
-		print('init config end ...')
 
 		
 if __name__ == "__main__": 
-	config_me = Config()
+	config_me = Config("test")
+	config_me.set_kernel('aptM')
+	b = copy.copy(config_me)
+	b.set_kernel('pboo')
+	attrs = vars(config_me)
+	print '\n'.join("%s: %s" % item for item in attrs.items())
+	config_me.set_xml_sub_dir('test/')
+	config_me.set_xml_filename('testtt2')
+	config_me.save_to_xml()
+
+
