@@ -21,13 +21,16 @@ def run_all_kernels(config):
 def change_relative_deadline():
 
 	config = Config()
+	# create a new sub directory
 	config.set_xml_csv_sub_dir('relative_deadline/')
 
 	
 	base_value = 120
 	for x in range(0,1):
 		new_value = base_value + x*10
+		# change the value
 		config.set_relative_deadline(new_value)
+		# give the prefix for the files
 		config.set_xml_csv_file_prefix('deadline' + str(new_value))
 		run_all_kernels(config)
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<simulation name="result/csv/ deadline120_bws">
+<simulation name="result/csv/relative_deadline/deadline120_bws">
 	<duration unit="sec" value="62"/>
 	<pipeline stagenumber="4"/>
 	<events>
