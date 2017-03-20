@@ -21,7 +21,7 @@ def run_all_kernels(config):
 def change_relative_deadline():
 
 	config = Config()
-	config.set_xml_sub_dir('relative_deadline/')
+	config.set_xml_csv_sub_dir('relative_deadline/')
 
 	
 	base_value = 120

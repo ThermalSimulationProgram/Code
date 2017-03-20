@@ -276,7 +276,7 @@ class Config(object):
 	def set_kernel_type(self, kernel_type):
 		self.set_kernel(kernel_type)
 
-	def set_xml_csv_sub-dir(self, subdir):
+	def set_xml_csv_sub_dir(self, subdir):
 		self.set_xml_sub_dir(subdir)
 		self.set_csv_sub_dir(subdir)
 
