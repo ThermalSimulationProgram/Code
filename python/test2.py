@@ -3,15 +3,18 @@
 import os
 from Config import Config  
 from xml_api import * 
-  
+ 
+import time
 
 def run_all_kernels(config):
-	config.set_kernel('aptm')
-	config.run()
-	config.set_kernel('bws')
-	config.run()
-	config.set_kernel('pboo')
-	config.run()
+	sleep_length = 1
+	all_kernels = ['aptm', 'bws', 'pboo']
+	for kernel in all_kernels:
+		config.set_kernel(kernel)
+		config.run()
+		time.sleep(sleep_length)
+
+
 
 
 
