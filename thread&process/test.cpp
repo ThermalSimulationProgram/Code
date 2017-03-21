@@ -25,6 +25,18 @@ int doubleRand() {
     	}
 }
 
+
+void random_r_loop(){
+	struct random_data rand_states;
+	int r;
+
+	while(1){
+		random_r(&rand_states, &r);
+	}
+}
+
+
+
 void stress_cpu_trig()
 {
 	 double i = 0;
@@ -94,7 +106,7 @@ unsigned int seed = 45;
 	sqrt(rand());
   		
   }*/
-doubleRand();
+random_r_loop();
   return 0;
 }
 
