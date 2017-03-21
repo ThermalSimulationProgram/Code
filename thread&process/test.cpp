@@ -29,6 +29,9 @@ int doubleRand() {
 void random_r_loop(){
 	struct random_data rand_states;
 	int r;
+	unsigned int seed = 89;
+	char *  s = (char*)calloc(64, 8);
+	initstate_r(seed, s, 8, &rand_states);
 
 	while(1){
 		random_r(&rand_states, &r);
@@ -113,8 +116,8 @@ random_r_loop();
 int main(){
 	int numworkers = 4;
 	
-	testthread(numworkers);
-	// testprocess(numworkers);
+	// testthread(numworkers);
+	testprocess(numworkers);
 }
 
 void testthread(int numworkers){
