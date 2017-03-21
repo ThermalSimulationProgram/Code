@@ -18,7 +18,7 @@ void * thredcpu(void* arg);
 int doubleRand() {
      	std::random_device rd;  //Will be used to obtain a seed for the random number engine
     	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    	std::uniform_int_distribution<> dis(1, 60);
+    	std::uniform_int_distribution<> dis(1, 600000);
 
     	while(1){
     		dis(gen);
@@ -101,8 +101,8 @@ doubleRand();
 int main(){
 	int numworkers = 4;
 	
-	// testthread(numworkers);
-	testprocess(numworkers);
+	testthread(numworkers);
+	// testprocess(numworkers);
 }
 
 void testthread(int numworkers){
