@@ -17,12 +17,13 @@ void stress_cpu_trig()
 {
 	 int i = 0;
 	long double d_sum = 0.0;
-
+	long double theta = 0;
 
 	while (1) {
 		i++;
-		long double theta = (2.0 * M_PI * (double)i)/1500.0;
-		{
+		theta = (2.0 * M_PI * (double)i)/1500.0;
+		d_sum += (cosl(theta) * sinl(theta));
+		/*{
 			d_sum += (cosl(theta) * sinl(theta));
 			d_sum += (cos(theta) * sin(theta));
 			d_sum += (cosf(theta) * sinf(theta));
@@ -40,7 +41,7 @@ void stress_cpu_trig()
 			d_sum += sinl(theta3);
 			d_sum += sin(theta3);
 			d_sum += sinf(theta3);
-		}
+		}*/
 	}
 }
 
