@@ -246,8 +246,8 @@ void Worker::wrapper(){
 				sem_post(&ptm_sem);
 			} while ((!stop) && Pipeline::isSimulating() );	
 			Statistics::addTrace(thread_type, id, active_end); 
-		}
-	}*/
+		}*/
+	}
 
 
   #if _INFO == 1
