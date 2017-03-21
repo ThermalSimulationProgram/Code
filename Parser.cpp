@@ -238,6 +238,7 @@ struct timespec Parser::parseTime(xml_node n) {
 	}
 	else {
 		cout << "Parser error: could not recognize time unit!\n";
+		exit(1)
 	}
 
 	return ret;

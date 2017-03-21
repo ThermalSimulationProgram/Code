@@ -51,7 +51,7 @@ template<typename T> T formatTimeMicros(double v, const std::string& unit){
 		r = (T) (v);
 	else {
 		std::cout << "parseTimeVectorMicro: Parser error: could not recognize time unit!\n";
-		r = -1;
+		exit(1);
 	}
 	return r;
 }
