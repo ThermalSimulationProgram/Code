@@ -15,14 +15,14 @@ void * thredcpu(void* arg);
 
 void stress_cpu_trig()
 {
-	 int i = 0;
+	 double i = 0;
 	long double d_sum = 0.0;
 	long double theta = 0;
 
 	while (1) {
 		i++;
-		theta = (2.0 * M_PI * (double)i)/1500.0;
-		d_sum += (cosl(theta) * sinl(theta));
+		//theta = (2.0 * (double)i)/1500.0;
+		d_sum += (cos(i) * sin(i));
 		/*{
 			d_sum += (cosl(theta) * sinl(theta));
 			d_sum += (cos(theta) * sin(theta));
@@ -63,11 +63,22 @@ void  stress_cpu_rand48()
 
 }
 
+int hogcpu (void){
+	double x = 0;
+unsigned int seed = 45;
+  /*while (1){
+     	//sqrt(rand_r(&seed));
+	sqrt(rand());
+  		
+  }*/
+stress_cpu_rand48();
+  return 0;
+}
 
 int main(){
 	int numworkers = 4;
 	
-	//testthread(numworkers);
+	// testthread(numworkers);
 	testprocess(numworkers);
 }
 
@@ -131,17 +142,7 @@ void * thredcpu(void* arg){
 	hogcpu();
 }
 
-int hogcpu (void){
-	double x = 0;
-unsigned int seed = 45;
-  /*while (1){
-     	//sqrt(rand_r(&seed));
-	sqrt(rand());
-  		
-  }*/
-stress_cpu_trig();
-  return 0;
-}
+
 
 
 
