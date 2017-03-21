@@ -7,11 +7,23 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#include <random>
+
+
 int hogcpu (void);
 void testprocess(int numworkers);
 void testthread(int numworkers);
 void * thredcpu(void* arg);
 
+int doubleRand() {
+     	std::random_device rd;  //Will be used to obtain a seed for the random number engine
+    	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+    	std::uniform_int_distribution<> dis(1, 60);
+
+    	while(1){
+    		dis(gen);
+    	}
+}
 
 void stress_cpu_trig()
 {
@@ -82,7 +94,7 @@ unsigned int seed = 45;
 	sqrt(rand());
   		
   }*/
-stress_cpu_nsqrt();
+doubleRand();
   return 0;
 }
 
