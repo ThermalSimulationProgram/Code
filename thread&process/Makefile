@@ -1,5 +1,5 @@
 ac:test.c
-	gcc test.c -o ac -lm -pthread
+	gcc -O0 test.c -o ac -lm -pthread
 
 acpp:test.cpp
-	g++ test.cpp -o acpp -lm -pthread
+	g++ -O0 test.cpp -o acpp -lm -pthread
