@@ -1339,3 +1339,9 @@ void CPUStressor::stressOnce(){
 		index = 1;
 }
 
+
+void CPUStressor::stressWithMethod(int index){
+	const char* name = "";
+	methods[index].func(name);
+}
+

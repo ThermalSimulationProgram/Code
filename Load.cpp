@@ -20,7 +20,8 @@ unsigned long Load::consume_us_benchmarks(unsigned long length){
 	unsigned long realLength = 0;
 	
 	do{
-		cpu_stressor.stressOnce();
+			cpu_stressor.stressOnce();
+		// cpu_stressor.stressWithMethod(32);
 		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
 	}while(realLength < length);
 	return realLength;

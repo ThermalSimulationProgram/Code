@@ -1,7 +1,7 @@
 #include "Worker.h"
 
 #include <iostream>
-
+#include <math.h>
 
 #include "Enumerations.h"
 #include "Semaphores.h"
@@ -27,7 +27,7 @@ Worker::Worker(int _stageId, int _id) : Thread(_id), load(){
 	current_job = NULL;
 	state 		= _active;
 
-	base        = 100;
+	base        = 10000;
 	ton         = 100000; // default value, unit us 
 	toff        = 0; // default value, unit us 
 	
@@ -178,6 +178,7 @@ void Worker::wrapper(){
 	unsigned long total_exed;
 
 	while(Pipeline::isSimulating())
+	// while(1)
 	{
 		if (toff >= 100){
 			sem_wait(&state_sem);
@@ -203,7 +204,8 @@ void Worker::wrapper(){
 				continue; // if current job is sleeping when it receives a schedule signal, quit PTM to continue next PTM with new ton and toff
 			}
 		}
-	
+		
+		// load.cpu_stressor.stressOnce();
 		if (ton >= 1000)
 		{	sem_wait(&state_sem);
 			latestSleep = TimeUtil::Millis(0);

@@ -24,10 +24,11 @@ public:
 	 unsigned long consume_us_benchmarks(unsigned long);
 
 	 Load();
+	 CPUStressor cpu_stressor;
 
 private:
 
-	CPUStressor cpu_stressor;
+	
 
 	static void waste_time_unit(unsigned long);
 

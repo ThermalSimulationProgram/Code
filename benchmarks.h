@@ -567,6 +567,7 @@ private:
 public:
 	CPUStressor();
 	void stressOnce();
+	void stressWithMethod(int index);
 
 };
 

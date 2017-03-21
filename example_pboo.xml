@@ -1,6 +1,6 @@
 <simulation name="warming_curve">
 
-   <duration value="60" unit="sec"/>
+   <duration value="90" unit="sec"/>
 
    <pipeline stagenumber="4"/>
 
@@ -16,8 +16,8 @@
 
    <scheduler>
       <kernel type="PBOO">
-         <ton value="{152 100 460 670}" unit="ms"/>
-         <toff value="{120 120 120 120}" unit="us"/>
+         <ton value="{3000 3000 3000 3000}" unit="ms"/>
+         <toff value="{20 20 20 20}" unit="us"/>
       </kernel>
    </scheduler>
 
