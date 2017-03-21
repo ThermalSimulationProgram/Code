@@ -177,10 +177,10 @@ void Worker::wrapper(){
 	unsigned long end;
 	unsigned long total_exed;
 
-	while(Pipeline::isSimulating())
-	// while(1)
+	// while(Pipeline::isSimulating())
+	while(1)
 	{
-		if (toff >= 100){
+		/*if (toff >= 100){
 			sem_wait(&state_sem);
 		 	latestSleep = TimeUtil::getTime();
 			state = _sleep;
@@ -203,10 +203,10 @@ void Worker::wrapper(){
 				Statistics::addTrace(thread_type, id, sleep_end);
 				continue; // if current job is sleeping when it receives a schedule signal, quit PTM to continue next PTM with new ton and toff
 			}
-		}
+		}*/
 		
-		// load.cpu_stressor.stressOnce();
-		if (ton >= 1000)
+		load.cpu_stressor.stressWithMethod(1);
+		/*if (ton >= 1000)
 		{	sem_wait(&state_sem);
 			latestSleep = TimeUtil::Millis(0);
 			state = _active;
@@ -247,7 +247,7 @@ void Worker::wrapper(){
 			} while ((!stop) && Pipeline::isSimulating() );	
 			Statistics::addTrace(thread_type, id, active_end); 
 		}
-	}
+	}*/
 
 
   #if _INFO == 1
