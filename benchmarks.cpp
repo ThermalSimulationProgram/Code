@@ -48,7 +48,7 @@ uint64_t opt_flags = PR_ERROR | PR_INFO | OPT_FLAGS_MMAP_MADVISE;
 #define cabsl	cabs
 #endif
 
-MWC RND = MWC();
+
 
 void uint64_put(const uint64_t a)
 {
@@ -133,7 +133,7 @@ void HOT stress_cpu_sqrt(const char *name)
 	int i;
 	//for (i = 0; i < 16384; i++) {
 	for (i = 0; i < 256; i++) {
-		uint64_t rnd = RND.mwc32();
+		uint64_t rnd = i * i + 123;
 		double r = sqrt((double)rnd) * sqrt((double)rnd);
 		double_put(r);
 	}
@@ -328,6 +328,7 @@ void HOT OPTIMIZE3 stress_cpu_rand(const char *name)
 {
 	int i;
 	uint32_t i_sum = 0;
+	MWC RND = MWC();
 	// const uint32_t sum = 0xc253698c;
 
 	// for (i = 0; i < 16384; i++)
@@ -403,6 +404,7 @@ void HOT OPTIMIZE3 stress_cpu_phi(const char *name)
 	const uint64_t mask = 1ULL << 63;
 	int i;
 
+	MWC RND = MWC();
 	/* Pick any two starting points */
 	a = RND.mwc64() % 99;
 	b = RND.mwc64() % 99;
@@ -504,7 +506,7 @@ void HOT OPTIMIZE3 stress_cpu_euler(const char *name)
 void random_buffer(uint8_t *data, const size_t len)
 {
 	size_t i;
-
+	MWC RND = MWC();
 	for (i = 0; i < len / 4; i++) {
 		uint32_t v = RND.mwc32();
 
@@ -795,6 +797,7 @@ void HOT OPTIMIZE3 stress_cpu_matrix_prod(const char *name)
 {
 	int i, j, k;
 	const int n = 8;
+	MWC RND = MWC();
 
 	long double a[n][n], b[n][n], r[n][n];
 	long double v = 1 / (long double)((uint32_t)~0);
@@ -1051,7 +1054,7 @@ void HOT OPTIMIZE3 stress_cpu_correlate(const char *name)
 	double data[data_len], corr[corr_len + 1];
 
 	(void)name;
-
+	MWC RND = MWC();
 	/* Generate some random data */
 	for (i = 0; i < data_len; i++) {
 		data[i] = RND.mwc64();

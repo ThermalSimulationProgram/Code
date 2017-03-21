@@ -49,7 +49,7 @@
 #define FORCE_DO_NOTHING() while (0)
 #endif
 
-extern MWC RND; 
+
 
 static volatile uint64_t uint64_val;
 static volatile double   double_val;

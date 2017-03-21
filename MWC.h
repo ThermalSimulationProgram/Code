@@ -13,7 +13,7 @@ class MWC{
 private:
 	uint32_t w;
 	uint32_t z;
-	sem_t mwc_sem;
+	// sem_t mwc_sem;
 public:
 	MWC();
 	~MWC();

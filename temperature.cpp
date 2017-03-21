@@ -16,7 +16,10 @@ using namespace std;
 
 #define _INFO 1
 
-#define _DEBUG 0
+#define _DEBUG 1
+
+
+
 
 
 
@@ -144,23 +147,23 @@ std::vector<double> TempWatcher::get_cpu_temperature(){
           err = -SENSORS_ERR_ACCESS_R;
         res = fclose( f);
         if ( err){
-         std::cerr << err << " error"<<std::endl;
+         std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << err <<std::endl;
          exit(err);
        }
 
        if ( res == EOF) {
         if ( errno == EIO){
-         std::cerr << -SENSORS_ERR_IO << " error"<<std::endl;
+         std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_IO <<std::endl;
          exit(-SENSORS_ERR_IO) ;
        }
        else{
-         std::cerr << -SENSORS_ERR_ACCESS_R << " error"<<std::endl;
+         std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_ACCESS_R <<std::endl;
          exit(-SENSORS_ERR_ACCESS_R) ;
        }
      }
             // value /= get_type_scaling( SENSORS_SUBFEATURE_TEMP_INPUT);
    } else{
-     std::cout << -SENSORS_ERR_KERNEL << " error"<<std::endl;
+     std::cout << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_KERNEL <<std::endl;
      exit(-SENSORS_ERR_KERNEL) ;
    }
 

@@ -6,7 +6,7 @@
 MWC::MWC(){
 	w = MWC_SEED_W;
 	z = MWC_SEED_Z;
-	sem_init(&mwc_sem, 0, 1);
+	// sem_init(&mwc_sem, 0, 1);
 }
 
 MWC::~MWC(){
@@ -21,11 +21,11 @@ MWC::~MWC(){
  */
 uint32_t MWC::mwc32(){
 	uint32_t ret;
-	sem_wait(&mwc_sem);
+	// sem_wait(&mwc_sem);
 	z = 36969 * (z & 65535) + (z >> 16);
 	w = 18000 * (w & 65535) + (w >> 16);
 	ret = (z << 16) + w;
-	sem_post(&mwc_sem);
+	// sem_post(&mwc_sem);
 	return ret;
 }
 
@@ -42,14 +42,14 @@ uint8_t MWC::mwc8(){
 }
 
 void MWC::mwc_seed(void){
-	sem_wait(&mwc_sem);
+	// sem_wait(&mwc_sem);
 	w = MWC_SEED_W;
 	z = MWC_SEED_Z;
-	sem_post(&mwc_sem);
+	// sem_post(&mwc_sem);
 }
 
 void MWC::mwc_reseed(void){
-	sem_wait(&mwc_sem);
+	// sem_wait(&mwc_sem);
 	if (NO_RAND_SEED) {
 		w = MWC_SEED_W;
 		z = MWC_SEED_Z;
@@ -68,6 +68,6 @@ void MWC::mwc_reseed(void){
 			(void)mwc32();
 		}
 	}
-	sem_post(&mwc_sem);
+	// sem_post(&mwc_sem);
 
 }
