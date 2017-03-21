@@ -60,7 +60,7 @@ void Dispatcher::wrapper(){
 
 	///Invokes parent class memember function to release jobs
 	///in a timed pattern
-	timedRun();
+	// timedRun();
 
 	#if _INFO == 1
 	Semaphores::print_sem.wait_sem();

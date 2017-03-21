@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <stdlib.h>
 
 #include "Enumerations.h"
 #include "Semaphores.h"
@@ -178,6 +179,7 @@ void Worker::wrapper(){
 	unsigned long total_exed;
 
 	// while(Pipeline::isSimulating())
+	unsigned int seed;
 	while(1)
 	{
 		/*if (toff >= 100){
@@ -204,8 +206,8 @@ void Worker::wrapper(){
 				continue; // if current job is sleeping when it receives a schedule signal, quit PTM to continue next PTM with new ton and toff
 			}
 		}*/
-		
-		load.cpu_stressor.stressWithMethod(1);
+		sqrt(rand_r(&seed));
+		// load.cpu_stressor.stressWithMethod(1);
 		/*if (ton >= 1000)
 		{	sem_wait(&state_sem);
 			latestSleep = TimeUtil::Millis(0);

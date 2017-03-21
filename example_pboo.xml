@@ -1,6 +1,6 @@
-<simulation name="warming_curve">
+<simulation name="example_pboo">
 
-   <duration value="90" unit="sec"/>
+   <duration value="9" unit="sec"/>
 
    <pipeline stagenumber="4"/>
 

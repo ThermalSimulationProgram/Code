@@ -80,7 +80,7 @@ void TempWatcher::wrapper(){
   while(!Pipeline::isSimulating()){};
 
 
-  timedRun();
+  // timedRun();
 
 	//toFile();
 
