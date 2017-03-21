@@ -296,7 +296,7 @@ void HOT OPTIMIZE3 stress_cpu_int_unit(T _a, T _b, T _c1, T _c2, T _c3){
 	const T c3 = _c3 & mask;				
 	register T a, b;					
 	int i;							
-								
+	MWC RND = MWC();								
 							
 	a = RND.mwc32();						
 	b = RND.mwc32();						

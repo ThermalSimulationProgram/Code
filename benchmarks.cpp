@@ -774,7 +774,7 @@ stress_cpu_int_unit<uint8_t>(
 
 void stress_cpu_fp (const char* name){
 	int i;	
-					
+	MWC RND = MWC();				
 	double a = 0.18728, b = RND.mwc32(), c = RND.mwc32(), d;	
 							
 	(void)name;					
