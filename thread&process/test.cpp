@@ -46,21 +46,32 @@ void stress_cpu_trig()
 }
 
 
-void  stress_cpu_rand48()
+void  stress_cpu_nsqrt()
 {
 	int i;
-	double d = 0;
-	long int l = 0;
+	const long double precision = 1.0e-12;
+	const int max_iter = 56;
 
+	// for (i = 0; i < 16384; i++) 
+	while (1) {
+		i++;
+		long double n = (double)i;
+		long double lo = (n < 1.0) ? n : 1.0;
+		long double hi = (n < 1.0) ? 1.0 : n;
+		long double rt;
+		int j = 0;
 
-
-	srand48(0x0defaced);
-	// for (i = 0; i < 16384; i++) {
-	while(1) {
-		d += drand48();
-		l += lrand48();
+		while ((j++ < max_iter) && ((hi - lo) > precision)) {
+			long double g = (lo + hi) / 2.0;
+			if ((g * g) > n)
+				hi = g;
+			else
+				lo = g;
+		}
+		rt = (lo + hi) / 2.0;
+		
 	}
-
+	
 }
 
 int hogcpu (void){
@@ -71,7 +82,7 @@ unsigned int seed = 45;
 	sqrt(rand());
   		
   }*/
-stress_cpu_rand48();
+stress_cpu_nsqrt();
   return 0;
 }
 
