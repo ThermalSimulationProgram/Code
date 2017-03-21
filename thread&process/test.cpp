@@ -46,6 +46,24 @@ void stress_cpu_trig()
 }
 
 
+void  stress_cpu_rand48()
+{
+	int i;
+	double d = 0;
+	long int l = 0;
+
+
+
+	srand48(0x0defaced);
+	// for (i = 0; i < 16384; i++) {
+	while(1) {
+		d += drand48();
+		l += lrand48();
+	}
+
+}
+
+
 int main(){
 	int numworkers = 4;
 	
