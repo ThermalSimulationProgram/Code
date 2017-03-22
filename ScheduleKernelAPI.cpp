@@ -36,10 +36,15 @@ ScheduleKernelAPI::ScheduleKernelAPI(Scheduler* scheduler,
 			_kernel = (ScheduleKernel*) tempkernel;
 			break;
 		}
-		case PBOO:
-		
+		case PBOO:{
+			StaticKernel *tempkernel = new StaticKernel(nstages, kernel_type);
+			_kernel = (ScheduleKernel*) tempkernel;
+			break;
+		}
+			
 		case GE:{
 			StaticKernel *tempkernel = new StaticKernel(nstages, kernel_type);
+			// tempkernel->setStaticScheme(vector<double>(nstages, 10000), vector<double>(nstages, 0));
 			_kernel = (ScheduleKernel*) tempkernel;
 			break;
 		}
