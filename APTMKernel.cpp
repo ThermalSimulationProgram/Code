@@ -325,12 +325,12 @@ void APTMKernel::calcAPTM(vector<double> & tonsin, vector<double>& toffsin,
 		}
 		#endif
 
-		toffsin = tau0 + taue - 1;
+		toffsin = tau0 + taue ;
 		for(int i=0; i< (int)toffsin.size(); i++){
 			if(toffsin[i]<0)
 				toffsin[i] = 0;
 		}
-		tonsin = tons + 1;
+		tonsin = tons ;
 
 		#if _DEBUG==1
 		displayvector(tons,"tons");
@@ -415,7 +415,7 @@ void APTMKernel::aPTM(double extBound, const vector<int>& index,
 	}
 	#endif
 
-	tinvs = newtinvs - tau0;
+	tinvs = newtinvs - tau0 + 1;
 	tvlds = partwcets * N;
 }
 
@@ -714,12 +714,18 @@ void APTMKernel::getApdatInfo(AdaptInfo& config){
 				config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
 				config.rho[i]           = tmp;
 			}else{
-				// double minrho = rtc::minspeedbdfEDG(alpha_d, minDSC);
-				double minrho = rtc::minspeedbdfEDG(alpha_d_data, minDSC);
+				bmax = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, k);
+				bmax = minDSC + bcoef * (bmax - minDSC);
+				double minrho = rtc::minspeedbdfEDG(alpha_d_data, bmax);
 				tmp           = minrho > tmp ? minrho : tmp;
 				config.rho[i] = k < tmp ? k : tmp;
 				bmax          = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, config.rho[i]);
-				// bmax          = rtc::minbdf_BSF(alpha_d, relativeDeadline, config.rho[i]);
+
+				// double minrho = rtc::minspeedbdfEDG(alpha_d_data, minDSC);
+				// tmp           = minrho > tmp ? minrho : tmp;
+				// config.rho[i] = k < tmp ? k : tmp;
+				// bmax          = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, config.rho[i]);
+
 			}
 			#if _PROFILE == 1
 			timeout = (double)Statistics::getRelativeTime_ms();

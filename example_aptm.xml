@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <simulation name="example_aptm">
 
-   <duration unit="sec" value="30" />
+   <duration unit="sec" value="40" />
 
    <pipeline stagenumber="4" />
 
@@ -12,13 +12,13 @@
       <distance unit="ms" value="0" />
       <wcets unit="ms" value="{14.2 9 3.6 5.7}" />
       <exe_factor value="0.9" />
-      <relative_deadline unit="ms" value="120" />
+      <relative_deadline unit="ms" value="80" />
    </events>
 
    <scheduler>
       <kernel type="APTM">
          <period unit="ms" value="20" />
-         <b_factor value="0.93" />
+         <b_factor value="0.9" />
          <offlinedata>
             <prefix path="./csv_data/Dell9020ThermalProp" />
          </offlinedata>
