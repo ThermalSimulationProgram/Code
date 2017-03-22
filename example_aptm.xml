@@ -12,7 +12,7 @@
       <distance unit="ms" value="0" />
       <wcets unit="ms" value="{14.2 9 3.6 5.7}" />
       <exe_factor value="0.9" />
-      <relative_deadline unit="ms" value="80" />
+      <relative_deadline unit="ms" value="70" />
    </events>
 
    <scheduler>
