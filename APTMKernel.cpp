@@ -462,8 +462,9 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 		exit(1);
 	}
 	#endif
-
-	vector<bool> validId = vectorLess(lambdaExt, breakToffs[0]);
+	vector<double> maxLambdaExt = vectorExtract(breakToffs, segmentIdLim);
+	vector<bool> validId = vectorLess(lambdaExt, maxLambdaExt);
+	vector<bool> validIdorg = validId;
 	while (sumLambda < upBound){
 		vector<double> nextBreakPoints = vectorExtract(breakToffs,
 			segementId);
@@ -488,7 +489,12 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 			displayvector(validId, "validId");
 			displayvector(lambdaExt, "lambdaExt");
 			displayvector(segementId, "segementId");
+			displayvector(segmentIdLim, "segmentIdLim");
 			displayvector(breakToffs, "breakToffs");
+			displayvector(maxLambdaExt, "maxLambdaExt");
+			vector<bool> validId2 = vectorLess(lambdaExt, breakToffs[0]);
+			displayvector(validId2, "validId2");
+			displayvector(validIdorg, "validIdorg");
 			displayvector(currentSlope, "currentSlope");
 			cout << nindex << endl;
 			cerr << "APTMKernel::assignToffs:currentSlope has zero element\n";
@@ -503,6 +509,8 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 			displayvector(validId, "validId");
 			displayvector(lambdaExt, "lambdaExt");
 			displayvector(segementId, "segementId");
+			displayvector(segmentIdLim, "segmentIdLim");
+			displayvector(maxLambdaExt, "maxLambdaExt");
 			displayvector(breakToffs, "breakToffs");
 			displayvector(breakToffs[0], "breakToffs[0]");
 			displayvector(currentSlope, "currentSlope");
@@ -524,15 +532,15 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 			vectorExtract(breakToffs, segementId));
 			
 			
-			vector<bool> feasible       = vectorLess(segementId, segmentIdLim);
+			vector<bool> feasible       = vectorLess(lambdaExt, maxLambdaExt);
 			
 			vector<bool> changeId       = atBreakPointId & feasible;
-			vector<bool> toInfId        = atBreakPointId & vecNot(feasible);
+			// vector<bool> toInfId        = atBreakPointId & vecNot(feasible);
 
 			vectorAssign(segementId, changeId, 
 				vectorExtract(segementId, changeId)+1);
 
-			validId 					= vecNot(toInfId);
+			validId 					= feasible;
 			// if (vectorAll(toInfId))
 			// 	break;
 

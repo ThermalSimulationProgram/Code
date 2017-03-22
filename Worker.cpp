@@ -177,12 +177,11 @@ void Worker::wrapper(){
 	unsigned long start;
 	unsigned long end;
 	unsigned long total_exed;
-
-	// while(Pipeline::isSimulating())
-	unsigned int seed;
-	while(1)
+	// unsigned int seed;
+	while(Pipeline::isSimulating())
+	// while(1)
 	{
-		/*if (toff >= 100){
+		if (toff >= 100){
 			sem_wait(&state_sem);
 		 	latestSleep = TimeUtil::getTime();
 			state = _sleep;
@@ -205,10 +204,10 @@ void Worker::wrapper(){
 				Statistics::addTrace(thread_type, id, sleep_end);
 				continue; // if current job is sleeping when it receives a schedule signal, quit PTM to continue next PTM with new ton and toff
 			}
-		}*/
-		sqrt(rand_r(&seed));
+		}
+		// sqrt(rand_r(&seed));
 		// load.cpu_stressor.stressWithMethod(1);
-		/*if (ton >= 1000)
+		if (ton >= 1000)
 		{	sem_wait(&state_sem);
 			latestSleep = TimeUtil::Millis(0);
 			state = _active;
@@ -219,13 +218,13 @@ void Worker::wrapper(){
 			start = TimeUtil::convert_us(TimeUtil::getTime());
 			total_exed = 0;
 			bool stop = false;
-			Statistics::addTrace(thread_type, id, active_start);
+			// Statistics::addTrace(thread_type, id, active_start);
 			do //ton loop
 			{
 				if (sem_trywait(&schedule_sem) == 0)//successfully read a schedule singal, break immediately
 				{
 					//cout<<"receives a schedule signal, break from active\n";
-					Statistics::addTrace(thread_type, id, active_end);
+					// Statistics::addTrace(thread_type, id, active_end);
 					break;
 				}
 				// Load::consume_us(base);
@@ -235,20 +234,21 @@ void Worker::wrapper(){
 				total_exed = total_exed + exedSlice;
 				start = end;
 				if (current_job != NULL){
-					if (current_job->execute(exedSlice) == 1)
+					if (current_job->execute(exedSlice) == 1){
 						finishedJob();
+					}
 				}
-				else
+				else{
 					tryLoadJob();
+				}
 
 				sem_wait(&ptm_sem);
 				if (total_exed > ton)
 					stop = true;
-				
 				sem_post(&ptm_sem);
 			} while ((!stop) && Pipeline::isSimulating() );	
 			Statistics::addTrace(thread_type, id, active_end); 
-		}*/
+		}
 	}
 
 

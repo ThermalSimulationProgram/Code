@@ -82,7 +82,7 @@ void Scheduler::wrapper(){
 
 
 	// this function is inherited from TimedRunable class
-	// timedRun();
+	timedRun();
 
 	#if _INFO == 1
 	Semaphores::print_sem.wait_sem();

@@ -8,7 +8,11 @@
 #include <stdlib.h>
 
 #include <random>
+#include <iostream>
 
+#include <semaphore.h>
+
+#include "TimeUtil.h"
 
 int hogcpu (void);
 void testprocess(int numworkers);
@@ -117,7 +121,19 @@ int main(){
 	int numworkers = 4;
 	
 	// testthread(numworkers);
-	testprocess(numworkers);
+	//testprocess(numworkers);
+
+	sem_t test;
+	sem_init(&test, 0, 0);
+
+	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
+
+	for (int i = 0; i < 10000; ++i)
+	{
+		sem_trywait(&test);
+	}
+	unsigned long timeout = TimeUtil::convert_us(TimeUtil::getTime());
+	std::cout << timeout - timein;
 }
 
 void testthread(int numworkers){

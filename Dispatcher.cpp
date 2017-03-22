@@ -13,7 +13,7 @@
 
 
 
-#define _INFO 0
+#define _INFO 1
 #define _DEBUG 0
 using namespace std;
 
@@ -60,7 +60,7 @@ void Dispatcher::wrapper(){
 
 	///Invokes parent class memember function to release jobs
 	///in a timed pattern
-	// timedRun();
+	timedRun();
 
 	#if _INFO == 1
 	Semaphores::print_sem.wait_sem();

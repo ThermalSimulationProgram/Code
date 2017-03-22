@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <simulation name="example_aptm">
 
-   <duration unit="sec" value="40" />
+   <duration unit="sec" value="30" />
 
    <pipeline stagenumber="4" />
 

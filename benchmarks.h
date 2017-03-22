@@ -555,7 +555,7 @@ private:
 	{ "prime",		stress_cpu_prime },
 	{ "psi",		stress_cpu_psi },
 	{ "queens",		stress_cpu_queens },
-	{ "rand48",		stress_cpu_rand48 },
+	// { "rand48",		stress_cpu_rand48 },
 	{ "sdbm",		stress_cpu_sdbm },
 	{ "sqrt", 		stress_cpu_sqrt },
 	{ "trig",		stress_cpu_trig },

@@ -165,9 +165,9 @@ vector<double> AdaptiveKernel::getFIFODemands(
 		// cout << "Pipeline::getFIFODemands:has workload "<<endl;
 		timeToDeadline = allDeadlines[0] - curTime;
 		if (timeToDeadline  < timeToDeadline0){
-			cout << "timeToDeadline:  " << timeToDeadline << endl;
-			cout << "timeToDeadline0:  " << timeToDeadline0 << endl;
-			cout << "Pipeline::getFIFODemands: Warning: Current event deadline miss happened!"<<endl;
+			// cout << "timeToDeadline:  " << timeToDeadline << endl;
+			// cout << "timeToDeadline0:  " << timeToDeadline0 << endl;
+			// cout << "Pipeline::getFIFODemands: Warning: Current event deadline miss happened!"<<endl;
 			// exit(1);
 			curvedata[1] = 1 ;
 		}else{

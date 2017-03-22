@@ -703,7 +703,7 @@ void HOT OPTIMIZE3 stress_cpu_idct(const char *name)
 	const double pi_over_16 = M_PI / 16.0;
 	const int sz = 3;
 	int i, j, u, v;
-	float data[sz][sz], idct[sz][sz];
+	float data[sz][sz];
 
 	/*
 	 *  Set up DCT
@@ -733,7 +733,7 @@ void HOT OPTIMIZE3 stress_cpu_idct(const char *name)
 						cos_pi_i_u * cos_pi_j_v);
 				}
 			}
-			idct[i][j] = 0.25 * sum;
+			// idct[i][j] = 0.25 * sum;
 		}
 	}
 	// /* Final output should be a 8x8 matrix of values 255 */
