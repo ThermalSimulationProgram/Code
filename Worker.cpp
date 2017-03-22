@@ -227,8 +227,8 @@ void Worker::wrapper(){
 					// Statistics::addTrace(thread_type, id, active_end);
 					break;
 				}
-				load.consume_us(base);
-				// load.consume_us_rand(base);
+				// load.consume_us(base);
+				load.consume_us_rand(base);
 
 				end = TimeUtil::convert_us(TimeUtil::getTime());
 				exedSlice = end - start;

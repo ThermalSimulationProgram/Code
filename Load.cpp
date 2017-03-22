@@ -31,13 +31,13 @@ unsigned long Load::consume_us_benchmarks(unsigned long length){
 
 unsigned long Load::consume_us_rand(unsigned long length){
 	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
-
-	unsigned long realLength = 0;
+	unsigned long realLength;
+	MWC RND = MWC();
 	
 	do{
-		for (int i = 0; i < 5000; ++i)
+		for (int i = 0; i < 3000; ++i)
 		{
-			RND.mwc32();
+			sqrt(RND.mwc32());
 		}
 		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
 	}while(realLength < length);
