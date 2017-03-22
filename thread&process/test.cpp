@@ -136,7 +136,7 @@ int main(){
 	// initstate_r(seed, rand_statebuf, sizeof(rand_statebuf), &rand_states);
 	MWC RND = MWC();
 	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
-	for (int i = 0; i < 2000; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		sqrt(RND.mwc32());
 	}
