@@ -502,7 +502,7 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 		}
 		currentSlope                = newslopes;
 		vector<double> K            = vecsum(currentSlope) / currentSlope;
-		vector<bool> tmpvalid       = vecAbs(dist2nextBp) > 0.000001;
+		vector<bool> tmpvalid       = vecAbs(dist2nextBp) > 0.001;
 		
 		if(tmpvalid.size()<1){
 			displayvector(slopes, "slopes");
@@ -528,11 +528,12 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 			vectorAssign(lambdaExt, validId, tmpLambda) ;
 			sumLambda                   = sumLambda + validDist;
 			
-			vector<bool> atBreakPointId = vectorEqual(lambdaExt, 
-			vectorExtract(breakToffs, segementId));
+			vector<bool> atBreakPointId = vecAbs(lambdaExt - vectorExtract(breakToffs, segementId)) < 0.001;
 			
+			vector<double> diff = maxLambdaExt - lambdaExt;
 			
-			vector<bool> feasible       = vectorLess(lambdaExt, maxLambdaExt);
+			vector<bool> feasible       = diff > 0.001;
+			// vectorLess(lambdaExt, maxLambdaExt);
 			
 			vector<bool> changeId       = atBreakPointId & feasible;
 			// vector<bool> toInfId        = atBreakPointId & vecNot(feasible);

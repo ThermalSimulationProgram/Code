@@ -13,11 +13,14 @@
 #include <semaphore.h>
 
 #include "TimeUtil.h"
+#include "MWC.h"
 
 int hogcpu (void);
 void testprocess(int numworkers);
 void testthread(int numworkers);
 void * thredcpu(void* arg);
+
+int __a  = 0;
 
 int doubleRand() {
      	std::random_device rd;  //Will be used to obtain a seed for the random number engine
@@ -108,12 +111,14 @@ void  stress_cpu_nsqrt()
 int hogcpu (void){
 	double x = 0;
 unsigned int seed = 45;
-  /*while (1){
+MWC RND = MWC();
+  while (1){
      	//sqrt(rand_r(&seed));
-	sqrt(rand());
+	sqrt(RND.mwc32());
   		
-  }*/
-random_r_loop();
+  }
+//random_r_loop();
+
   return 0;
 }
 
@@ -121,19 +126,23 @@ int main(){
 	int numworkers = 4;
 	
 	// testthread(numworkers);
-	//testprocess(numworkers);
+	testprocess(numworkers);
+	// struct random_data rand_states;
+	// int r;
+	// unsigned int seed = 89;
+	// char  rand_statebuf[128];
+	
 
-	sem_t test;
-	sem_init(&test, 0, 0);
+	// initstate_r(seed, rand_statebuf, sizeof(rand_statebuf), &rand_states);
 
-	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
-
-	for (int i = 0; i < 10000; ++i)
-	{
-		sem_trywait(&test);
-	}
-	unsigned long timeout = TimeUtil::convert_us(TimeUtil::getTime());
-	std::cout << timeout - timein;
+	// unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
+	// for (int i = 0; i < 10000; ++i)
+	// {
+	// 	random_r(&rand_states, &r);
+	// }
+	// unsigned long timeout = TimeUtil::convert_us(TimeUtil::getTime());
+	// std::cout << timeout - timein;
+	
 }
 
 void testthread(int numworkers){

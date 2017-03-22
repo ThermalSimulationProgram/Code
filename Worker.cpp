@@ -28,7 +28,7 @@ Worker::Worker(int _stageId, int _id) : Thread(_id), load(){
 	current_job = NULL;
 	state 		= _active;
 
-	base        = 10000;
+	base        = 200;
 	ton         = 100000; // default value, unit us 
 	toff        = 0; // default value, unit us 
 	
@@ -227,8 +227,9 @@ void Worker::wrapper(){
 					// Statistics::addTrace(thread_type, id, active_end);
 					break;
 				}
-				// Load::consume_us(base);
-				load.consume_us_benchmarks(base);
+				load.consume_us(base);
+				// load.consume_us_rand(base);
+
 				end = TimeUtil::convert_us(TimeUtil::getTime());
 				exedSlice = end - start;
 				total_exed = total_exed + exedSlice;

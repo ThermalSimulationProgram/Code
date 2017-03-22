@@ -3,15 +3,16 @@
 #include <cmath>
 #include <stdlib.h>
 #include <iostream>
-
+#include <cstring>
 
 #include "TimeUtil.h"
+
 
 
 using namespace std;
 
 
-Load::Load():cpu_stressor(){
+Load::Load():cpu_stressor(), RND(){
 
 }
 
@@ -25,6 +26,24 @@ unsigned long Load::consume_us_benchmarks(unsigned long length){
 		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
 	}while(realLength < length);
 	return realLength;
+}
+
+
+unsigned long Load::consume_us_rand(unsigned long length){
+	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
+
+	unsigned long realLength = 0;
+	
+	do{
+		for (int i = 0; i < 5000; ++i)
+		{
+			RND.mwc32();
+		}
+		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
+	}while(realLength < length);
+	return realLength;
+
+
 }
 
 

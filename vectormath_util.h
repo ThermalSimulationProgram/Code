@@ -8,7 +8,7 @@
 
 // using namespace std;
 
-#define EPSILON (0.0000001)
+#define EPSILON (0.00000001)
 
  std::vector<int> integerVector(int start, int end);
  std::vector<int> integerVector(int start, int end, int interval);

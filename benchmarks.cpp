@@ -391,6 +391,7 @@ void HOT OPTIMIZE3 stress_cpu_nsqrt(const char *name)
 	
 }
 
+
 /*
  *  stress_cpu_phi()
  *	compute the Golden Ratio

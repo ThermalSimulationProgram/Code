@@ -1,7 +1,9 @@
 #ifndef _TIMESIM_H
 #define _TIMESIM_H
 
-#include <semaphore.h>
+#include <unistd.h>
+#include <stdlib.h>
+
 
 #include "benchmarks.h"
 
@@ -23,12 +25,14 @@ public:
 
 	 unsigned long consume_us_benchmarks(unsigned long);
 
+	 unsigned long consume_us_rand(unsigned long);
+
 	 Load();
 	 CPUStressor cpu_stressor;
 
 private:
 
-	
+	MWC RND;
 
 	static void waste_time_unit(unsigned long);
 
