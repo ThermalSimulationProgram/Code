@@ -415,7 +415,7 @@ void APTMKernel::aPTM(double extBound, const vector<int>& index,
 	}
 	#endif
 
-	tinvs = newtinvs - tau0 + 1;
+	tinvs = newtinvs - tau0 ;
 	tvlds = partwcets * N;
 }
 
