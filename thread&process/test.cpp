@@ -115,7 +115,7 @@ MWC RND = MWC();
   while (1){
      	//sqrt(rand_r(&seed));
 	sqrt(RND.mwc32());
-  		
+  		// sqrt(rand());
   }
 //random_r_loop();
 
