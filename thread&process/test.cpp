@@ -136,12 +136,12 @@ int main(){
 	// initstate_r(seed, rand_statebuf, sizeof(rand_statebuf), &rand_states);
 	MWC RND = MWC();
 	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
-	for (int i = 0; i < 5000; ++i)
+	for (int i = 0; i < 2000; ++i)
 	{
 		sqrt(RND.mwc32());
 	}
 	unsigned long timeout = TimeUtil::convert_us(TimeUtil::getTime());
-	std::cout << timeout - timein;
+	std::cout << timeout - timein << std::endl;
 	
 }
 
