@@ -3,12 +3,20 @@
 
 import os
 import copy
-
+import time
+import csv
   
 from xml_api import *
 from dir_utils import *
 
-
+def readcsv(name):
+	tempdata = []
+	with open(name, 'rb') as csvfile:
+		r = csv.reader(csvfile, delimiter = ',')
+		for row in r:
+			for d in row:
+				tempdata.append(float(d))
+	return tempdata
 
 	
 class FilePath():
@@ -17,6 +25,7 @@ class FilePath():
 		self.subDir = sub_dir
 		self.filename = filename
 		self.update_final_path()
+		self.valid_kernels = ['aptm', 'bws', 'pboo']
 
 	def update_final_path(self):
 		self.finalPath = self.rootPath + self.subDir + self.filename
@@ -54,25 +63,57 @@ class Config(object):
 		super(Config, self).__init__()
 		self.__load_xml_config(xml_path)
 
+	def update_xml_csv_filenames(self):
+		same_filename = self.__xmlfileprefix + '_' + kernel_type_lower
+		self.__xml_path.set_file_name(same_filename)
+		self.__csv_path.set_file_name(same_filename)
 
 	def set_kernel(self, kernel_type):
 
 		kernel_type_lower = kernel_type.lower()
 
-		legal_kernels = ['aptm', 'bws', 'pboo', 'ge']
-		if kernel_type_lower in legal_kernels:
+		if kernel_type_lower in self.valid_kernels:
 			self.__kernel_type = kernel_type_lower
-			same_filename = self.__xmlfileprefix + '_' + kernel_type_lower
-			self.__xml_path.set_file_name(same_filename)
-			self.__csv_path.set_file_name(same_filename)
+			self.update_xml_csv_filenames()
 		else:
 			print "Illegal kernel type input!"
 
 	'''***********************************************'''
 
+	def get_best_bfactor(config):
+		config.set_xml_csv_sub_dir('bfactor_temp/')
+		config.set_kernel('aptm')
+		config.set_simulation_duration(20)
+		T = []
+		bestT = 200
+		bestb = 0.9
+		for b in range(50, 98, 1):
+			config.set_b_factor(b*0.01)
+			config.set_xml_csv_file_prefix('bfactor' + str(b))			
+			config.run()
+			time.sleep(5)
+			csvfile_name = config.get_csv_filepath() + '_result.csv'
+			tempdata = readcsv(csvfile_name)
+			thisT = tempdata[4]
+			T.append(thisT)
+			if (thisT < bestT):
+				bestT = thisT
+				bestb = b
+
+		return (bestb, bestT, T)
+
+	
+	def run_all_kernels(self):
+		sleeplength = 5
+		for kernel in self.valid_kernels:
+			config.set_kernel(kernel)
+			config.run()
+			time.sleep(sleep_length)
+
+
 	def save_to_xml(self):
-		legal_kernels = ['aptm', 'bws', 'pboo', 'ge']
-		if not self.__kernel_type in legal_kernels:
+
+		if not self.__kernel_type in self.valid_kernels:
 			print "kernel type has not been set yet!"
 			return
 
@@ -280,6 +321,8 @@ class Config(object):
 	def set_xml_csv_file_prefix(self, prefix):
 		self.__xmlfileprefix = prefix
 		self.__csvfileprefix = prefix
+		if self.__kernel_type in self.valid_kernels:
+			self.update_xml_csv_filenames()
 
 	def set_kernel_type(self, kernel_type):
 		self.set_kernel(kernel_type)
