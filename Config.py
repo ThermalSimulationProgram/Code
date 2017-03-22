@@ -25,7 +25,7 @@ class FilePath():
 		self.subDir = sub_dir
 		self.filename = filename
 		self.update_final_path()
-		self.valid_kernels = ['aptm', 'bws', 'pboo']
+		
 
 	def update_final_path(self):
 		self.finalPath = self.rootPath + self.subDir + self.filename
@@ -62,37 +62,37 @@ class Config(object):
 	def __init__(self, xml_path='Config.xml'):
 		super(Config, self).__init__()
 		self.__load_xml_config(xml_path)
+		self.__kernel_type = 'invalid kernel'
+		self.valid_kernels = ['aptm', 'bws', 'pboo']
 
 	def update_xml_csv_filenames(self):
-		same_filename = self.__xmlfileprefix + '_' + kernel_type_lower
+		same_filename = self.__xmlfileprefix + '_' + self.__kernel_type.lower()
 		self.__xml_path.set_file_name(same_filename)
 		self.__csv_path.set_file_name(same_filename)
 
 	def set_kernel(self, kernel_type):
 
-		kernel_type_lower = kernel_type.lower()
-
-		if kernel_type_lower in self.valid_kernels:
-			self.__kernel_type = kernel_type_lower
+		if kernel_type.lower() in self.valid_kernels:
+			self.__kernel_type = kernel_type.lower()
 			self.update_xml_csv_filenames()
 		else:
 			print "Illegal kernel type input!"
 
 	'''***********************************************'''
 
-	def get_best_bfactor(config):
-		config.set_xml_csv_sub_dir('bfactor_temp/')
-		config.set_kernel('aptm')
-		config.set_simulation_duration(20)
+	def get_best_bfactor(self):
+		self.set_xml_csv_sub_dir('bfactor_temp/')
+		self.set_kernel('aptm')
+		self.set_simulation_duration(20)
 		T = []
 		bestT = 200
 		bestb = 0.9
 		for b in range(50, 98, 1):
-			config.set_b_factor(b*0.01)
-			config.set_xml_csv_file_prefix('bfactor' + str(b))			
-			config.run()
+			self.set_b_factor(b*0.01)
+			self.set_xml_csv_file_prefix('bfactor' + str(b))			
+			self.run()
 			time.sleep(5)
-			csvfile_name = config.get_csv_filepath() + '_result.csv'
+			csvfile_name = self.get_csv_filepath() + '_result.csv'
 			tempdata = readcsv(csvfile_name)
 			thisT = tempdata[4]
 			T.append(thisT)
@@ -106,9 +106,9 @@ class Config(object):
 	def run_all_kernels(self):
 		sleeplength = 5
 		for kernel in self.valid_kernels:
-			config.set_kernel(kernel)
-			config.run()
-			time.sleep(sleep_length)
+			self.set_kernel(kernel)
+			self.run()
+			time.sleep(sleeplength)
 
 
 	def save_to_xml(self):
