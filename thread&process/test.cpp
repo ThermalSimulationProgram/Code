@@ -126,7 +126,7 @@ int main(){
 	int numworkers = 4;
 	
 	// testthread(numworkers);
-	testprocess(numworkers);
+	// testprocess(numworkers);
 	// struct random_data rand_states;
 	// int r;
 	// unsigned int seed = 89;
@@ -134,14 +134,14 @@ int main(){
 	
 
 	// initstate_r(seed, rand_statebuf, sizeof(rand_statebuf), &rand_states);
-
-	// unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
-	// for (int i = 0; i < 10000; ++i)
-	// {
-	// 	random_r(&rand_states, &r);
-	// }
-	// unsigned long timeout = TimeUtil::convert_us(TimeUtil::getTime());
-	// std::cout << timeout - timein;
+	MWC RND = MWC();
+	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
+	for (int i = 0; i < 5000; ++i)
+	{
+		sqrt(RND.mwc32());
+	}
+	unsigned long timeout = TimeUtil::convert_us(TimeUtil::getTime());
+	std::cout << timeout - timein;
 	
 }
 
