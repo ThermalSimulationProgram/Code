@@ -12,10 +12,14 @@ protected:
 	unsigned nstage;
 	unsigned cstage;
 
+	// absolute time variables
 	unsigned long releaseTime;
-	unsigned long rltDeadline;
 	unsigned long deadline;
 	unsigned long absDeadline;
+
+	// relative time variables
+	unsigned long rltDeadline;
+	unsigned long rltReleaseTime;
 
 	///This attribute indicates the real-cse execution time of each job, unit us 
 	std::vector<unsigned long> rcet;
@@ -53,6 +57,8 @@ public:
 	unsigned long getAbsDeadline();
 
 	unsigned long getRltDeadline();
+
+	unsigned long getRltReleaseTime();
 };
 
 

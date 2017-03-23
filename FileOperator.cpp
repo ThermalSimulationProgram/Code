@@ -145,6 +145,8 @@ void saveContentToNewFile(const string& filename, const vector<string>& data){
 	FileOperator file (filename, (int)(FSTREAM_OUT|FSTREAM_TRUNC));
 	file.write(data);
 }
+
+
 void appendContentToFile(const string& filename, const vector<string>& data){
 	FileOperator file (filename, (int)(FSTREAM_OUT|FSTREAM_APP));
 	file.write(data);

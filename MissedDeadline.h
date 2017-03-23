@@ -24,20 +24,20 @@ class MissedDeadline {
   unsigned int thread_id;
 
   ///This variable stores the job's arrival time
-  struct timespec arrivalTime;
+  unsigned long arrivalTime;
 
   ///This variable stores the job's deadline
-  struct timespec deadline;
+  unsigned long deadline;
 
   ///This variable stores the job's finish time
-  struct timespec finishTime;
+  unsigned long finishTime;
 
  public:
 
   /*********** MEMBER FUNCTIONS ***********/
 
   ///This function sets the attributes of the object
-  void setMissedDeadline(unsigned int ti, struct timespec at, struct timespec dl, struct timespec ft);
+  void setMissedDeadline(unsigned int ti, unsigned long at, unsigned long dl, unsigned long ft);
 
   ///This function converts the trace to string for file output
   std::string toString();
@@ -45,16 +45,16 @@ class MissedDeadline {
   /*********** GETTER FUNCTIONS ***********/
 
   ///This function returns the job's arrival time
-  struct timespec getArrivalTime();
+  unsigned long getArrivalTime();
 
   ///This function returns the job's deadline
-  struct timespec getDeadline();
+  unsigned long getDeadline();
 
   ///This function returns the thread ID
   unsigned int getId();
 
   ///This function returns the job's finish time
-  struct timespec getFinishTime();
+  unsigned long getFinishTime();
 };
 
 #endif

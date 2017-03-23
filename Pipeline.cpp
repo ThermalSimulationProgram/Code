@@ -186,8 +186,9 @@ double Pipeline::simulate(){
 		appendToFile(tempSaveName, vector<double>(1, maxTemp));
 		double MeanMaxTemp = tempwatcher->getMeanMaxTemp();
 		appendToFile(tempSaveName, vector<double>(1, MeanMaxTemp));
-
 		appendToFile(tempSaveName, scheduler->getKernelTime());
+
+		appendContentToFile(tempSaveName, Statistics::getAllMissedDeadline());
 	}
 	
 	return tempwatcher->getMeanMaxTemp();
@@ -270,7 +271,18 @@ bool Pipeline::isSimulating(){
 // This function is called by the end stage to announce a job is finished
 void Pipeline::finishedJob(Job* j){
 	// let the job self-check if it is real finished
-	if (j->isFinalFinished()){
+
+	double now = Statistics::getRelativeTime_ms();
+	double deadline = (double)j->getRltDeadline()/1000;
+
+	double release = ((double)j->getRltReleaseTime())/1000;
+
+	if (now > deadline + 2){
+		cout << release <<  " A deadline miss happened!" << endl;
+		Statistics::addMissedDeadline(j->getId(), (unsigned long)release, 
+			(unsigned long)deadline, (unsigned long)now);
+	}
+	/*if (j->isFinalFinished()){
 		Semaphores::print_sem.wait_sem();
 		double now = Statistics::getRelativeTime_ms();
 		double deadline = (double)j->getRltDeadline()/1000;
@@ -289,7 +301,7 @@ void Pipeline::finishedJob(Job* j){
 		cout << "Job with id: " << j->getId() << " finishes incorrectly!" 
 		<< "at time: "<< (Statistics::getRelativeTime_ms()) << " millisecond!"  << endl;
 		Semaphores::print_sem.post_sem();
-	}
+	}*/
 }
 
 // This function is called by the scheduler to apply new schedule scheme to each stage

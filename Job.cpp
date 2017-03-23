@@ -6,7 +6,7 @@
 using namespace std;
 
 Job::Job(unsigned _nstage, unsigned _id, unsigned long _rltDeadline, 
-	unsigned long rltReleaseTime){
+	unsigned long _rltReleaseTime){
 	nstage      = _nstage;
 	id          = _id;
 	cstage      = 0;
@@ -14,6 +14,8 @@ Job::Job(unsigned _nstage, unsigned _id, unsigned long _rltDeadline,
 	releaseTime = -1;
 	absDeadline = -1;
 	deadline 	= _rltDeadline;
+	rltReleaseTime = _rltReleaseTime;
+	// cout << "Job::Job: " << rltReleaseTime << endl;
 	rltDeadline = rltReleaseTime + deadline;
 	sem_init(&state_sem, 0, 1);
 }
@@ -143,6 +145,15 @@ unsigned long Job::getAbsDeadline(){
 unsigned long Job::getRltDeadline(){
 	sem_wait(&state_sem);
 	unsigned long ret = rltDeadline;
+	sem_post(&state_sem);
+	return ret;
+}
+
+
+unsigned long Job::getRltReleaseTime(){
+	sem_wait(&state_sem);
+	unsigned long ret = rltReleaseTime;
+	// cout << "Job::getRltReleaseTime: " << ret << endl;
 	sem_post(&state_sem);
 	return ret;
 }

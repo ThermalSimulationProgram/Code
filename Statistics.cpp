@@ -63,21 +63,31 @@ unsigned long Statistics::getRelativeTime_ms(){
 }
 
 ///This function adds a missed deadline trace to the vector
-void Statistics::addMissedDeadline(unsigned int t_id, struct timespec arrival_time, struct timespec deadline) {
+void Statistics::addMissedDeadline(unsigned int t_id, unsigned long arrival_time, unsigned long deadline, 
+    unsigned long finisht_time) {
   #if _TRACING_ENABLED == 1
   if(state == 1) {
     MissedDeadline md;
-    struct timespec aux;
-
-    aux = TimeUtil::getTime(relative);
+  
 
     sem_wait(&deadline_sem);
-      md.setMissedDeadline(t_id, arrival_time, deadline,  aux);
+      md.setMissedDeadline(t_id, arrival_time, deadline,  finisht_time);
       missedDeadlines.push_back(md);
     sem_post(&deadline_sem);
   }
   #endif
 }
+
+std::vector<string> Statistics::getAllMissedDeadline(){
+  vector<string> ret;
+  for (int i = 0; i < (int) missedDeadlines.size(); ++i)
+  {
+    ret.push_back(missedDeadlines[i].toString());
+  }
+  return ret;
+}
+
+
 
 ///This function adds a runtime to the vector
 void Statistics::addRuntime(enum _thread_type type, unsigned int id, struct timespec _rt) {

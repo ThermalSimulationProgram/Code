@@ -79,7 +79,10 @@ class Statistics {
   static struct timespec getStart();
   
   ///This function adds a missed deadline trace to the vector
-  static void addMissedDeadline(unsigned int t_id, struct timespec arrival_time, struct timespec deadline);
+  static void addMissedDeadline(unsigned int t_id, unsigned long arrival_time, unsigned long deadline, 
+    unsigned long finisht_time);
+
+  static std::vector<std::string> getAllMissedDeadline();
 
   ///This function adds a runtime statistic to the vector
   static void addRuntime(enum _thread_type type, unsigned int t_id, struct timespec rt);

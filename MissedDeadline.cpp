@@ -12,7 +12,7 @@ using namespace std;
 /*********** MEMBER FUNCTIONS ***********/
 
 ///This function sets the attributes of the object
-void MissedDeadline::setMissedDeadline(unsigned int ti, struct timespec at, struct timespec dl, struct timespec ft) {
+void MissedDeadline::setMissedDeadline(unsigned int ti, unsigned long at, unsigned long dl, unsigned long ft) {
   thread_id = ti;
   arrivalTime = at;
   deadline = dl;
@@ -24,7 +24,7 @@ void MissedDeadline::setMissedDeadline(unsigned int ti, struct timespec at, stru
 string MissedDeadline::toString() {
   stringstream out;
 
-  out << thread_id <<  "," << TimeUtil::convert_us(arrivalTime) << "," << TimeUtil::convert_us(deadline) << "," << TimeUtil::convert_us(finishTime);
+  out << thread_id <<  "," << arrivalTime << "," << deadline << "," << finishTime;
 
   return out.str();
 }
@@ -32,12 +32,12 @@ string MissedDeadline::toString() {
 /*********** GETTER FUNCTIONS ***********/
 
 ///This function returns the job's arrival time
-struct timespec MissedDeadline::getArrivalTime() {
+unsigned long MissedDeadline::getArrivalTime() {
   return arrivalTime;
 }
 
 ///This function returns the job's deadline
-struct timespec MissedDeadline::getDeadline() {
+unsigned long MissedDeadline::getDeadline() {
   return deadline;
 }
 
@@ -47,6 +47,6 @@ unsigned int MissedDeadline::getId() {
 }
 
 ///This function returns the jobs finish time
-struct timespec MissedDeadline::getFinishTime() {
+unsigned long MissedDeadline::getFinishTime() {
   return finishTime;
 }
