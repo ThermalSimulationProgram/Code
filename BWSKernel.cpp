@@ -2,9 +2,12 @@
 
 #include "vectormath.h"
 #include "structdef.h"
+#include "Statistics.h"
 
 
 using namespace std;
+
+#define _PROFILE 0
 
 BWSKernel::BWSKernel(unsigned _nstages, const vector<double>& _wcets,
 	const vector<double>& _tbet, enum _schedule_kernel kernel,
@@ -20,9 +23,32 @@ BWSKernel::~BWSKernel(){
 void BWSKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 
 	AdaptInfo config;
+	#if _PROFILE == 1
+	vector<double> partTimes = vector<double> (10, 0);
+	double timein = (double)Statistics::getRelativeTime_ms();
+	#endif
 	getAdaptInfo(config);
+	#if _PROFILE == 1
+	double timeout = (double)Statistics::getRelativeTime_ms();
+	double time1 = timeout - timein;
+	#endif
 
+	#if _PROFILE == 1
+	timein = (double)Statistics::getRelativeTime_ms();
+	#endif
 	calcBWS(tons, toffs, config);
+	#if _PROFILE == 1
+	timeout = (double)Statistics::getRelativeTime_ms();
+	double time2 = timeout - timein;
+	if (time1 + time2 > 2){
+		partTimes[0] += time1;
+		partTimes[1] += time2;
+		cout << "getScheduleScheme:time1:  "<<partTimes[0] << 
+		"   getScheduleScheme:time2:  " << partTimes[1] << endl;
+	}
+	#endif
+
+
 }
 
 void BWSKernel::calcBWS(vector<double> & tons, 
@@ -185,7 +211,7 @@ void BWSKernel::getAdaptInfo(AdaptInfo& config){
 
 		if (i == 0){
 			alpha_d = rtc::plus(haAlpha[index], alpha_f );
-			/*vector<double> alpha_d_data = rtc::segementsData(alpha_d, 20000);
+			/*vector<double> alpha_d_data = rtc::segementsData(alpha_d, 2000);
 
 			if (rtc::eqZero(alpha_d_data)){
 				config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
@@ -205,7 +231,7 @@ void BWSKernel::getAdaptInfo(AdaptInfo& config){
 		}
 		else{
 			alpha_d = alpha_f;
-			/*vector<double> alpha_d_data = rtc::segementsData(alpha_d, 20000);
+			/*vector<double> alpha_d_data = rtc::segementsData(alpha_d, 2000);
 			
 			if (rtc::eqZero(alpha_d_data)){
 				bmax = std::numeric_limits<double>::infinity();

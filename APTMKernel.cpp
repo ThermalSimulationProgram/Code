@@ -15,7 +15,7 @@ using namespace std;
 #define _DEBUG 0
 #define _INFO 0
 #define _PROFILE 0
-
+#define _PROFILE1 0
 
 
 
@@ -49,12 +49,12 @@ void APTMKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 	Semaphores::print_sem.post_sem();
 	#endif	
 
-	#if _PROFILE == 1
+	#if _PROFILE1 == 1
 	double timein = (double)Statistics::getRelativeTime_ms();
 	#endif
 	AdaptInfo config;
 	getApdatInfo(config);
-	#if _PROFILE == 1
+	#if _PROFILE1 == 1
 	double timeout = (double)Statistics::getRelativeTime_ms();
 	double time1 = timeout - timein;
 	#endif
@@ -66,11 +66,11 @@ void APTMKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 	Semaphores::print_sem.post_sem();
 	#endif
 
-	#if _PROFILE == 1
+	#if _PROFILE1 == 1
 	timein = (double)Statistics::getRelativeTime_ms();
 	#endif
 	calcAPTM(tons, toffs, config);
-	#if _PROFILE == 1
+	#if _PROFILE1 == 1
 	timeout = (double)Statistics::getRelativeTime_ms();
 	double time2 = timeout - timein;
 	if (time1 + time2 > 20){

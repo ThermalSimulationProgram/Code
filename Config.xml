@@ -11,23 +11,23 @@
   </simulation>
 
   <events>
-    <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>
-    <eventPeriod value="100" unit="ms"/>
-    <eventJitter   value="150" unit="ms"/>
+    <csv_path value="./csv_data/event_trace1000msperiod_60s.csv" unit="ms"/>
+    <eventPeriod value="1000" unit="ms"/>
+    <eventJitter   value="1500" unit="ms"/>
     <eventDistance value="0" unit="ms"/>
-    <eventWcets value="{14.2 9 3.6 5.7}" unit="ms"/>
+    <eventWcets value="{142 90 36 57}" unit="ms"/>
     <relativeDeadline value="120"  unit="ms"/>
     <exeFactor value="0.9" />
   </events>
 
   <all_kernel_args>
-    <kernelPeriod value="25" unit="ms"/>
+    <kernelPeriod value="200" unit="ms"/>
     <bFactor value="0.9" />
     <offlinedata>
       <prefix value="./csv_data/Dell9020ThermalProp" />
     </offlinedata>
-    <ton value="{15.2 10 4.6 6.7}" unit="ms"/>
-    <toff value="{6.5 12.6 11.1 9.6}" unit="ms"/>
+    <ton value="{152 100 46 67}" unit="ms"/>
+    <toff value="{65 126 111 96}" unit="ms"/>
   </all_kernel_args>
 
 </config>
