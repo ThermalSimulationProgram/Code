@@ -119,6 +119,7 @@ class Config(object):
 
 		make_dir(self.__xml_path.get_root_path())
 		make_dir(self.__xml_path.get_sub_dir_path())
+		print self.__xml_path.get_sub_dir_path()
 		make_dir(self.__csv_path.get_root_path())
 		make_dir(self.__csv_path.get_sub_dir_path())
 

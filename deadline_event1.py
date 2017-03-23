@@ -8,7 +8,7 @@ from Config import Config
 
 config = Config()
 # create a new sub directory
-config.set_xml_csv_sub_dir('relative_deadline/')
+config.set_xml_csv_sub_dir('relative_deadline_event1/')
 
 config.set_simulation_duration(45)
 base_value = 70
