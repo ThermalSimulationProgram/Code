@@ -27,7 +27,7 @@ void getCoolingCurve(unsigned n_cpu, vector<unsigned long> wcets){
       unsigned long toff = 2000;
       do{
         toffs.push_back(toff);
-        toff += 2000;
+        toff += 1000;
       }while(toff < 160000);
       vector<unsigned long> tons(toffs.size(), wcets[k]); 
 
@@ -134,7 +134,7 @@ void getOneStageCurve(const vector<unsigned long> & toffs, const vector<unsigned
 
       delete p;
 
-      //sleep(5);
+      sleep(15);
     }
 
     string savename = filename + ".csv";
