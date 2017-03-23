@@ -107,7 +107,8 @@ class Config(object):
 		sleeplength = 60
 		index = 0
 		for kernel in self.valid_kernels:
-			if control[index]:
+			if control[index] > 0:
+				index = index + 1
 				self.set_kernel(kernel)
 				self.run()
 				time.sleep(sleeplength)
@@ -177,10 +178,10 @@ class Config(object):
 		saved_xml_name = self.__xml_path.get_final_path() + '.xml'
 		pretty_write_xml(tree, saved_xml_name)
 
-	def run(self):
+	def run(self, flag = False):
 		self.save_to_xml()
 		main_to_xml_path = './' + self.__xml_path.get_final_path()
-		exe_command(main_to_xml_path, False)
+		exe_command(main_to_xml_path, flag)
 		
 
 	def __load_xml_config(self, xml_path = 'Config.xml'):
