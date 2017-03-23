@@ -1,6 +1,6 @@
 <simulation name="example_pboo">
 
-   <duration value="10" unit="sec"/>
+   <duration value="40" unit="sec"/>
 
    <pipeline stagenumber="4"/>
 
@@ -11,7 +11,7 @@
       <distance value="0" unit="ms"/>
       <wcets value="{14.2 10 3.6 5.7 }" unit="ms"/>
       <exe_factor value="0.9" />
-      <relative_deadline value="70" unit="ms"/>
+      <relative_deadline value="120" unit="ms"/>
    </events>
 
    <scheduler>
