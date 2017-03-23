@@ -12,13 +12,14 @@ config.set_xml_csv_sub_dir('relative_deadline_event1/')
 
 config.set_simulation_duration(45)
 base_value = 70
+control = [1, 1, 0]
 for x in range(0, 11):
 	new_value = base_value + x*5
 	# change the value
 	config.set_relative_deadline(new_value)
 	# give the prefix for the files
 	config.set_xml_csv_file_prefix('deadline' + str(new_value))
-	config.run_all_kernels()
+	config.run_all_kernels(control)
 
 
 

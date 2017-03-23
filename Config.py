@@ -103,12 +103,14 @@ class Config(object):
 		return (bestb, bestT, T)
 
 	
-	def run_all_kernels(self):
-		sleeplength = 5
+	def run_all_kernels(self, control = [1, 1, 1]):
+		sleeplength = 15
+		index = 0
 		for kernel in self.valid_kernels:
-			self.set_kernel(kernel)
-			self.run()
-			time.sleep(sleeplength)
+			if control[index]:
+				self.set_kernel(kernel)
+				self.run()
+				time.sleep(sleeplength)
 
 
 	def save_to_xml(self):
