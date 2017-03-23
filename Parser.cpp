@@ -37,6 +37,7 @@ int Parser::parseFile(){
 	xml_node sim_node      = doc.child("simulation");
 	string name            = sim_node.attribute("name").value();
 
+
 	// save the duration in microsecond unit
 	unsigned long duration = parseTimeMircroSecond(sim_node.child("duration"));
 	
@@ -106,6 +107,20 @@ int Parser::parseFile(){
 		rltDeadline, wcets, rl_release_times, type, duration, name);
 
 	Scratch::setExeFactor(exe_factor);
+
+	xml_node isSaveFile	   = sim_node.child("save_result");
+	if (isSaveFile){
+
+		string isSave 		=  isSaveFile.attribute("value").value();
+		if ((isSave == "false") || (isSave == "False")){
+			Scratch::setSavingFile(false);
+		}else if ((isSave == "true") || (isSave == "True")){
+			Scratch::setSavingFile(true);
+		}else{
+			cout << "Parser warning: parameter of saving result error! set to default TRUE value\n";
+		}
+	}
+	
 
 	// handle additional parameters for the scheduler
 	if(type == APTM){

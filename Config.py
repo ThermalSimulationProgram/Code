@@ -18,9 +18,18 @@ def readcsv(name):
 				tempdata.append(float(d))
 	return tempdata
 
+def heat_cpu(configin):
+	config = copy.deepcopy(configin)
+	config.set_simulation_duration(20)
+	config.is_save_result = False
+	config.set_xml_csv_file_prefix('heatup_cpu')
+	config.set_kernel('aptm')
+	config.run()
+	time.sleep(15)
+
 	
 class FilePath():
-	def __init__(self, root_path, sub_dir = ' ', filename = ' '):
+	def __init__(self, root_path, sub_dir = '', filename = 'default'):
 		self.rootPath = root_path
 		self.subDir = sub_dir
 		self.filename = filename
@@ -64,6 +73,7 @@ class Config(object):
 		self.__load_xml_config(xml_path)
 		self.__kernel_type = 'invalid kernel'
 		self.valid_kernels = ['aptm', 'bws', 'pboo']
+		self.is_save_result = True;
 
 	def update_xml_csv_filenames(self):
 		same_filename = self.__xmlfileprefix + '_' + self.__kernel_type.lower()
@@ -104,7 +114,7 @@ class Config(object):
 
 	
 	def run_all_kernels(self, control = [1, 1, 1]):
-		sleeplength = 60
+		sleeplength = 1
 		index = 0
 		for kernel in self.valid_kernels:
 			if control[index] > 0:
@@ -122,7 +132,6 @@ class Config(object):
 
 		make_dir(self.__xml_path.get_root_path())
 		make_dir(self.__xml_path.get_sub_dir_path())
-		print self.__xml_path.get_sub_dir_path()
 		make_dir(self.__csv_path.get_root_path())
 		make_dir(self.__csv_path.get_sub_dir_path())
 
@@ -131,16 +140,18 @@ class Config(object):
 
 		duration = create_time_node('duration', self.__duration_value, self.__duration_unit);
 		pipeline = create_node('pipeline', {'stagenumber':str(self.__stage_number)}, "")
+		save_result = create_node('save_result', {'value':str(self.is_save_result)}, "")
 		simulation.append(duration)
+		simulation.append(save_result)
 		simulation.append(pipeline)
 
-		events = create_node('events', {}, "")
-		csv_path = create_time_node('csv_path', self.__event_csv_path, self.__event_csv_path_unit)
-		period = create_time_node('period', self.__event_period_value, self.__event_period_unit)
-		distance = create_time_node('distance', self.__event_distance_value, self.__event_distance_unit)
-		jitter = create_time_node('jitter', self.__event_jitter_value,self. __event_jitter_unit)
-		wcets = create_time_node('wcets', self.__event_wcets_value, self.__event_wcets_unit)
-		deadline = create_time_node('relative_deadline', self.__relative_deadline_value, self.__relative_deadline_unit)
+		events     = create_node('events', {}, "")
+		csv_path   = create_time_node('csv_path', self.__event_csv_path, self.__event_csv_path_unit)
+		period     = create_time_node('period', self.__event_period_value, self.__event_period_unit)
+		distance   = create_time_node('distance', self.__event_distance_value, self.__event_distance_unit)
+		jitter     = create_time_node('jitter', self.__event_jitter_value,self. __event_jitter_unit)
+		wcets      = create_time_node('wcets', self.__event_wcets_value, self.__event_wcets_unit)
+		deadline   = create_time_node('relative_deadline', self.__relative_deadline_value, self.__relative_deadline_unit)
 		exe_factor = create_node('exe_factor', {'value':str(self.__exe_factor)}, "")
 		events.append(csv_path)
 		events.append(period)
@@ -152,9 +163,9 @@ class Config(object):
 		simulation.append(events)
 
 		scheduler = create_node('scheduler', {}, "")
-		kernel = create_node('kernel', {'type':self.__kernel_type.upper()}, "")
+		kernel    = create_node('kernel', {'type':self.__kernel_type.upper()}, "")
 		if ((self.__kernel_type == 'pboo') or (self.__kernel_type == 'ge')):
-			ton = create_time_node('ton', self.__kernel_ton_value, self.__kernel_ton_unit)
+			ton  = create_time_node('ton', self.__kernel_ton_value, self.__kernel_ton_unit)
 			toff = create_time_node('toff', self.__kernel_toff_value, self.__kernel_toff_unit)
 			kernel.append(ton)
 			kernel.append(toff)
@@ -162,9 +173,9 @@ class Config(object):
 			kernel_period = create_time_node('period', self.__kernel_period_value, self.__kernel_period_unit)
 			kernel.append(kernel_period)
 			if self.__kernel_type == 'aptm':
-				bfactor = create_node('b_factor', {'value':str(self.__kernel_b_factor)},"")
+				bfactor     = create_node('b_factor', {'value':str(self.__kernel_b_factor)},"")
 				offlinedata = create_node('offlinedata', {}, "")
-				prefix = create_node('prefix', {'path':self.__kernel_offline_prefix}, "")
+				prefix      = create_node('prefix', {'path':self.__kernel_offline_prefix}, "")
 				offlinedata.append(prefix)
 
 				kernel.append(bfactor)
@@ -189,19 +200,19 @@ class Config(object):
 		tree.parse(xml_path)
 
 		## xml file saving path setting, csv result saving path setting
-		nodes = find_nodes(tree,"path/xml_root_path")
-		xmlpath = nodes[0].attrib['value']
-		self.__xml_path = FilePath(xmlpath)
-
-		nodes = find_nodes(tree,"path/csv_root_path")
-		csvpath = nodes[0].attrib['value']
-		self.__csv_path = FilePath(csvpath)
+		nodes                = find_nodes(tree,"path/xml_root_path")
+		xmlpath              = nodes[0].attrib['value']
+		self.__xml_path      = FilePath(xmlpath)
+		
+		nodes                = find_nodes(tree,"path/csv_root_path")
+		csvpath              = nodes[0].attrib['value']
+		self.__csv_path      = FilePath(csvpath)
 		
 		
-		self.__xmlfilename = ''
+		self.__xmlfilename   = ''
 		self.__xmlfileprefix = ''
-
-		self.__csvfilename = ''
+		
+		self.__csvfilename   = ''
 		self.__csvfileprefix = ''
 
 
@@ -209,8 +220,8 @@ class Config(object):
 		
 		## simulation platform setting
 		# simulation name
-		nodes = find_nodes(tree, "simulation")
-		self.__name  = nodes[0].attrib['name']
+		nodes       = find_nodes(tree, "simulation")
+		self.__name = nodes[0].attrib['name']
 
 		# simulation duration
 		nodes = find_nodes(tree,"simulation/duration")
@@ -380,15 +391,15 @@ class Config(object):
 
 
 		
-if __name__ == "__main__": 
-	config_me = Config("test")
-	config_me.set_kernel('aptM')
-	b = copy.copy(config_me)
-	b.set_kernel('pboo')
-	attrs = vars(config_me)
-	print '\n'.join("%s: %s" % item for item in attrs.items())
-	config_me.set_xml_sub_dir('test/')
-	config_me.set_xml_filename('testtt2')
-	config_me.save_to_xml()
+# if __name__ == "__main__": 
+# 	config_me = Config("test")
+# 	config_me.set_kernel('aptM')
+# 	b = copy.copy(config_me)
+# 	b.set_kernel('pboo')
+# 	attrs = vars(config_me)
+# 	print '\n'.join("%s: %s" % item for item in attrs.items())
+# 	config_me.set_xml_sub_dir('test/')
+# 	config_me.set_xml_filename('testtt2')
+# 	config_me.save_to_xml()
 
 
