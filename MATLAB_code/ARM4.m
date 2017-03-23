@@ -1,8 +1,6 @@
-%
-% stagenumber = 3-4
-% applications:  MP3 decoder; H.263 decoder; MADPlayer
-% period = 100;
-% deadline = period
+
+% depends on lib D:/chengl/PBOOJournal/CaseStudies/
+
 clear;
 % option1 = pathoptiset(mfilename('fullpath'), 'i','d','ARM4coresTM1e-05p.mat');
 % [path1, savefile1] = getPath(option1);
@@ -23,7 +21,7 @@ all_wcets = [14.2,9,3.6, 5.7]; %H.263
 
 deadline_factor = 1.2;
 
-step = 2;
+step = 1;
 tswoffs = ones(1,4);
 tswons = tswoffs;
 
@@ -31,7 +29,7 @@ tswons = tswoffs;
 san = 4;
 
 %% for different deadline factor
-
+all_solutions = [];
 for deadlinefactor = 0.7 : 0.01 : 0.9
 
 
@@ -41,7 +39,7 @@ resultData = getresultData();
 
 % [path2, savefile2] = getPath(option2);
 
-savefile3 = ['ARM4Test',num2str(step),'.mat'];
+savefile3 = ['ARM4Test_deadlinefactor_', num2str(deadlinefactor*100), '.mat'];
 
 activeNum = 4;
 
@@ -50,7 +48,7 @@ i = 1;
 period = streams(i,1);
 jitter = streams(i,2);
 d = streams(i,3);
-deadline = period * deadline_factor;
+deadline = period * deadlinefactor;
 alpha = rtcpjd(period,jitter,d);
 wcets = all_wcets(i,:);
 
@@ -67,7 +65,7 @@ control(2) = 1;
 
 [newresultData] = varyingCoreNum(TM, config,control,0,'ARM4Test');
 resultData = mergeResultData(resultData, newresultData);
-
+all_solutions = [all_solutions; newresultData.resultFBPT.solution];
 save(savefile3,'resultData');
 end
 
