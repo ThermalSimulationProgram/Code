@@ -15,8 +15,8 @@ config.set_simulation_duration(45)
 base_value = 70
 control = [1, 1, 0]
 
-for x in range(0, 2):
-	new_value = base_value + x * 20
+for x in range(0, 15):
+	new_value = base_value + x * 2
 	# change the value
 	config.set_relative_deadline(new_value)
 	# give the prefix for the files

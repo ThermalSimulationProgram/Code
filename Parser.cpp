@@ -61,7 +61,7 @@ int Parser::parseFile(){
 				" previous and is modified to its previous value \n";
 				v[i] = v[i-1];
 			} 
-			rl_release_times.push_back(v[i]);
+			rl_release_times.push_back(v[i]*10);
 		}
 	}
 	

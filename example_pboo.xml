@@ -1,6 +1,6 @@
 <simulation name="example_pboo">
 
-   <duration value="40" unit="sec"/>
+   <duration value="100" unit="sec"/>
 
    <pipeline stagenumber="4"/>
 
@@ -11,16 +11,17 @@
       <distance value="0" unit="ms"/>
       <wcets value="{14.2 10 3.6 5.7 }" unit="ms"/>
       <exe_factor value="0.9" />
-      <relative_deadline value="120" unit="ms"/>
+      <relative_deadline value="70" unit="ms"/>
    </events>
 
    <scheduler>
       <kernel type="PBOO">
          <ton value="{15.2 10 4.6 6.7}" unit="ms"/>
-         <toff value="{6.5 12.6 11.1 9.6}" unit="ms"/>
+         <toff value="{0.05 1 1.97 1}" unit="ms"/>
       </kernel>
    </scheduler>
 
 </simulation>
+
 
 

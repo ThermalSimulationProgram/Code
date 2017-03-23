@@ -148,7 +148,7 @@ void BWSKernel::calcBWS(vector<double> & tons,
 			SSS1                           = newSSS1;
 		}
 
-		toffs = tau0 + taue ;
+		toffs = tau0 + taue - 1;
 	}else{
 		toffs = vector<double>(nstages, 0);
 		
@@ -185,39 +185,39 @@ void BWSKernel::getAdaptInfo(AdaptInfo& config){
 
 		if (i == 0){
 			alpha_d = rtc::plus(haAlpha[index], alpha_f );
-			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 20000);
+			/*vector<double> alpha_d_data = rtc::segementsData(alpha_d, 20000);
 
 			if (rtc::eqZero(alpha_d_data)){
 				config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
 				bmax = std::numeric_limits<double>::infinity();
 			}else{
 				bmax = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, k);
-			} 
+			} */
 			
 
-			/*if (rtc::eq(alpha_d, curvezero )){
+			if (rtc::eq(alpha_d, curvezero )){
 			 	config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
 			 	bmax = std::numeric_limits<double>::infinity();
 			}else{
 				bmax = rtc::minbdf_BSF(alpha_d, relativeDeadline, k);
-			}*/	 
+			}
 			
 		}
 		else{
 			alpha_d = alpha_f;
-			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 20000);
+			/*vector<double> alpha_d_data = rtc::segementsData(alpha_d, 20000);
 			
 			if (rtc::eqZero(alpha_d_data)){
 				bmax = std::numeric_limits<double>::infinity();
 			}else{
 				bmax = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, k);
-			}
+			}*/
 
-			/*if (rtc::eq(alpha_d, curvezero )){
+			if (rtc::eq(alpha_d, curvezero )){
 			 	bmax = std::numeric_limits<double>::infinity();
 			}else{
 				bmax = rtc::minbdf_BSF(alpha_d, relativeDeadline, k);
-			}*/
+			}
 			
 		}
 

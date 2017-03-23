@@ -229,7 +229,6 @@ void Worker::wrapper(){
 				}
 				// load.consume_us(base);
 				load.consume_us_rand(base);
-
 				end = TimeUtil::convert_us(TimeUtil::getTime());
 				exedSlice = end - start;
 				total_exed = total_exed + exedSlice;
