@@ -21,7 +21,7 @@
   </events>
 
   <all_kernel_args>
-    <kernelPeriod value="20" unit="ms"/>
+    <kernelPeriod value="10" unit="ms"/>
     <bFactor value="0.9" />
     <offlinedata>
       <prefix value="./csv_data/Dell9020ThermalProp" />

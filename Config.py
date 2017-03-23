@@ -104,7 +104,7 @@ class Config(object):
 
 	
 	def run_all_kernels(self, control = [1, 1, 1]):
-		sleeplength = 15
+		sleeplength = 60
 		index = 0
 		for kernel in self.valid_kernels:
 			if control[index]:
