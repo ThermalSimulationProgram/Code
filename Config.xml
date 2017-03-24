@@ -16,7 +16,7 @@
     <eventJitter   value="1500" unit="ms"/>
     <eventDistance value="0" unit="ms"/>
     <eventWcets value="{142 90 36 57}" unit="ms"/>
-    <relativeDeadline value="120"  unit="ms"/>
+    <relativeDeadline value="880"  unit="ms"/>
     <exeFactor value="0.9" />
   </events>
 

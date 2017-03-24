@@ -20,12 +20,35 @@ def readcsv(name):
 
 def heat_cpu(configin):
 	config = copy.deepcopy(configin)
-	config.set_simulation_duration(20)
+	config.set_simulation_duration(40)
 	config.is_save_result = False
 	config.set_xml_csv_file_prefix('heatup_cpu')
 	config.set_kernel('aptm')
 	config.run()
-	time.sleep(15)
+	time.sleep(30)
+
+def get_best_bfactor(configin):
+	config = copy.deepcopy(configin)
+	config.set_xml_csv_sub_dir('bfactor_temp/')
+	config.set_kernel('aptm')
+	config.set_simulation_duration(20)
+	T = []
+	bestT = 20000000
+	bestb = 0.9
+	for b in range(40, 98, 5):
+		config.set_b_factor(b*0.01)
+		config.set_xml_csv_file_prefix('bfactor' + str(b))			
+		# config.run()
+		# time.sleep(5)
+		csvfile_name = config.get_csv_filepath() + '_result.csv'
+		tempdata = readcsv(csvfile_name)
+		thisT = tempdata[35]
+		T.append(thisT)
+		if (thisT < bestT):
+			bestT = thisT
+			bestb = b*0.01
+
+	return (bestb, bestT, T)
 
 	
 class FilePath():
@@ -90,31 +113,9 @@ class Config(object):
 
 	'''***********************************************'''
 
-	def get_best_bfactor(self):
-		self.set_xml_csv_sub_dir('bfactor_temp/')
-		self.set_kernel('aptm')
-		self.set_simulation_duration(20)
-		T = []
-		bestT = 200
-		bestb = 0.9
-		for b in range(50, 98, 1):
-			self.set_b_factor(b*0.01)
-			self.set_xml_csv_file_prefix('bfactor' + str(b))			
-			self.run()
-			time.sleep(5)
-			csvfile_name = self.get_csv_filepath() + '_result.csv'
-			tempdata = readcsv(csvfile_name)
-			thisT = tempdata[4]
-			T.append(thisT)
-			if (thisT < bestT):
-				bestT = thisT
-				bestb = b
-
-		return (bestb, bestT, T)
-
 	
 	def run_all_kernels(self, control = [1, 1, 1]):
-		sleeplength = 60
+		sleeplength = 80
 		index = 0
 		for kernel in self.valid_kernels:
 			if control[index] > 0:
