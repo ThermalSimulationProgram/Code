@@ -5,13 +5,14 @@
 #include <string>
 
 #include "structdef.h"
-
+#include "CPUUsage.h"
 
 class Worker;
 class Dispatcher;
 class Scheduler;
 class TempWatcher;
 class Job;
+class CPUUsage;
 
 
 class Pipeline{
@@ -48,6 +49,8 @@ protected:
 	// auxiliary variable to set main thread priority
 	struct sched_param param;
 
+	// CPUUsage records cpu active and idle times, used to calculate cpu usage
+	CPUUsage cpuUsageRecorder;
 public:
 
 	// Constructor needs the xml file path

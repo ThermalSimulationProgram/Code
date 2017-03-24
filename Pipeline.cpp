@@ -12,6 +12,7 @@
 #include "Scheduler.h"
 #include "Worker.h"
 #include "Job.h"
+
 //parser
 #include "Parser.h"
 //utilities
@@ -24,6 +25,7 @@
 #include "FileOperator.h"
 
 
+
 using namespace std;
 #define _DEBUG 0
 #define _INFO 0
@@ -33,7 +35,7 @@ bool Pipeline::initialized = false;
 bool Pipeline::simulating  = false;
 
 // Constructor needs the xml file path
-Pipeline::Pipeline(string xml_path)
+Pipeline::Pipeline(string xml_path):cpuUsageRecorder()
 {
 	Parser* p = new Parser(xml_path);
 	if (p->parseFile()!=0){
@@ -73,6 +75,7 @@ Pipeline::Pipeline(string xml_path)
 		pthread_exit(0);
 	}
 	tempwatcher 	= new TempWatcher(200000, Scratch::getName(), 98);
+
 	// initialize();	
 }
 
@@ -170,6 +173,7 @@ double Pipeline::simulate(){
 	tempwatcher->setReadingTimes(tstart_us);
 
 	// simulation starts now
+	cpuUsageRecorder.startLoggingCPU();
 	simulating = true;
 	// main thread sleeps for duration time length
 	nanosleep(&duration, &rem);
@@ -178,15 +182,23 @@ double Pipeline::simulate(){
 	join_all();
 	// return the average temperature 
 
+	cpuUsageRecorder.endLoggingCPU();
+
 	if (Scratch::isSaveFile()){
 		string tempSaveName = Scratch::getName() + "_result.csv";
 
 		saveToNewFile(tempSaveName, tempwatcher->getMeanTemp());
+
 		double maxTemp = tempwatcher->getMaxTemp();
 		appendToFile(tempSaveName, vector<double>(1, maxTemp));
+
 		double MeanMaxTemp = tempwatcher->getMeanMaxTemp();
 		appendToFile(tempSaveName, vector<double>(1, MeanMaxTemp));
+
 		appendToFile(tempSaveName, scheduler->getKernelTime());
+
+		float total_cpu_usage = cpuUsageRecorder.getUsage();
+		appendToFile(tempSaveName, vector<float>(1, total_cpu_usage));
 
 		appendContentToFile(tempSaveName, Statistics::getAllMissedDeadline());
 	}
