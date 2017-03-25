@@ -31,18 +31,18 @@ def get_best_bfactor(configin):
 	config = copy.deepcopy(configin)
 	config.set_xml_csv_sub_dir('bfactor_temp/')
 	config.set_kernel('aptm')
-	config.set_simulation_duration(20)
+	config.set_simulation_duration(25)
 	T = []
 	bestT = 20000000
 	bestb = 0.9
 	for b in range(40, 98, 5):
 		config.set_b_factor(b*0.01)
 		config.set_xml_csv_file_prefix('bfactor' + str(b))			
-		# config.run()
-		# time.sleep(5)
+		config.run()
+		time.sleep(45)
 		csvfile_name = config.get_csv_filepath() + '_result.csv'
 		tempdata = readcsv(csvfile_name)
-		thisT = tempdata[35]
+		thisT = tempdata[5]
 		T.append(thisT)
 		if (thisT < bestT):
 			bestT = thisT
@@ -120,9 +120,10 @@ class Config(object):
 		for kernel in self.valid_kernels:
 			if control[index] > 0:
 				index = index + 1
+				time.sleep(sleeplength)
 				self.set_kernel(kernel)
 				self.run()
-				time.sleep(sleeplength)
+
 
 
 	def save_to_xml(self):
