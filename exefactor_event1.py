@@ -20,8 +20,8 @@ for x in range(0, 1):
 	new_value = base_value + x*0.1
 	# change the value
 	config.set_exe_factor(new_value)
-	#(b, T, allt) = get_best_bfactor(config, 2)
-	config.set_b_factor(0.74)
+	(b, T, allt) = get_best_bfactor(config, 2)
+	config.set_b_factor(b)
 	# give the prefix for the files
 	config.set_xml_csv_file_prefix('exefactor' + str(new_value))
 	config.run_all_kernels(control)
