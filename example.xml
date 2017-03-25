@@ -1,8 +1,10 @@
 <simulation name="example">
 
-   <duration value="62" units="sec"/>
+   <duration value="62" unit="sec"/>
 
    <pipeline stagenumber="4"/>
+
+   <benchmark name = "fft"/>
 
    <events>
       <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>

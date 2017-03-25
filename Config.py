@@ -96,7 +96,8 @@ class Config(object):
 		self.__load_xml_config(xml_path)
 		self.__kernel_type = 'invalid kernel'
 		self.valid_kernels = ['aptm', 'bws', 'pboo']
-		self.is_save_result = True;
+		self.is_save_result = True
+		self.benchmark_name = 'default'
 
 	def update_xml_csv_filenames(self):
 		same_filename = self.__xmlfileprefix + '_' + self.__kernel_type.lower()
@@ -116,6 +117,7 @@ class Config(object):
 	
 	def run_all_kernels(self, control = [1, 1, 1]):
 		sleeplength = 80
+		# sleeplength = 0
 		index = 0
 		for kernel in self.valid_kernels:
 			if control[index] > 0:
@@ -140,12 +142,14 @@ class Config(object):
 		tree = ElementTree()
 		simulation = create_node('simulation', { 'name': self.__csv_path.get_final_path() }, "")
 
-		duration = create_time_node('duration', self.__duration_value, self.__duration_unit);
-		pipeline = create_node('pipeline', {'stagenumber':str(self.__stage_number)}, "")
+		duration    = create_time_node('duration', self.__duration_value, self.__duration_unit);
+		pipeline    = create_node('pipeline', {'stagenumber':str(self.__stage_number)}, "")
 		save_result = create_node('save_result', {'value':str(self.is_save_result)}, "")
+		benchmark   = create_node('benchmark', {'name':str(self.benchmark_name)}, "")
 		simulation.append(duration)
 		simulation.append(save_result)
 		simulation.append(pipeline)
+		simulation.append(benchmark)
 
 		events     = create_node('events', {}, "")
 		csv_path   = create_time_node('csv_path', self.__event_csv_path, self.__event_csv_path_unit)
@@ -332,6 +336,9 @@ class Config(object):
 		return self.__event_wcets_value
 
 	'''***********************************************'''
+	def set_benchmark_name(self, name):
+		self.benchmark_name = name
+
 	def set_simulation_duration(self, duration):
 		self.__duration_value = duration
 

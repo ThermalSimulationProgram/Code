@@ -5,6 +5,7 @@
 // #include "stress-ng.h"
 #include <complex.h>
 #include <cstdint>
+#include <string>
 
 
 #include "MWC.h"
@@ -555,7 +556,6 @@ private:
 	{ "prime",		stress_cpu_prime },
 	{ "psi",		stress_cpu_psi },
 	{ "queens",		stress_cpu_queens },
-	// { "rand48",		stress_cpu_rand48 },
 	{ "sdbm",		stress_cpu_sdbm },
 	{ "sqrt", 		stress_cpu_sqrt },
 	{ "trig",		stress_cpu_trig },
@@ -568,6 +568,8 @@ public:
 	CPUStressor();
 	void stressOnce();
 	void stressWithMethod(int index);
+	int getMethodNumber();
+	std::string getMethodName(int id);
 
 };
 

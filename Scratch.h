@@ -29,6 +29,7 @@ public:
 	static void 					setBFactor(double f);
 	static void 					setName(std::string);
 	static void 					setSavingFile(bool);
+	static void 					setBenchmark(const std::string&);
 	
 
 	static unsigned long 			getAdaptionPeriod();
@@ -51,6 +52,7 @@ public:
 	static double 					getBFactor();
 	static void 					print();
 	static bool 					isSaveFile();
+	static std::string 				getBenchmarkName();
 
 
 private:
@@ -77,6 +79,7 @@ private:
 
 	static sem_t 					access_sem;
 	static bool 					isSave;
+	static std::string 				benchmark;
 };
 
 

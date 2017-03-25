@@ -12,19 +12,56 @@
 using namespace std;
 
 
-Load::Load():cpu_stressor(), RND(){
+Load::Load():RND(),cpu_stressor(){
+	methodid = -1;
+}
+
+Load::Load(const std::string& methodname): RND(),cpu_stressor(){
+	int totalMethodNumber = cpu_stressor.getMethodNumber();
+	bool found = false;
+	// cout << "Load::Load: totalMethodNumber is: " << totalMethodNumber << endl;
+	// cout << "Load::Load: methond name is: " << methodname << endl;
+
+	if (methodname != ""){
+		for (int i = 1; i <= totalMethodNumber; ++i)
+		{
+			if(methodname == cpu_stressor.getMethodName(i)){
+				methodid = i;
+				found = true;
+				break;
+			}
+		}
+	}
+
+
+	if (!found){
+		methodid = -1;
+	}
+
+	cout << "Load::Load: method id is: " << methodid << endl;
+
 
 }
 
 unsigned long Load::consume_us_benchmarks(unsigned long length){
 	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
 	unsigned long realLength = 0;
+	if (methodid < 0){
+		do{
+			for (int i = 0; i < 3000; ++i){
+				sqrt(RND.mwc32());
+			}
+			realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
+		}while(realLength < length);
+
+	}else{
+		do{
+			// cpu_stressor.stressOnce();
+			cpu_stressor.stressWithMethod(methodid);
+			realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
+		}while(realLength < length);
+	}
 	
-	do{
-			cpu_stressor.stressOnce();
-		// cpu_stressor.stressWithMethod(32);
-		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
-	}while(realLength < length);
 	return realLength;
 }
 

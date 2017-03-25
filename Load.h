@@ -3,7 +3,7 @@
 
 #include <unistd.h>
 #include <stdlib.h>
-
+#include <string>
 
 #include "benchmarks.h"
 
@@ -28,12 +28,15 @@ public:
 	 unsigned long consume_us_rand(unsigned long);
 
 	 Load();
-	 CPUStressor cpu_stressor;
+	 
+	 Load(const std::string&);
 
 private:
 
 	MWC RND;
+	CPUStressor cpu_stressor;
 
+	int methodid;
 	static void waste_time_unit(unsigned long);
 
 };

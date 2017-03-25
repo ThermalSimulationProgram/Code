@@ -120,6 +120,12 @@ int Parser::parseFile(){
 			cout << "Parser warning: parameter of saving result error! set to default TRUE value\n";
 		}
 	}
+
+	xml_node benchmark = sim_node.child("benchmark");
+	if(benchmark){
+		string benchmark_name = benchmark.attribute("name").value();
+		Scratch::setBenchmark(benchmark_name);
+	}
 	
 
 	// handle additional parameters for the scheduler

@@ -1335,6 +1335,19 @@ CPUStressor::CPUStressor(){
 	index = 1;
 }
 
+int CPUStressor::getMethodNumber(){
+	return numberStressor;
+}
+
+std::string CPUStressor::getMethodName(int id){
+	std::string ret;
+	if (id < 0 || id > numberStressor){
+		return ret;
+	}
+	ret = std::string(methods[id].name);
+	return ret;
+}
+
 void CPUStressor::stressOnce(){
 	const char* name = "";
 	methods[index].func(name);

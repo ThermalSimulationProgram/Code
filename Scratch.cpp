@@ -27,6 +27,7 @@ ptmspec 				Scratch::ptm;
 thermalProp 			Scratch::offlinedata;
 sem_t 					Scratch::access_sem;
 bool 					Scratch::isSave;
+string 					Scratch::benchmark;
 
 
 void Scratch::initialize(int _nstage, unsigned long _period,
@@ -53,6 +54,7 @@ void Scratch::initialize(int _nstage, unsigned long _period,
 	isSave 			= true;
 	for (unsigned i = 0; i < wcets.size(); ++i)
 		dwcets.push_back((double)wcets[i]/1000);
+	benchmark 		= "default";
 
 	sem_init(&access_sem, 0, 1);
 }
@@ -72,6 +74,14 @@ void Scratch::print(){
 	cout << "bfactor \t\t= " << bfactor << endl;
 	displayvector(wcets, "wcets");
 }
+
+void Scratch::setBenchmark(const string& name){
+	sem_wait(&access_sem);
+	benchmark = name;
+	sem_post(&access_sem);
+}
+
+
 void Scratch::setSavingFile(bool f){
 	sem_wait(&access_sem);
 	isSave = f;
@@ -169,7 +179,13 @@ void Scratch::setBFactor(double f){
 
 }
 
+string Scratch::getBenchmarkName(){
+	sem_wait(&access_sem);
+	string ret = benchmark;
+	sem_post(&access_sem);
+	return ret;
 
+}
 
 unsigned long Scratch::getAdaptionPeriod(){
 	sem_wait(&access_sem);
@@ -178,6 +194,8 @@ unsigned long Scratch::getAdaptionPeriod(){
 	return ret;
 
 }
+
+
 ptmspec Scratch::getPTMValues(){
 	sem_wait(&access_sem);
 	if (kernel != PBOO && kernel != GE){

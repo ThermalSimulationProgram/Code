@@ -21,7 +21,7 @@ using namespace std;
 
 
 
-Worker::Worker(int _stageId, int _id) : Thread(_id), load(){
+Worker::Worker(int _stageId, int _id) : Thread(_id), load(Scratch::getBenchmarkName()){
 	stageId     = _stageId; 
 	next        = NULL;
 	thread_type = worker;
@@ -228,7 +228,8 @@ void Worker::wrapper(){
 					break;
 				}
 				// load.consume_us(base);
-				load.consume_us_rand(base);
+				// load.consume_us_rand(base);
+				load.consume_us_benchmarks(base);
 				end = TimeUtil::convert_us(TimeUtil::getTime());
 				exedSlice = end - start;
 				total_exed = total_exed + exedSlice;
