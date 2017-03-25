@@ -46,7 +46,7 @@ Load::Load(const std::string& methodname): RND(),cpu_stressor(){
 unsigned long Load::consume_us_benchmarks(unsigned long length){
 	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
 	unsigned long realLength = 0;
-	if (methodid < 0){
+	if (methodid < 1){
 		do{
 			for (int i = 0; i < 3000; ++i){
 				sqrt(RND.mwc32());
