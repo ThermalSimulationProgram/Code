@@ -38,7 +38,7 @@ Load::Load(const std::string& methodname): RND(),cpu_stressor(){
 		methodid = -1;
 	}
 
-	cout << "Load::Load: method id is: " << methodid << endl;
+	// cout << "Load::Load: method id is: " << methodid << endl;
 
 
 }
