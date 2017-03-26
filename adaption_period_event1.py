@@ -13,9 +13,9 @@ config.set_xml_csv_sub_dir('adaption_period_event1/')
 
 config.set_simulation_duration(100)
 config.set_relative_deadline(720)
-base_value = 200
+base_value = 360
 control = [1, 1, 0]
-for x in range(0, 10):
+for x in range(0, 4):
 	new_value = base_value + x*20
 	# change the value
 	config.set_kernel_period(new_value)
