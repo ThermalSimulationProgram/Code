@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-  
 # python2.7
 import os
-from Config import Config  
+from Config import *
 
 
 
