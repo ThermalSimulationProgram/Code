@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<simulation name="result/csv/bfactor_temp/bfactor46_aptm">
+	<duration unit="sec" value="25"/>
+	<save_result value="True"/>
+	<pipeline stagenumber="4"/>
+	<events>
+		<csv_path unit="ms" value="./csv_data/event_trace1000msperiod_60s.csv"/>
+		<period unit="ms" value="1000"/>
+		<jitter unit="ms" value="1500"/>
+		<distance unit="ms" value="0"/>
+		<wcets unit="ms" value="{142 90 36 57}"/>
+		<relative_deadline unit="ms" value="720"/>
+		<exe_factor value="0.2"/>
+	</events>
+	<scheduler>
+		<kernel type="APTM">
+			<period unit="ms" value="200"/>
+			<b_factor value="0.46"/>
+			<offlinedata>
+				<prefix path="./csv_data/Dell9020ThermalProp"/>
+			</offlinedata>
+		</kernel>
+	</scheduler>
+</simulation>
