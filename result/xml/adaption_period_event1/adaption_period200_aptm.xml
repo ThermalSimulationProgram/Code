@@ -3,6 +3,7 @@
 	<duration unit="sec" value="100"/>
 	<save_result value="True"/>
 	<pipeline stagenumber="4"/>
+	<benchmark name="default"/>
 	<events>
 		<csv_path unit="ms" value="./csv_data/event_trace1000msperiod_60s.csv"/>
 		<period unit="ms" value="1000"/>
@@ -15,7 +16,7 @@
 	<scheduler>
 		<kernel type="APTM">
 			<period unit="ms" value="200"/>
-			<b_factor value="0.6"/>
+			<b_factor value="0.9"/>
 			<offlinedata>
 				<prefix path="./csv_data/Dell9020ThermalProp"/>
 			</offlinedata>
