@@ -116,7 +116,7 @@ void Pipeline::initialize(){
 	dispatcher->trigger();
 
 	scheduler->trigger();
-
+	scheduler->activate();
 	tempwatcher->trigger();
 
 	Worker *current;
@@ -150,7 +150,7 @@ double Pipeline::simulate(){
 	dispatcher->activate();
 	dispatcher->setCPU(n_cpus-1);
 	
-	scheduler->activate();
+	
 	scheduler->setCPU(n_cpus - 2);
 
 	tempwatcher->activate();
