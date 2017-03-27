@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <simulation name="result/csv/adaption_period_event1/adaption_period360_aptm">
 	<duration unit="sec" value="100"/>
-	<save_result value="True"/>
+	<save_result value="False"/>
 	<pipeline stagenumber="4"/>
 	<benchmark name="default"/>
 	<events>
