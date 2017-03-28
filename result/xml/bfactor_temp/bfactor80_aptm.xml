@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <simulation name="result/csv/bfactor_temp/bfactor80_aptm">
-	<duration unit="sec" value="25"/>
+	<duration unit="sec" value="35"/>
 	<save_result value="True"/>
 	<pipeline stagenumber="4"/>
 	<benchmark name="default"/>
@@ -10,7 +10,7 @@
 		<jitter unit="ms" value="1500"/>
 		<distance unit="ms" value="0"/>
 		<wcets unit="ms" value="{142 90 36 57}"/>
-		<relative_deadline unit="ms" value="720"/>
+		<relative_deadline unit="ms" value="700"/>
 		<exe_factor value="0.9"/>
 	</events>
 	<scheduler>

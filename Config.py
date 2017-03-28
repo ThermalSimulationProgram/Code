@@ -27,11 +27,11 @@ def heat_cpu(configin):
 	config.run()
 	time.sleep(30)
 
-def get_best_bfactor(configin, testrange = [40, 98], step = 5):
+def get_best_bfactor(configin, testrange = [40, 98], step = 4):
 	config = copy.deepcopy(configin)
 	config.set_xml_csv_sub_dir('bfactor_temp/')
 	config.set_kernel('aptm')
-	config.set_simulation_duration(25)
+	config.set_simulation_duration(35)
 	T = []
 	bestT = 20000000
 	bestb = 0.9
