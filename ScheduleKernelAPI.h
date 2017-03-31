@@ -22,6 +22,9 @@ private:
 
 	std::vector<double> timeExpense;
 
+	std::vector<std::vector<double> > allschemes;
+	// std::vector<std::vector<double> > alltoffs;
+
 public:
 	ScheduleKernelAPI(Scheduler* ,enum _schedule_kernel, std::vector<unsigned long>&);
 
@@ -34,6 +37,8 @@ public:
 	std::vector<double> getKernelTimeExpenseLog();
 
 	void getPipelineInfo(PipelineInfo& pinfo);
+
+	std::vector<std::vector<double> > getAllSchemes();
 
 };
 

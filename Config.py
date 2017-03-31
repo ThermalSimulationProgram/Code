@@ -20,12 +20,12 @@ def readcsv(name):
 
 def heat_cpu(configin):
 	config = copy.deepcopy(configin)
-	config.set_simulation_duration(40)
+	config.set_simulation_duration(60)
 	config.is_save_result = False
 	config.set_xml_csv_file_prefix('heatup_cpu')
 	config.set_kernel('aptm')
 	config.run()
-	time.sleep(30)
+	time.sleep(60)
 
 def get_best_bfactor(configin, testrange = [40, 98], step = 4):
 	config = copy.deepcopy(configin)
@@ -118,15 +118,15 @@ class Config(object):
 
 	
 	def run_all_kernels(self, control = [1, 1, 1]):
-		sleeplength = 80
+		sleeplength = 60
 		# sleeplength = 0
 		index = 0
 		for kernel in self.valid_kernels:
 			if control[index] > 0:
-				index = index + 1
 				time.sleep(sleeplength)
 				self.set_kernel(kernel)
 				self.run()
+			index = index + 1
 
 
 

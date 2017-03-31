@@ -185,7 +185,7 @@ void BWSKernel::calcBWS(vector<double> & tons,
 			toffs[i] = 0;
 		}
 	}
-	tons = vector<double>(nstages, 10000);	
+	tons = vector<double>(nstages, 100000);	
 }
 
 

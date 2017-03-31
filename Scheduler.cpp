@@ -139,3 +139,7 @@ Pipeline* Scheduler::getPipelinePointer(){
 	return pipeline;
 }
 
+std::vector<std::vector<double> > Scheduler::getAllSchemes(){
+	return kernelAPI->getAllSchemes();
+}
+

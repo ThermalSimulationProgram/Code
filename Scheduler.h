@@ -54,6 +54,8 @@ public:
 
 	Pipeline* getPipelinePointer();
 
+	std::vector<std::vector<double> > getAllSchemes();
+
 };
 
 

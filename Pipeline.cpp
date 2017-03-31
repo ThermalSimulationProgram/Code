@@ -201,6 +201,8 @@ double Pipeline::simulate(){
 		appendToFile(tempSaveName, vector<float>(1, total_cpu_usage));
 
 		appendContentToFile(tempSaveName, Statistics::getAllMissedDeadline());
+
+		// appendToFile(tempSaveName, scheduler->getAllSchemes());
 	}
 	
 	return tempwatcher->getMeanMaxTemp();

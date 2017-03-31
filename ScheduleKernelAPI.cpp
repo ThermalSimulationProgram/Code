@@ -17,6 +17,8 @@ ScheduleKernelAPI::ScheduleKernelAPI(Scheduler* scheduler,
 	enum _schedule_kernel kernel_type,  std::vector<unsigned long>& rl_scheduling_times){
 	_scheduler = scheduler;
 	timeExpense.reserve(10000);
+	allschemes.reserve(10000);
+	// alltoffs.reserve(10000);
 
 	unsigned nstages = Scratch::getNstage();
 	// get the kernel for different kernel types
@@ -60,6 +62,11 @@ void ScheduleKernelAPI::runKernel(vector<double>& tons,
 	double timein = (double)Statistics::getRelativeTime();
 	_kernel->getScheme( tons,  toffs);
 	double timeout = (double)Statistics::getRelativeTime();
+	vector<double> tmp;
+	tmp.insert(tmp.end(), tons.begin(), tons.end());
+	tmp.insert(tmp.end(), toffs.begin(), toffs.end());
+	allschemes.push_back(tmp);
+	// alltoffs.push_back(toffs);
 	timeExpense.push_back(timeout - timein);
 }
 
@@ -76,4 +83,8 @@ double ScheduleKernelAPI::getMeanTimeExpense(){
 
 void ScheduleKernelAPI::getPipelineInfo(PipelineInfo& pinfo){
 	_scheduler->getPipelinePointer()->getAllPipelineInfo(pinfo);
+}
+
+vector<vector<double> > ScheduleKernelAPI::getAllSchemes(){
+	return allschemes;
 }
