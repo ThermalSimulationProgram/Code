@@ -41,7 +41,7 @@ for x in range(0, 15):
 	command = 'sudo ./main ' + absfilepath;
 	print command
 	os.system(command);
-	time.sleep(1)
+	time.sleep(60)
 
 
 	

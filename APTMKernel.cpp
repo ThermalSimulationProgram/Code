@@ -466,6 +466,9 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 	vector<bool> validId = vectorLess(lambdaExt, maxLambdaExt);
 	vector<bool> validIdorg = validId;
 	while (sumLambda < upBound){
+		if (vectorAll(validId < 1)){
+				break;
+			}
 		vector<double> nextBreakPoints = vectorExtract(breakToffs,
 			segementId);
 
@@ -505,6 +508,7 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 		vector<bool> tmpvalid       = vecAbs(dist2nextBp) > 0.001;
 		
 		if(tmpvalid.size()<1){
+			displayvector(dist2nextBp, "dist2nextBp");
 			displayvector(slopes, "slopes");
 			displayvector(validId, "validId");
 			displayvector(lambdaExt, "lambdaExt");
@@ -542,8 +546,7 @@ void APTMKernel::assignToffs(vector<double>& lambdaExt, double upBound,
 				vectorExtract(segementId, changeId)+1);
 
 			validId 					= feasible;
-			// if (vectorAll(toInfId))
-			// 	break;
+			
 
 		}
 		else{
