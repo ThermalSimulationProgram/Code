@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<simulation name="result/csv/adaption_period_event5/adaption_period480_bws">
+	<duration unit="sec" value="60"/>
+	<save_result value="True"/>
+	<pipeline stagenumber="4"/>
+	<benchmark name="default"/>
+	<events>
+		<csv_path unit="ms" value="./csv_data/event_trace1000msperiod_60s.csv"/>
+		<period unit="ms" value="1000"/>
+		<jitter unit="ms" value="1500"/>
+		<distance unit="ms" value="0"/>
+		<wcets unit="ms" value="{142 90 36 57}"/>
+		<relative_deadline unit="ms" value="1000"/>
+		<exe_factor value="0.9"/>
+	</events>
+	<scheduler>
+		<kernel type="BWS">
+			<period unit="ms" value="480"/>
+		</kernel>
+	</scheduler>
+</simulation>
