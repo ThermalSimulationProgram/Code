@@ -47,7 +47,6 @@ void Scratch::initialize(int _nstage, unsigned long _period,
 	arrival_times   = _arrival_times;
 	kernel 			= _kernel;
 	duration 		= _duration;
-	duration = 1000000;
 	name            = _name;
 	adaption_period = 0;
 	exefactor 		= 1;
