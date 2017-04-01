@@ -41,7 +41,7 @@ def get_best_bfactor(configin, testrange = [40, 98], step = 4):
 		config.set_b_factor(b*0.01)
 		config.set_xml_csv_file_prefix('bfactor' + str(b))			
 		config.run()
-		time.sleep(45)
+		# time.sleep(45)
 		csvfile_name = config.get_csv_filepath() + '_result.csv'
 		tempdata = readcsv(csvfile_name)
 		thisT = tempdata[5]
@@ -118,8 +118,8 @@ class Config(object):
 
 	
 	def run_all_kernels(self, control = [1, 1, 1]):
-		sleeplength = 60
-		# sleeplength = 0
+		# sleeplength = 80
+		sleeplength = 0
 		index = 0
 		for kernel in self.valid_kernels:
 			if control[index] > 0:
