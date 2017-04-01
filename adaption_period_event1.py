@@ -15,14 +15,14 @@ config.set_simulation_duration(60)
 config.set_relative_deadline(1000)
 base_value = 200
 # config.is_save_result = False
-control = [0, 1, 0]
+control = [1, 0, 0]
 for x in range(0, 15):
 	new_value = base_value + x*30
 	# change the value
 	config.set_kernel_period(new_value)
-	# (b, T, allt) = get_best_bfactor(config)
-	# config.set_b_factor(b)
+	(b, T, allt) = get_best_bfactor(config)
+	config.set_b_factor(b)
 	# give the prefix for the files
 	config.set_xml_csv_file_prefix('adaption_period' + str(new_value))
 	config.run_all_kernels(control)
-	# time.sleep(900)
+	time.sleep(30)
