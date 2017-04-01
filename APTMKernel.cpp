@@ -365,6 +365,7 @@ void APTMKernel::aPTM(double extBound, const vector<int>& index,
 
 	if (vectorAny(k > 1) || vectorAny(k == 0)){
 		cerr<<"APTM::APTM:wrong slopes input"<<endl;
+		dumpMatrix(d.K);
 		dumpMatrix(k);
 		dumpMatrix(k>1);
 		dumpMatrix(k==0);
@@ -645,7 +646,7 @@ void APTMKernel::getApdatInfo(AdaptInfo& config){
 			#endif
 			alpha_f                     = rtc::Curve(config.FIFOcurveData[i] );
 			alpha_d                     = rtc::plus(haAlpha[index], alpha_f );
-			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 2000);
+			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 10000);
 			#if _PROFILE == 1
 			timeout = (double)Statistics::getRelativeTime_ms();
 			time211 = timeout - timein;
