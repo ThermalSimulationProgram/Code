@@ -30,7 +30,7 @@ san = 4;
 
 %% for different deadline factor
 all_solutions = [];
-for deadlinefactor = 0.7 : 0.01 : 0.9
+for deadlinefactor = 1 : 0.01 : 1
 
 
 resultData = getresultData();
