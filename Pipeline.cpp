@@ -35,7 +35,12 @@ bool Pipeline::initialized = false;
 bool Pipeline::simulating  = false;
 
 // Constructor needs the xml file path
-Pipeline::Pipeline(string xml_path):cpuUsageRecorder()
+Pipeline::Pipeline(string xml_path):Pipeline(xml_path, 0){
+
+}
+
+// Constructor needs the xml file path
+Pipeline::Pipeline(string xml_path, int isAppendSaveFile):cpuUsageRecorder()
 {
 	Parser* p = new Parser(xml_path);
 	if (p->parseFile()!=0){
@@ -76,6 +81,7 @@ Pipeline::Pipeline(string xml_path):cpuUsageRecorder()
 	}
 	tempwatcher 	= new TempWatcher(200000, Scratch::getName(), 98);
 
+	_isAppendSaveFile = isAppendSaveFile;
 	// initialize();	
 }
 
@@ -185,10 +191,19 @@ double Pipeline::simulate(){
 	cpuUsageRecorder.endLoggingCPU();
 
 	if (Scratch::isSaveFile()){
+
 		string tempSaveName = Scratch::getName() + "_result.csv";
 
-		saveToNewFile(tempSaveName, tempwatcher->getMeanTemp());
+		vector<string> beginOfData = vector<string>(1, "111111111111111111111111111111");
+		
 
+		if (_isAppendSaveFile > 0){
+			appendContentToFile(tempSaveName, beginOfData);
+		}else{
+			saveContentToNewFile(tempSaveName, beginOfData);
+		}
+		
+		appendToFile(tempSaveName, tempwatcher->getMeanTemp());
 		double maxTemp = tempwatcher->getMaxTemp();
 		appendToFile(tempSaveName, vector<double>(1, maxTemp));
 
@@ -202,6 +217,8 @@ double Pipeline::simulate(){
 
 		appendContentToFile(tempSaveName, Statistics::getAllMissedDeadline());
 
+		vector<string> endOfData = vector<string>(1, "999999999999999999999999999999");
+		appendContentToFile(tempSaveName, endOfData);
 		// appendToFile(tempSaveName, scheduler->getAllSchemes());
 	}
 	

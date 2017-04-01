@@ -51,10 +51,15 @@ protected:
 
 	// CPUUsage records cpu active and idle times, used to calculate cpu usage
 	CPUUsage cpuUsageRecorder;
+
+	int _isAppendSaveFile;
 public:
 
 	// Constructor needs the xml file path
 	explicit Pipeline(std::string);
+
+	// Constructor needs the xml file path
+	explicit Pipeline(std::string, int);
 
 	~Pipeline();
 

@@ -89,21 +89,28 @@ void runSimulation(int argc, char** argv){
 
 
 	string *file;
+	int isAppendSaveFile = 0;
 	if (argc > 1){
 
 		for(int i=1; i<=argc; i++){
 			if(argv[i] == NULL)
 			    continue;
-			file = new string(argv[i]);
-			if(file->find(".xml") == string::npos) {
-			*file = *file + ".xml";
-      			}
+
+			if (argv[i] == string("-a")){
+				i++;
+				isAppendSaveFile = atoi(argv[i]);
+			}else{
+				file = new string(argv[i]);
+				if(file->find(".xml") == string::npos) {
+					*file = *file + ".xml";
+				}
+			}
 		}
 	}else{
 		file = new string("example.xml");
 	}
 
-	Pipeline *p = new Pipeline(*file);
+	Pipeline *p = new Pipeline(*file, isAppendSaveFile);
 	// cout << "begin initialize Pipeline\n";
 	p->initialize();
 
