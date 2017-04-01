@@ -32,16 +32,17 @@ import time
 cwp = os.getcwd();
 path = cwp + '/result/xml/adaption_period_event5/';
 
-base_value = 200
+base_value = 260
 
-for x in range(0, 15):
+for x in range(0, 13):
 	new_value = base_value + x*30;
 	valid_file = 'adaption_period' + str(new_value) + '_aptm.xml';
 	absfilepath = path + valid_file;
 	command = 'sudo ./main ' + absfilepath;
 	print command
-	os.system(command);
 	time.sleep(60)
+	os.system(command);
+	
 
 
 	
