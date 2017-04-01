@@ -41,10 +41,10 @@ def get_best_bfactor(configin, testrange = [40, 98], step = 4):
 		config.set_b_factor(b*0.01)
 		config.set_xml_csv_file_prefix('bfactor' + str(b))			
 		config.run()
-		# time.sleep(45)
+		time.sleep(45)
 		csvfile_name = config.get_csv_filepath() + '_result.csv'
 		tempdata = readcsv(csvfile_name)
-		thisT = tempdata[5]
+		thisT = tempdata[6]
 		T.append(thisT)
 		if (thisT < bestT):
 			bestT = thisT
