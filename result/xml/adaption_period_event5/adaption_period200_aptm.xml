@@ -15,8 +15,8 @@
 	</events>
 	<scheduler>
 		<kernel type="APTM">
-			<period unit="ms" value="200"/>
-			<b_factor value="0.94"/>
+			<period unit="ms" value="202"/>
+			<b_factor value="0.96"/>
 			<offlinedata>
 				<prefix path="./csv_data/Dell9020ThermalProp"/>
 			</offlinedata>
