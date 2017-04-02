@@ -15,13 +15,13 @@ disp('loaded!')
 
 %% system setup
 
-streams = [100 150 0];
-all_wcets = [14.2,9,3.6, 5.7]; %H.263
+streams = [100 150 0]*10;
+all_wcets = [14.2,9,3.6, 5.7]*10; %H.263
 
 
 deadline_factor = 1.2;
 
-step = 1;
+step = 10;
 tswoffs = ones(1,4);
 tswons = tswoffs;
 
@@ -30,7 +30,7 @@ san = 4;
 
 %% for different deadline factor
 all_solutions = [];
-for deadlinefactor = 1 : 0.01 : 1
+for deadlinefactor = 0.7 : 0.02 : 0.94
 
 
 resultData = getresultData();
@@ -39,7 +39,7 @@ resultData = getresultData();
 
 % [path2, savefile2] = getPath(option2);
 
-savefile3 = ['ARM4Test_deadlinefactor_', num2str(deadlinefactor*100), '.mat'];
+savefile3 = ['ARM4Test2_deadlinefactor_', num2str(deadlinefactor*100), '.mat'];
 
 activeNum = 4;
 
