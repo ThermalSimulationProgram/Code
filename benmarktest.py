@@ -75,7 +75,7 @@ for benchmark in all_benchmarks:
 	# config.set_b_factor(0.9)
 	# give the prefix for the files
 	config.set_xml_csv_file_prefix('benchmark_name_' + benchmark)
-	config.run_all_kernels(control, 100)
+	config.run_all_kernels(control)
 
 
 
