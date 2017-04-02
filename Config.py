@@ -25,7 +25,7 @@ def heat_cpu(configin):
 	config.set_xml_csv_file_prefix('heatup_cpu')
 	config.set_kernel('aptm')
 	config.run()
-	time.sleep(30)
+	# time.sleep(30)
 
 def get_best_bfactor(configin, testrange = [40, 98], step = 4):
 	config = copy.deepcopy(configin)
