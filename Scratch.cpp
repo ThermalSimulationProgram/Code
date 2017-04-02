@@ -73,6 +73,8 @@ void Scratch::print(){
 	cout << "exefactor \t\t= " << exefactor << endl;
 	cout << "bfactor \t\t= " << bfactor << endl;
 	displayvector(wcets, "wcets");
+	displayvector(ptm.tons, "tons");
+	displayvector(ptm.toffs, "toffs");
 }
 
 void Scratch::setBenchmark(const string& name){
