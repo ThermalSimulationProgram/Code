@@ -229,11 +229,18 @@ void Worker::wrapper(){
 				}
 				// load.consume_us(base);
 				// load.consume_us_rand(base);
-				load.consume_us_benchmarks(base);
+				if (current_job != NULL){
+					load.consume_us_benchmarks(base);
+				}else{
+					load.consume_us_idle(base);
+				}
+
+				// load.consume_us_benchmarks(base);
 				end = TimeUtil::convert_us(TimeUtil::getTime());
 				exedSlice = end - start;
 				total_exed = total_exed + exedSlice;
 				start = end;
+
 				if (current_job != NULL){
 					if (current_job->execute(exedSlice) == 1){
 						finishedJob();

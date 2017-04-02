@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstring>
 
+
 #include "TimeUtil.h"
 
 
@@ -76,6 +77,19 @@ unsigned long Load::consume_us_rand(unsigned long length){
 		{
 			sqrt(RND.mwc32());
 		}
+		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
+	}while(realLength < length);
+	return realLength;
+}
+
+
+unsigned long Load::consume_us_idle(unsigned long length){
+	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
+	unsigned long realLength;
+	struct timespec idle = TimeUtil::Micros(5);
+	struct timespec rem;
+	do{
+		nanosleep(&idle, &rem);
 		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
 	}while(realLength < length);
 	return realLength;

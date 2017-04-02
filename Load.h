@@ -27,6 +27,8 @@ public:
 
 	 unsigned long consume_us_rand(unsigned long);
 
+	 unsigned long consume_us_idle(unsigned long);
+
 	 Load();
 	 
 	 Load(const std::string&);
