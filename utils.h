@@ -97,6 +97,13 @@ std::string vectorTostring(const std::vector<T>& data){
 }
 
 template<typename T>
+std::string numberTostring(const T & data){
+	std::stringstream out;
+	out << (double) data;
+	return out.str();
+}
+
+template<typename T>
 std::vector<std::string> matrixTostring(const std::vector<std::vector<T>>& data){
 	std::vector<std::string> ret;
 

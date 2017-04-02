@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include "utils.h"
+
 using namespace std;
 
 Job::Job(unsigned _nstage, unsigned _id, unsigned long _rltDeadline, 
@@ -44,6 +46,7 @@ int Job::setRCET(vector<unsigned long> wcets, float exe_factor){
 		rcet.push_back(r);
 		loads.push_back(r);
 	}
+	// displayvector(rcet, numberTostring(id));
 	sem_post(&state_sem);
 	return 0;
 }
