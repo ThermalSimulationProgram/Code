@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <simulation name="result/csv/heatup_cpu_aptm">
-	<duration unit="sec" value="60"/>
+	<duration unit="sec" value="100"/>
 	<save_result value="False"/>
 	<pipeline stagenumber="4"/>
 	<benchmark name="default"/>

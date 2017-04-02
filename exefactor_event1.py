@@ -10,9 +10,9 @@ from Config import *
 config = Config()
 heat_cpu(config)
 # create a new sub directory
-config.set_xml_csv_sub_dir('exefactor_event1/')
+config.set_xml_csv_sub_dir('exefactor_event2/')
 
-config.set_simulation_duration(100)
+config.set_simulation_duration(60)
 
 deadline = 720
 config.set_relative_deadline(deadline)

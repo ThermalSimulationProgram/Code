@@ -86,7 +86,7 @@ unsigned long Load::consume_us_rand(unsigned long length){
 unsigned long Load::consume_us_idle(unsigned long length){
 	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
 	unsigned long realLength;
-	struct timespec idle = TimeUtil::Micros(5);
+	struct timespec idle = TimeUtil::Micros(2);
 	struct timespec rem;
 	do{
 		nanosleep(&idle, &rem);

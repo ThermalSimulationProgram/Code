@@ -20,7 +20,7 @@ def readcsv(name):
 
 def heat_cpu(configin):
 	config = copy.deepcopy(configin)
-	config.set_simulation_duration(60)
+	config.set_simulation_duration(100)
 	config.is_save_result = False
 	config.set_xml_csv_file_prefix('heatup_cpu')
 	config.set_kernel('aptm')
@@ -39,9 +39,9 @@ def get_best_bfactor(configin, testrange = [40, 98], step = 4):
 	endpoint = testrange[1];
 	for b in range(start, endpoint, step):
 		config.set_b_factor(b*0.01)
-		config.set_xml_csv_file_prefix('bfactor' + str(b))			
+		config.set_xml_csv_file_prefix('bfactor' + str(b))
+		time.sleep(45)			
 		config.run()
-		time.sleep(45)
 		csvfile_name = config.get_csv_filepath() + '_result.csv'
 		tempdata = readcsv(csvfile_name)
 		thisT = tempdata[6]
