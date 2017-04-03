@@ -62,7 +62,7 @@ fsize = 13;
 set(gca, 'xlim',[min(periods)-10, max(periods)+ 10],'xtick', min(periods):60:max(periods),...
     'ylim',[310 335],'FontSize',fsize,...
     'FontName','Times New Roman','Position',[0.13 0.15 0.8 0.6]);
- xlabel('Adaption Period','FontSize',fsize)
+ xlabel('Adaption period /ms','FontSize',fsize)
  ylabel('Temperature / K','FontSize',fsize, 'Rotation', 90)
 box on;
 
