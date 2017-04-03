@@ -12,7 +12,7 @@ heat_cpu(config)
 # create a new sub directory
 config.set_xml_csv_sub_dir('exefactor_event2/')
 
-config.set_simulation_duration(60)
+config.set_simulation_duration(80)
 
 deadline = 720
 config.set_relative_deadline(deadline)
@@ -28,15 +28,15 @@ config.set_kernel_toff(toff)
 
 base_value = 0.1
 control = [0, 0, 1]
-for x in range(0, 10):
-	new_value = base_value + x*0.1
+for x in range(0, 3):
+	new_value = base_value + x*0.3
 	# change the value
 	config.set_exe_factor(new_value)
 	# (b, T, allt) = get_best_bfactor(config, 2)
 	# config.set_b_factor(b)
 	# give the prefix for the files
 	config.set_xml_csv_file_prefix('exefactor' + str(new_value))
-	config.run_all_kernels(control, 100)
+	config.run_all_kernels(control, 60)
 
 
 

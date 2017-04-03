@@ -86,14 +86,15 @@ unsigned long Load::consume_us_rand(unsigned long length){
 unsigned long Load::consume_us_idle(unsigned long length){
 	unsigned long timein = TimeUtil::convert_us(TimeUtil::getTime());
 	unsigned long realLength;
-	struct timespec idle = TimeUtil::Micros(2);
+	struct timespec idle = TimeUtil::Micros(6);
 	struct timespec rem;
+	
 	do{
 		nanosleep(&idle, &rem);
+		consume_us(34);
 		realLength = TimeUtil::convert_us(TimeUtil::getTime()) - timein;
 	}while(realLength < length);
 	return realLength;
-
 
 }
 
@@ -113,8 +114,12 @@ void Load::consume_us(unsigned long us){
 	}
 	unsigned long start = 0, end = 0;
 	start = TimeUtil::convert_us(TimeUtil::getTime());
+	MWC RND = MWC();
 	do{
-		Load::waste_time_unit(10);
+		for (int i = 0; i < 100; ++i)
+		{
+			sqrt(RND.mwc32());
+		}
 		end = TimeUtil::convert_us(TimeUtil::getTime());
 	}while((end - start)<=us);
 }
