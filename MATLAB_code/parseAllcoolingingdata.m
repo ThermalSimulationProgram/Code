@@ -6,7 +6,7 @@ function alldata = parseAllcoolingingdata()
 
     
     for i = 1 : nstage
-        name = ['stage_', num2str(i), '_cooling_.csv'];
+        name = ['stage_', num2str(i), '_cooling.csv'];
         M = csvread(name);
         alldata{i} = M;
     end

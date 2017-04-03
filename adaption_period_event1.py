@@ -31,7 +31,7 @@ for x in range(0, 1):
 	# config.set_b_factor(b)
 	# give the prefix for the files
 	config.set_xml_csv_file_prefix('adaption_period' + str(new_value))
-	config.run_all_kernels(control)
+	config.run_all_kernels(control，100)
 	# time.sleep(30)
 
 

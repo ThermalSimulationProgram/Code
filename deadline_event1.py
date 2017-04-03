@@ -11,7 +11,7 @@ heat_cpu(config)
 # create a new sub directory
 config.set_xml_csv_sub_dir('relative_deadline_event4/')
 
-config.set_simulation_duration(100)
+config.set_simulation_duration(60)
 base_value = 700
 control = [0, 0, 1]
 
