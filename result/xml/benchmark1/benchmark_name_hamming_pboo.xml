@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<simulation name="result/csv/benchmark1/benchmark_name_hamming_pboo">
+	<duration unit="sec" value="60"/>
+	<save_result value="True"/>
+	<pipeline stagenumber="4"/>
+	<benchmark name="hamming"/>
+	<events>
+		<csv_path unit="ms" value="./csv_data/event_trace1000msperiod_60s.csv"/>
+		<period unit="ms" value="1000"/>
+		<jitter unit="ms" value="1500"/>
+		<distance unit="ms" value="0"/>
+		<wcets unit="ms" value="{142 90 36 57}"/>
+		<relative_deadline unit="ms" value="720"/>
+		<exe_factor value="0.9"/>
+	</events>
+	<scheduler>
+		<kernel type="PBOO">
+			<ton unit="ms" value="[569.0, 91.0, 37.0, 58.0]"/>
+			<toff unit="ms" value="[10.965, 26.1, 31.593, 31.01]"/>
+		</kernel>
+	</scheduler>
+</simulation>
