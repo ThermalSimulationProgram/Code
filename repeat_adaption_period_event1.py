@@ -18,6 +18,7 @@ base_value = 200
 kernels = ['aptm', 'bws']
 for y in range (0, 10):
 	valid_file = 'adaption_period' + str(900) + '_pboo.xml';
+	absfilepath = path + valid_file;
 	command = 'sudo ./main -a 1 ' + absfilepath;
 	print command
 	time.sleep(60)
