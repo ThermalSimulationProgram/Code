@@ -15,6 +15,8 @@ TimedRunnable::TimedRunnable(unsigned _id) : Thread(_id){
 	abs_times_ready = false;
 	///wrapper_sem has its value always being 0
 	sem_init(&wrapper_sem, 0, 0);
+
+	runTimes.reserve(1000);
 }
 
 TimedRunnable::~TimedRunnable(){
@@ -33,6 +35,7 @@ void TimedRunnable::wrapper(){
 void TimedRunnable::timedRun(){
 	
 	int ret, err_no;
+	unsigned long timein, timeout;
 	///wait for the absolute times are setted
 	while(!abs_times_ready && (Pipeline::isSimulating()) ){};
 
@@ -43,6 +46,7 @@ void TimedRunnable::timedRun(){
 			///the semaphore wrapper_sem has its value always being 0
 			//if timeslot was exhausted, pass on to the next time slot	
 			ret = sem_timedwait(&wrapper_sem, &abs_times[i]);
+			timein = TimeUtil::getTimeUsec();
 			err_no = errno;
 			if(ret == -1){
             
@@ -65,6 +69,9 @@ void TimedRunnable::timedRun(){
 			}
 
 			t->timedJob(i);
+			timeout = TimeUtil::getTimeUsec();
+			runTimes.push_back(timeout - timein);
+			
 		}
 		else
 			break;

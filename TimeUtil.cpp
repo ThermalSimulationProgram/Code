@@ -42,7 +42,7 @@ unsigned long TimeUtil::getTimeUSec()
   struct timespec aux;
   clock_gettime(HSF_CLOCK, &aux);
   
-  aux = aux - offset;
+  // aux = aux - offset;
 
   return convert_us(aux);
 }

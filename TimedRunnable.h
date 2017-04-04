@@ -22,6 +22,8 @@ protected:
 	///This semaphore is used to block the thread until next absolute times instance in abs_times
 	sem_t wrapper_sem;
 
+	std::vector<unsigned long> runTimes;
+
 	
 
 public:
