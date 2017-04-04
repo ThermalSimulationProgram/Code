@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <simulation name="result/csv/adaption_period_event5/adaption_period620_bws">
-	<duration unit="sec" value="60"/>
+	<duration unit="sec" value="100"/>
 	<save_result value="True"/>
 	<pipeline stagenumber="4"/>
 	<benchmark name="default"/>
