@@ -25,7 +25,6 @@ for x in range(0, 20):
 	# change the value
 	toff = [new_value, new_value, new_value, new_value]
 	config.set_kernel_toff(toff);
-
 	# give the prefix for the files
 	config.set_xml_csv_file_prefix('toff' + str(new_value))
 	config.run_all_kernels(control, 100)
