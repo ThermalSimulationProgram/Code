@@ -46,7 +46,7 @@ void TimedRunnable::timedRun(){
 			///the semaphore wrapper_sem has its value always being 0
 			//if timeslot was exhausted, pass on to the next time slot	
 			ret = sem_timedwait(&wrapper_sem, &abs_times[i]);
-			timein = TimeUtil::getTimeUsec();
+			timein = TimeUtil::getTimeUSec();
 			err_no = errno;
 			if(ret == -1){
             
@@ -69,7 +69,7 @@ void TimedRunnable::timedRun(){
 			}
 
 			t->timedJob(i);
-			timeout = TimeUtil::getTimeUsec();
+			timeout = TimeUtil::getTimeUSec();
 			runTimes.push_back(timeout - timein);
 			
 		}
