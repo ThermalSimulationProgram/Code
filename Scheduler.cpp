@@ -143,3 +143,7 @@ std::vector<std::vector<double> > Scheduler::getAllSchemes(){
 	return kernelAPI->getAllSchemes();
 }
 
+
+std::vector<std::vector<double> > Scheduler::getKernelTimeExpenseLog(){
+	return kernelAPI->getKernelTimeExpenseLog();
+}

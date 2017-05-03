@@ -20,7 +20,7 @@ public:
 
 	~BWSKernel();
 	
-	void getScheme(std::vector<double> &, std::vector<double>&);
+	int getScheme(std::vector<double> &, std::vector<double>&);
 	
 	void calcBWS(std::vector<double> &, std::vector<double>&, const AdaptInfo&);
 

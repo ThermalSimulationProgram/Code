@@ -33,7 +33,7 @@ LIBS    := -ldl -lpthread -lrt -ljvm -lm
 FLAGSNO    := -Wall -g 
 FLAGS    :=  -Wall -g 
 CCFLAGS  := $(FLAGS)
-CXXFLAGS := $(FLAGS) -std=c++11 -lrt -ljvm
+CXXFLAGS := $(FLAGS) -O3 -std=c++11 -lrt -ljvm
 CCFLAGSNO  := $(FLAGSNO)
 CXXFLAGSNO := $(FLAGSNO) -std=c++11 -lrt -ljvm
 

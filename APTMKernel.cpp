@@ -42,7 +42,7 @@ void APTMKernel::setBcoef(double b){
 }
 
 
-void APTMKernel::getScheme(vector<double> & tons, vector<double>& toffs){
+int APTMKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 	#if _DEBUG == 1
 	Semaphores::print_sem.wait_sem();
 	cout << "aptm kernel starts collecting info\n";
@@ -52,8 +52,13 @@ void APTMKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 	#if _PROFILE1 == 1
 	double timein = (double)Statistics::getRelativeTime_ms();
 	#endif
+	unsigned long part1_timein = Statistics::getRelativeTime();
 	AdaptInfo config;
 	getApdatInfo(config);
+
+	unsigned long part1_time = Statistics::getRelativeTime() - part1_timein;
+
+
 	#if _PROFILE1 == 1
 	double timeout = (double)Statistics::getRelativeTime_ms();
 	double time1 = timeout - timein;
@@ -88,6 +93,8 @@ void APTMKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 	cout << "aptm kernel finishes calculating scheme\n";
 	Semaphores::print_sem.post_sem();
 	#endif
+
+	return (int) part1_time;
 }
 
 

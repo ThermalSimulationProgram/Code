@@ -56,6 +56,8 @@ public:
 
 	std::vector<std::vector<double> > getAllSchemes();
 
+	std::vector<std::vector<double> > getKernelTimeExpenseLog();
+
 };
 
 

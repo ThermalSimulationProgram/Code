@@ -22,8 +22,9 @@ void StaticKernel::setStaticScheme(vector<double> _tons,
 }
 
 
-void StaticKernel::getScheme(vector<double>& tonsin, 
+int StaticKernel::getScheme(vector<double>& tonsin, 
 	vector<double>& toffsin){
 	tonsin = tons;
 	toffsin = toffs;
+	return 1;
 }

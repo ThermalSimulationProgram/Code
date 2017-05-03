@@ -20,7 +20,7 @@ private:
 
 	Scheduler* _scheduler;
 
-	std::vector<double> timeExpense;
+	std::vector<std::vector<double> > timeExpense;
 
 	std::vector<std::vector<double> > allschemes;
 	// std::vector<std::vector<double> > alltoffs;
@@ -34,7 +34,7 @@ public:
 
 	double getMeanTimeExpense();
 
-	std::vector<double> getKernelTimeExpenseLog();
+	std::vector<std::vector<double> > getKernelTimeExpenseLog();
 
 	void getPipelineInfo(PipelineInfo& pinfo);
 

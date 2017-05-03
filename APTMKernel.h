@@ -45,7 +45,7 @@ public:
 
 	void getApdatInfo(AdaptInfo& config);
 
-	void getScheme(std::vector<double> &, std::vector<double>&);
+	int getScheme(std::vector<double> &, std::vector<double>&);
 
 	void aPTM(double extBound, const std::vector<int>& index,
 		const std::vector<double> &tau0, const dynamicdata &d, std::vector<double>& tinvs, 

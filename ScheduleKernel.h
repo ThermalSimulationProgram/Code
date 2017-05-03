@@ -25,7 +25,7 @@ public:
 	void setScheduleAPI(ScheduleKernelAPI*);
 
 	// void getScheme(vector<double> &, vector<double>&);
-	virtual void getScheme(std::vector<double> &, std::vector<double>&) = 0;
+	virtual int getScheme(std::vector<double> &, std::vector<double>&) = 0;
 
 
 	

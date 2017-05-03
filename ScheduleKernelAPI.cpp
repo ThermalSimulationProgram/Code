@@ -59,24 +59,40 @@ ScheduleKernelAPI::ScheduleKernelAPI(Scheduler* scheduler,
 
 void ScheduleKernelAPI::runKernel(vector<double>& tons, 
 	vector<double>& toffs){
+	double part1_time = 0;
 	double timein = (double)Statistics::getRelativeTime();
-	_kernel->getScheme( tons,  toffs);
+	part1_time = (double) _kernel->getScheme( tons,  toffs);
 	double timeout = (double)Statistics::getRelativeTime();
 	vector<double> tmp;
 	tmp.insert(tmp.end(), tons.begin(), tons.end());
 	tmp.insert(tmp.end(), toffs.begin(), toffs.end());
 	allschemes.push_back(tmp);
 	// alltoffs.push_back(toffs);
-	timeExpense.push_back(timeout - timein);
+	vector<double> tmp2{part1_time, timeout - timein};
+	
+	timeExpense.push_back(tmp2);
 }
 
 
 double ScheduleKernelAPI::getMaxTimeExpense(){
-	return maxElement(timeExpense);
+	double maxtime = -1;
+	for (int i = 0; i < (int)timeExpense.size(); ++i)
+	{
+		if (timeExpense[i][1] > maxtime){
+			maxtime = timeExpense[i][1];
+		}
+	}
+	return maxtime;
 }
 
 double ScheduleKernelAPI::getMeanTimeExpense(){
-	double sum = std::accumulate(timeExpense.begin(), timeExpense.end(), 0.0);
+	double sum = 0;
+
+	for (int i = 0; i < (int)timeExpense.size(); ++i)
+	{
+		sum += timeExpense[i][1];
+	}
+
 	double avg = sum/timeExpense.size();
 	return avg;
 }
@@ -87,4 +103,8 @@ void ScheduleKernelAPI::getPipelineInfo(PipelineInfo& pinfo){
 
 vector<vector<double> > ScheduleKernelAPI::getAllSchemes(){
 	return allschemes;
+}
+
+std::vector<std::vector<double> > ScheduleKernelAPI::getKernelTimeExpenseLog(){
+	return timeExpense;
 }

@@ -21,7 +21,7 @@ public:
 
 	void setStaticScheme(std::vector<double>, std::vector<double>);
 
-	void getScheme(std::vector<double> &, std::vector<double>&);
+	int getScheme(std::vector<double> &, std::vector<double>&);
 
 };
 

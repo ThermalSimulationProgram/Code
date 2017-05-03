@@ -55,7 +55,7 @@ public:
 
 	void setHaAlpha(std::vector<jobject>, double);
 
-	virtual void getScheme(std::vector<double> &, std::vector<double>&) = 0;
+	virtual int getScheme(std::vector<double> &, std::vector<double>&) = 0;
 
 	// virtual void getAdaptScheme(std::vector<double> &, std::vector<double>&);
 

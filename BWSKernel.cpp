@@ -20,14 +20,20 @@ BWSKernel::~BWSKernel(){
 	
 }
 
-void BWSKernel::getScheme(vector<double> & tons, vector<double>& toffs){
+int BWSKernel::getScheme(vector<double> & tons, vector<double>& toffs){
+
+	unsigned long part1_timein = Statistics::getRelativeTime();
 
 	AdaptInfo config;
 	#if _PROFILE == 1
 	vector<double> partTimes = vector<double> (10, 0);
 	double timein = (double)Statistics::getRelativeTime_ms();
 	#endif
+
 	getAdaptInfo(config);
+
+	unsigned long part1_time = Statistics::getRelativeTime() - part1_timein;
+
 	#if _PROFILE == 1
 	double timeout = (double)Statistics::getRelativeTime_ms();
 	double time1 = timeout - timein;
@@ -48,6 +54,7 @@ void BWSKernel::getScheme(vector<double> & tons, vector<double>& toffs){
 	}
 	#endif
 
+	return (int) part1_time;
 
 }
 
@@ -207,43 +214,45 @@ void BWSKernel::getAdaptInfo(AdaptInfo& config){
 	for (int i = 0; i < (int)nstages; ++i){
 		double minDSC = minDSCs[i];
 		double k      = minALLKs[i];
-		alpha_f       = rtc::Curve(config.FIFOcurveData[i] );
+		
 
 		if (i == 0){
+			alpha_f       = rtc::Curve(config.FIFOcurveData[i] );
 			alpha_d = rtc::plus(haAlpha[index], alpha_f );
-			/*vector<double> alpha_d_data = rtc::segementsData(alpha_d, 2000);
+			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 10000);
 
 			if (rtc::eqZero(alpha_d_data)){
 				config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
 				bmax = std::numeric_limits<double>::infinity();
 			}else{
 				bmax = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, k);
-			} */
+			} 
 			
 
-			if (rtc::eq(alpha_d, curvezero )){
+			/*if (rtc::eq(alpha_d, curvezero )){
 			 	config.dcs[nstages-i-1] = std::numeric_limits<double>::infinity();
 			 	bmax = std::numeric_limits<double>::infinity();
 			}else{
 				bmax = rtc::minbdf_BSF(alpha_d, relativeDeadline, k);
-			}
+			}*/
 			
 		}
 		else{
-			alpha_d = alpha_f;
-			/*vector<double> alpha_d_data = rtc::segementsData(alpha_d, 2000);
-			
+			/*alpha_d = alpha_f;
+			vector<double> alpha_d_data = rtc::segementsData(alpha_d, 10000);*/
+			vector<double> alpha_d_data  = config.FIFOcurveData[i];
+
 			if (rtc::eqZero(alpha_d_data)){
 				bmax = std::numeric_limits<double>::infinity();
 			}else{
 				bmax = rtc::minbdf_BSF(alpha_d_data, relativeDeadline, k);
-			}*/
+			}
 
-			if (rtc::eq(alpha_d, curvezero )){
+			/*if (rtc::eq(alpha_d, curvezero )){
 			 	bmax = std::numeric_limits<double>::infinity();
 			}else{
 				bmax = rtc::minbdf_BSF(alpha_d, relativeDeadline, k);
-			}
+			}*/
 			
 		}
 
