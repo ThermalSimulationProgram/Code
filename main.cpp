@@ -88,7 +88,7 @@ void offlineSimulation(){
 void runSimulation(int argc, char** argv){
 
 
-	string *file;
+	string file;
 	int isAppendSaveFile = 0;
 	if (argc > 1){
 
@@ -100,24 +100,24 @@ void runSimulation(int argc, char** argv){
 				i++;
 				isAppendSaveFile = atoi(argv[i]);
 			}else{
-				file = new string(argv[i]);
-				if(file->find(".xml") == string::npos) {
-					*file = *file + ".xml";
+				file = string(argv[i]);
+				if(file.find(".xml") == string::npos) {
+					file = file + ".xml";
 				}
 			}
 		}
 	}else{
-		file = new string("example.xml");
+		file = string("example.xml");
 	}
 
-	Pipeline *p = new Pipeline(*file, isAppendSaveFile);
+	Pipeline p = Pipeline(file, isAppendSaveFile);
 	// cout << "begin initialize Pipeline\n";
-	p->initialize();
-
-	double temp = p->simulate();
+	p.initialize();
+	// cout << "begin simulate Pipeline\n";
+	double temp = p.simulate();
 	// cout << temp << endl;
-	delete p;
-	delete file;
+
+	
 
 }
 

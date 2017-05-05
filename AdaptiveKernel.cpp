@@ -8,6 +8,8 @@
 #include "ScheduleKernelAPI.h"
 #include "utils.h"
 
+#include <iostream>
+
 
 using namespace std;
 
@@ -30,7 +32,7 @@ ScheduleKernel(n, kernel){
 	}
 
 
-	// calculate history aware arrival curves statically for APTM and BWS kernel
+	// calculate history aware arrival curves statically 
 	
 	
 	long period                         = (long)Scratch::getPeriod()/1000;
@@ -48,11 +50,54 @@ ScheduleKernel(n, kernel){
 	for (unsigned i = 0; i < haAlpha.size(); ++i){
 		haAlpha[i] = rtc::affine(haAlpha[i], 1, relativeDeadline);
 	}
+
+
+
+	vector<vector<double> > all_rl_job_arrivals = Scratch::getAllArrivalTimes_ms();
+
+	vector<double> allperiod 			= Scratch::getAllPeriod()/1000;
+	vector<double> alljitter 			= Scratch::getAllJitter()/1000;
+	vector<double> alldelay 			= Scratch::getAllDistance()/1000;
+	vector<vector<double> > allwcets 			= Scratch::getAllDwcets();
+	vector<double> allRelativeDeadlines = Scratch::getAllRltDeadline_ms();
+	// for every task
+
+	vector<vector<jobject>> all_multi_haAlpha;
+	for (int i = 0; i < (int) all_rl_job_arrivals.size(); ++i)
+	{
+		vector<jobject> temp = rtc::staticHistoryAwareArrialCurves(all_rl_job_arrivals[i],
+			tmp_scheduling_times, allperiod[i], alljitter[i], alldelay[i]);
+
+		for (int j = 0; j < (int)temp.size(); ++j)
+		{
+			temp[i] = rtc::affine(temp[i], 1, allRelativeDeadlines[i]);
+			temp[i] = rtc::times(temp[i], allwcets[i][0]);
+		}
+
+		all_multi_haAlpha.push_back(temp);
+	}
+
+	for (int i = 0; i < (int) tmp_scheduling_times.size(); ++i)
+	{
+		jobject allAlpha = all_multi_haAlpha[0][i];
+		for (int j = 1; j < (int) all_multi_haAlpha.size(); ++j)
+		{
+			allAlpha = rtc::plus(allAlpha, all_multi_haAlpha[j][i]);
+		}
+		multi_haAlpha.push_back(allAlpha);
+	}
+
+
+	cout << "AdaptiveKernel: finish calculate history arrival curve" << endl;
 }
 
 AdaptiveKernel::~AdaptiveKernel(){
 	
 }
+
+
+
+
 
 void AdaptiveKernel::setHaAlpha(vector<jobject> _haalpha, double rldeadline){
 	relativeDeadline = rldeadline;

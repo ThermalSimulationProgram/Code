@@ -27,8 +27,8 @@ public:
 	// save all necessary data required by the simulation in Scratch class.
 	int parseFile();
 
-	struct timespec parseTime(pugi::xml_node n);
-	unsigned long parseTimeMircroSecond(pugi::xml_node n);
+	
+	
 
 		
 	// This function loads warming curves of the processor from csv files
@@ -39,6 +39,16 @@ public:
 	static thermalProp getOfflineData(std::string, unsigned);
 	
 };
+
+struct timespec parseTime(pugi::xml_node n);
+
+unsigned long parseTimeMircroSecond(pugi::xml_node n);
+
+
+void parseTask(pugi::xml_node node, std::vector<unsigned long>&rl_release_times,
+unsigned long& period, unsigned long& jitter, unsigned long& distance,
+unsigned long& rltDeadline, std::vector<unsigned long>& wcets,
+double& exe_factor, int nstage);
 
 
 template<typename T> T formatTimeMicros(double v, const std::string& unit){

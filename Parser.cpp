@@ -48,41 +48,18 @@ int Parser::parseFile(){
 	// get job release times
 	vector<unsigned long> rl_release_times;
 	xml_node event_node     = sim_node.child("events");
-	string arrival_csv_path = event_node.child("csv_path").attribute("value").value();
-	string unit             = event_node.child("csv_path").attribute("unit").value();
-	
-	if(arrival_csv_path.length() > 0){
-		vector<double> initv = loadVectorFromFile<double> (arrival_csv_path);
-		vector<double> v     = formatTimeMicros<double>(initv, unit);
 
-		for (unsigned i = 0; i < v.size(); ++i){
-			if( (i>0) && (v[i]< v[i-1])){			
-				cout << "At lease on element in input time vector is less than its" <<
-				" previous and is modified to its previous value \n";
-				v[i] = v[i-1];
-			} 
-			rl_release_times.push_back(v[i]);
-		}
-	}
-	
 	// get task parameteres: period, jitter, distance, and wcets
-	unsigned long period        = parseTimeMircroSecond(
-		event_node.child("period"));
-	unsigned long jitter        = parseTimeMircroSecond(
-		event_node.child("jitter"));
-	unsigned long distance      = parseTimeMircroSecond(
-		event_node.child("distance"));
-	unsigned long rltDeadline   = parseTimeMircroSecond(
-		event_node.child("relative_deadline"));
-	vector<unsigned long> wcets = parseTimeVectorMicro<unsigned long>(
-		event_node.child("wcets"));
-	if ((int)wcets.size() != nstage){
-		cout << "Parser error: wcetvalues' size doesn't match pipeline stage number\n";
-		return -1;
-	}
-	
+	unsigned long period ;
+	unsigned long jitter ;
+	unsigned long distance ;
+	unsigned long rltDeadline ;
+	vector<unsigned long> wcets;
 	// get the execution time factor
-	double exe_factor = event_node.child("exe_factor").attribute("value").as_double();
+	double exe_factor ;
+
+	parseTask( event_node, rl_release_times, period, jitter, distance,
+	 rltDeadline, wcets, exe_factor, nstage );	
 
 	// get scheduler attributes
 	xml_node schedule_node = sim_node.child("scheduler");
@@ -97,6 +74,8 @@ int Parser::parseFile(){
 		type = PBOO;
 	else if (kernel_type == "GE")
 		type = GE;
+	else if (kernel_type == "SAPTM")
+		type = SAPTM;
 	else{
 		cout << "Parser error: could not recognize kernel type!\n";
 		return -1;
@@ -108,6 +87,21 @@ int Parser::parseFile(){
 
 	Scratch::setExeFactor(exe_factor);
 
+
+
+	// get parameters of additional tasks
+	xml_node moreevent_node     = sim_node.child("moreevents");
+	//iterate through all of the children nodes
+	if (moreevent_node){
+		for (xml_node newevent = moreevent_node.first_child(); newevent; newevent = newevent.next_sibling()){
+
+			parseTask( newevent, rl_release_times, period, jitter, distance,
+				rltDeadline, wcets, exe_factor, nstage );
+
+			Scratch::addTask(period, jitter, distance, rltDeadline, wcets, rl_release_times);
+		}
+	}
+	
 	xml_node isSaveFile	   = sim_node.child("save_result");
 	if (isSaveFile){
 
@@ -155,7 +149,7 @@ int Parser::parseFile(){
 			Scratch::setBFactor(b_factor);
 		}
 		
-	}else if (type == BWS){
+	}else if (type == BWS || type == SAPTM){
 		unsigned long adaptPeriod = parseTimeMircroSecond(kernel_node.child("period"));
 		Scratch::setAdaptionPeriod(adaptPeriod);
 	}else if (type == PBOO){
@@ -171,7 +165,7 @@ int Parser::parseFile(){
 		ptm.toffs = vector<double>(nstage,0);
 		Scratch::setPTMValues(ptm);
 	}
-	// Scratch::print();
+	Scratch::print();
 	return ret;
 }
 
@@ -238,12 +232,12 @@ vector<warmingCurves> Parser::parseWarmingingCurve(string prefix, unsigned nstag
 
 
 
-unsigned long Parser::parseTimeMircroSecond(xml_node n){
+unsigned long parseTimeMircroSecond(xml_node n){
 	struct timespec tmp = parseTime(n);
 	return TimeUtil::convert_us(tmp);
 }
 
-struct timespec Parser::parseTime(xml_node n) {
+struct timespec parseTime(xml_node n) {
 	int time     = n.attribute("value").as_int();
 	string units = n.attribute("unit").value();
 	struct timespec ret;
@@ -334,4 +328,49 @@ vector<WorkerInfo> loadWorkerInfo(unsigned nstage){
 
 	}
 	return ret;
+}
+
+
+void parseTask(xml_node event_node, vector<unsigned long>&rl_release_times,
+unsigned long& period, unsigned long& jitter, unsigned long& distance,
+unsigned long& rltDeadline, vector<unsigned long>& wcets,
+double& exe_factor, int nstage ){
+
+	rl_release_times.clear();
+
+	string arrival_csv_path = event_node.child("csv_path").attribute("value").value();
+	string unit             = event_node.child("csv_path").attribute("unit").value();
+	
+	if(arrival_csv_path.length() > 0 && unit.length() > 0){
+		vector<double> initv = loadVectorFromFile<double> (arrival_csv_path);
+		vector<double> v     = formatTimeMicros<double>(initv, unit);
+
+		for (unsigned i = 0; i < v.size(); ++i){
+			if( (i>0) && (v[i]< v[i-1])){			
+				cout << "At lease on element in input time vector is less than its" <<
+				" previous and is modified to its previous value \n";
+				v[i] = v[i-1];
+			} 
+			rl_release_times.push_back(v[i]);
+		}
+	}
+	
+	// get task parameteres: period, jitter, distance, and wcets
+	period        = parseTimeMircroSecond(
+		event_node.child("period"));
+	jitter        = parseTimeMircroSecond(
+		event_node.child("jitter"));
+	distance      = parseTimeMircroSecond(
+		event_node.child("distance"));
+	rltDeadline   = parseTimeMircroSecond(
+		event_node.child("relative_deadline"));
+	wcets = parseTimeVectorMicro<unsigned long>(
+		event_node.child("wcets"));
+	if ((int)wcets.size() != nstage){
+		cout << "Parser error: wcetvalues' size doesn't match pipeline stage number\n";
+		exit(1);
+	}
+	
+	// get the execution time factor
+	exe_factor = event_node.child("exe_factor").attribute("value").as_double();
 }

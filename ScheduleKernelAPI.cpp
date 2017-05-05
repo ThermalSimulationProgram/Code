@@ -8,6 +8,7 @@
 #include "Statistics.h"
 #include "Pipeline.h"
 #include "APTMKernel.h"
+#include "SAPTMKernel.h"
 #include "BWSKernel.h"
 #include "StaticKernel.h"
 
@@ -47,6 +48,13 @@ ScheduleKernelAPI::ScheduleKernelAPI(Scheduler* scheduler,
 		case GE:{
 			StaticKernel *tempkernel = new StaticKernel(nstages, kernel_type);
 			// tempkernel->setStaticScheme(vector<double>(nstages, 10000), vector<double>(nstages, 0));
+			_kernel = (ScheduleKernel*) tempkernel;
+			break;
+		}
+
+		case SAPTM:{
+			SAPTMKernel *tempkernel = new SAPTMKernel(nstages, Scratch::getDwcets(),
+				vector<double>(nstages, 2), rl_scheduling_times);
 			_kernel = (ScheduleKernel*) tempkernel;
 			break;
 		}
@@ -99,6 +107,10 @@ double ScheduleKernelAPI::getMeanTimeExpense(){
 
 void ScheduleKernelAPI::getPipelineInfo(PipelineInfo& pinfo){
 	_scheduler->getPipelinePointer()->getAllPipelineInfo(pinfo);
+}
+
+void ScheduleKernelAPI::getNewWorkerInfo(std::vector<newWorkerInfo>& info){
+	_scheduler->getPipelinePointer()->getAllNewWorkerInfo(info);
 }
 
 vector<vector<double> > ScheduleKernelAPI::getAllSchemes(){

@@ -8,9 +8,10 @@
 using namespace std;
 
 Job::Job(unsigned _nstage, unsigned _id, unsigned long _rltDeadline, 
-	unsigned long _rltReleaseTime){
+	unsigned long _rltReleaseTime, unsigned _taskId){
 	nstage      = _nstage;
 	id          = _id;
+	taskId 		= _taskId;
 	cstage      = 0;
 	abet        = 0;
 	releaseTime = -1;
@@ -22,8 +23,8 @@ Job::Job(unsigned _nstage, unsigned _id, unsigned long _rltDeadline,
 	sem_init(&state_sem, 0, 1);
 }
 
-int Job::setRCET(vector<unsigned long> wcets, float exe_factor){
-	if (wcets.size() != nstage){
+int Job::setRCET(vector<unsigned long> _wcets, float exe_factor){
+	if (_wcets.size() != nstage){
 		cerr << "Job::setRCET: input wcets doesn't match stage number\n";
 		exit(1);
 	}
@@ -32,14 +33,14 @@ int Job::setRCET(vector<unsigned long> wcets, float exe_factor){
 		cerr << "Job::setRCET: input exe_factor out of range\n";
 		exit(1);
 	}
-
+	wcet = _wcets;
 	sem_wait(&state_sem);
 	rcet.clear();
 	loads.clear();
 	
-	for (unsigned i = 0; i < wcets.size(); ++i){
-		float min    = ((float)wcets[i]) * exe_factor;
-		float max    = (float)wcets[i];
+	for (unsigned i = 0; i < _wcets.size(); ++i){
+		float min    = ((float)_wcets[i]) * exe_factor;
+		float max    = (float)_wcets[i];
 		float lambda = ((double) rand()/ (RAND_MAX));
 		unsigned long r;
 		r            =  (unsigned long) (min  * lambda + max * (1-lambda) + 0.5);
@@ -80,7 +81,7 @@ unsigned long Job::getABET(){
 	sem_post(&state_sem);
 	return ret;
 }
-bool Job::isFinished(){
+bool Job::isFinished() {
 	bool ret;
 	sem_wait(&state_sem);
 	ret = (loads[cstage] == 0);
@@ -113,15 +114,21 @@ int Job::joinStage(unsigned stage){
 	return 0;
 }
 
-unsigned Job::getId(){
+unsigned Job::getId() {
 	sem_wait(&state_sem);
 	unsigned ret = id;
 	sem_post(&state_sem);
-	return ret;
-	
+	return ret;	
 }
 
-unsigned long Job::getLoad(){
+unsigned Job::getTaskId() {
+	sem_wait(&state_sem);
+	unsigned ret = taskId;
+	sem_post(&state_sem);
+	return ret;	
+}
+
+unsigned long Job::getLoad() {
 	sem_wait(&state_sem);
 	unsigned long ret = loads[cstage-1];
 	sem_post(&state_sem);
@@ -137,7 +144,7 @@ void Job::release(unsigned long releasetime){
 	sem_post(&state_sem);
 }
 
-unsigned long Job::getAbsDeadline(){
+unsigned long Job::getAbsDeadline() {
 	sem_wait(&state_sem);
 	unsigned long ret = absDeadline;
 	sem_post(&state_sem);
@@ -145,7 +152,7 @@ unsigned long Job::getAbsDeadline(){
 }
 
 
-unsigned long Job::getRltDeadline(){
+unsigned long Job::getRltDeadline() {
 	sem_wait(&state_sem);
 	unsigned long ret = rltDeadline;
 	sem_post(&state_sem);
@@ -153,10 +160,18 @@ unsigned long Job::getRltDeadline(){
 }
 
 
-unsigned long Job::getRltReleaseTime(){
+unsigned long Job::getRltReleaseTime() {
 	sem_wait(&state_sem);
 	unsigned long ret = rltReleaseTime;
 	// cout << "Job::getRltReleaseTime: " << ret << endl;
 	sem_post(&state_sem);
 	return ret;
+}
+
+vector<unsigned long> Job::getWCET(){
+	return wcet;
+}
+
+unsigned long Job::getCurrentWCET(){
+	return wcet[cstage];
 }

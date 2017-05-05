@@ -46,6 +46,11 @@ public:
 	static std::vector<double> 			getDwcets();
 	static std::vector<unsigned long> 	getArrivalTimes();
 	static std::vector<double> 			getArrivalTimes_ms();
+
+	
+
+
+	
 	static enum _schedule_kernel 	getKernel();
 	static unsigned long 			getDuration();
 	static double 					getExeFactor();
@@ -54,19 +59,36 @@ public:
 	static bool 					isSaveFile();
 	static std::string 				getBenchmarkName();
 
+	static std::vector<unsigned long> 			getAllPeriod();
+	static std::vector<unsigned long> 			getAllJitter();
+	static std::vector<unsigned long> 			getAllDistance();
+	static std::vector<unsigned long> 			getAllRltDeadline();
+	static std::vector<double> 					getAllRltDeadline_ms();
+	static std::vector<std::vector<unsigned long> > 	getAllWcets();
+	static std::vector<std::vector<double> >			getAllDwcets();
+
+
+	static std::vector<std::vector<double> > getAllArrivalTimes_ms();
+
+	static void addTask(unsigned long period, unsigned long jitter,
+				unsigned long distance, unsigned long deadline, 
+				std::vector<unsigned long> wcet, std::vector<unsigned long> arrivaltimes);
+
 
 private:
 	
 	static std::string 					name;
 	static int 						nstage;
-	static unsigned long 			period;
-	static unsigned long 			jitter;
-	static unsigned long 			distance;
-	static unsigned long 			rltDeadline;
-	static double 					rltDeadline_ms;
-	static std::vector<unsigned long> 	wcets;
-	static std::vector<double> 			dwcets;
-	static std::vector<unsigned long> 	arrival_times;
+	static std::vector<unsigned long> 			period;
+	static std::vector<unsigned long> 			jitter;
+	static std::vector<unsigned long>			distance;
+	static std::vector<unsigned long> 			rltDeadline;
+	static std::vector<double> 					rltDeadline_ms;
+	static std::vector<std::vector<unsigned long>> 	wcets;
+	static std::vector<std::vector<double>> 			dwcets;
+
+
+	static std::vector<std::vector<unsigned long> >	arrival_times;
 	static enum _schedule_kernel 	kernel;
 	static unsigned long 			duration;
 

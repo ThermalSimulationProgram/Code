@@ -67,8 +67,12 @@ void TimedRunnable::timedRun(){
 			else {
 				cout << "TimedRunnable::wrapper: received a signal, be deactivated" << endl;
 			}
-
-			t->timedJob(i);
+			if (Pipeline::isSimulating()){
+				t->timedJob(i);
+			}else{
+				break;
+			}
+			
 			timeout = TimeUtil::getTimeUSec();
 			runTimes.push_back(timeout - timein);
 			

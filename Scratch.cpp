@@ -2,6 +2,7 @@
 
 
 #include "utils.h"
+#include "vectormath.h"
 
 #include <iostream>
 
@@ -10,14 +11,14 @@ using namespace std;
 
 string 					Scratch::name;
 int 					Scratch::nstage;
-unsigned long 			Scratch::period;
-unsigned long 			Scratch::jitter;
-unsigned long 			Scratch::distance;
-unsigned long 			Scratch::rltDeadline;
-double 					Scratch::rltDeadline_ms;
-vector<unsigned long> 	Scratch::wcets;
-vector<double> 			Scratch::dwcets;
-vector<unsigned long> 	Scratch::arrival_times;
+vector<unsigned long> 			Scratch::period;
+vector<unsigned long> 			Scratch::jitter;
+vector<unsigned long> 			Scratch::distance;
+vector<unsigned long> 			Scratch::rltDeadline;
+vector<double>					Scratch::rltDeadline_ms;
+vector<vector<unsigned long> > 	Scratch::wcets;
+vector<vector<double> > 			Scratch::dwcets;
+vector<vector<unsigned long> >	Scratch::arrival_times;
 enum _schedule_kernel 	Scratch::kernel;
 unsigned long 			Scratch::duration;
 double 					Scratch::exefactor;
@@ -38,13 +39,13 @@ void Scratch::initialize(int _nstage, unsigned long _period,
 	string _name){
 
 	nstage 			= _nstage;
-	period          = _period;
-	jitter          = _jitter;
-	distance 		= _distance;
-	rltDeadline 	= _rltDeadline;
-	rltDeadline_ms 	= (double)rltDeadline/1000;
-	wcets           = _wcets;
-	arrival_times   = _arrival_times;
+	period.push_back(_period);       
+	jitter.push_back(_jitter);
+	distance.push_back(_distance);
+	rltDeadline.push_back(_rltDeadline);
+	rltDeadline_ms.push_back((double)_rltDeadline/1000);
+	wcets.push_back(_wcets);
+	arrival_times.push_back(_arrival_times); 
 	kernel 			= _kernel;
 	duration 		= _duration;
 	name            = _name;
@@ -52,8 +53,8 @@ void Scratch::initialize(int _nstage, unsigned long _period,
 	exefactor 		= 1;
 	bfactor 		= 0.93;
 	isSave 			= true;
-	for (unsigned i = 0; i < wcets.size(); ++i)
-		dwcets.push_back((double)wcets[i]/1000);
+	dwcets.push_back(wcets[0]/1000);
+
 	benchmark 		= "default";
 
 	sem_init(&access_sem, 0, 1);
@@ -61,21 +62,46 @@ void Scratch::initialize(int _nstage, unsigned long _period,
 
 void Scratch::print(){
 	cout << "nstage \t\t\t= " << nstage << endl;
-	cout << "period \t\t\t= " << period << endl;
-	cout << "jitter \t\t\t= " << jitter << endl;
-	cout << "distance \t\t= " << distance << endl;
-	cout << "rltDeadline \t\t= " << rltDeadline << endl;
-	cout << "rltDeadline_ms \t\t= " << rltDeadline_ms << endl;
+	// cout << "period \t\t\t= " << period << endl;
+	// cout << "jitter \t\t\t= " << jitter << endl;
+	// cout << "distance \t\t= " << distance << endl;
+	// cout << "rltDeadline \t\t= " << rltDeadline << endl;
+	// cout << "rltDeadline_ms \t\t= " << rltDeadline_ms << endl;
 	cout << "kernel \t\t\t= " << kernel << endl;
 	cout << "duration \t\t= " << duration << endl;
 	cout << "name \t\t\t= " << name << endl;
 	cout << "adaption_period \t= " << adaption_period << endl;
 	cout << "exefactor \t\t= " << exefactor << endl;
 	cout << "bfactor \t\t= " << bfactor << endl;
-	displayvector(wcets, "wcets");
+	displayvector(period, "period");
+	displayvector(jitter, "jitter");
+	displayvector(distance, "distance");
+	displayvector(rltDeadline, "rltDeadline");
+	displayvector(rltDeadline_ms, "rltDeadline_ms");
+	for (int i = 0; i < (int)wcets.size(); ++i)
+	{
+		displayvector(wcets[i], "wcets");
+	}
+	
 	displayvector(ptm.tons, "tons");
 	displayvector(ptm.toffs, "toffs");
 }
+
+void Scratch::addTask(unsigned long _period, unsigned long _jitter,
+				unsigned long _distance, unsigned long _deadline, 
+				std::vector<unsigned long> _wcet, std::vector<unsigned long> _arrivaltimes){
+	sem_wait(&access_sem);
+	period.push_back(_period);
+	jitter.push_back(_jitter);
+	distance.push_back(_distance);
+	rltDeadline.push_back(_deadline);
+	rltDeadline_ms.push_back((double)_deadline/1000);
+	wcets.push_back(_wcet);
+	dwcets.push_back(_wcet/1000);
+	arrival_times.push_back(_arrivaltimes);
+	sem_post(&access_sem);
+}
+
 
 void Scratch::setBenchmark(const string& name){
 	sem_wait(&access_sem);
@@ -105,11 +131,6 @@ void Scratch::setName(string newname){
 
 void Scratch::setAdaptionPeriod(unsigned long p){
 	sem_wait(&access_sem);
-	if (kernel != APTM && kernel != BWS){
-		cout << "Scratch::setAdaptionPeriod:Set adaption period only for APTM or BWS kernel"<< endl;
-		sem_post(&access_sem);
-		return;
-	}
 	adaption_period = p;
 	sem_post(&access_sem);
 	
@@ -223,43 +244,54 @@ int Scratch::getNstage(){
 }
 unsigned long Scratch::getPeriod(){
 	sem_wait(&access_sem);
-	unsigned ret = period;
+	unsigned ret = period[0];
 	sem_post(&access_sem);
 	return ret;
 }
 unsigned long Scratch::getJitter(){
 	sem_wait(&access_sem);
-	unsigned long ret = jitter;
+	unsigned long ret = jitter[0];
 	sem_post(&access_sem);
 	return ret;
 }
 unsigned long Scratch::getDistance(){
 	sem_wait(&access_sem);
-	unsigned long ret = distance;
+	unsigned long ret = distance[0];
 	sem_post(&access_sem);
 	return ret;
 }
 unsigned long Scratch::getRltDeadline(){
 	sem_wait(&access_sem);
-	unsigned long ret = rltDeadline;
+	unsigned long ret = rltDeadline[0];
 	sem_post(&access_sem);
 	return ret;
 }
 double 	Scratch::getRltDeadline_ms(){
 	sem_wait(&access_sem);
-	double ret = rltDeadline_ms;
+	double ret = rltDeadline_ms[0];
 	sem_post(&access_sem);
 	return ret;
 }
 vector<unsigned long> Scratch::getWcets(){
 	sem_wait(&access_sem);
-	vector<unsigned long> ret = wcets;
+	vector<unsigned long> ret = wcets[0];
 	sem_post(&access_sem);
 	return ret;
 }
 vector<double> 	Scratch::getDwcets(){
 	sem_wait(&access_sem);
-	vector<double> ret = dwcets;
+	vector<double> ret = dwcets[0];
+	sem_post(&access_sem);
+	return ret;
+}
+
+std::vector<std::vector<double> > Scratch::getAllArrivalTimes_ms(){
+	sem_wait(&access_sem);
+	vector<vector<double> > ret;
+	for (int i = 0; i < (int)arrival_times.size(); ++i)
+	 {
+	 	ret.push_back(arrival_times[i]/1000);
+	 } 
 	sem_post(&access_sem);
 	return ret;
 }
@@ -267,7 +299,7 @@ vector<double> 	Scratch::getDwcets(){
 
 vector<unsigned long> Scratch::getArrivalTimes(){
 	sem_wait(&access_sem);
-	vector<unsigned long> ret = arrival_times;
+	vector<unsigned long> ret = arrival_times[0];
 	sem_post(&access_sem);
 	return ret;
 }
@@ -275,8 +307,8 @@ vector<unsigned long> Scratch::getArrivalTimes(){
 vector<double> Scratch::getArrivalTimes_ms(){
 	sem_wait(&access_sem);
 	vector<double> ret;
-	for (unsigned i = 0; i < arrival_times.size(); ++i)
-		ret.push_back((double)arrival_times[i]/1000);
+	for (unsigned i = 0; i < arrival_times[0].size(); ++i)
+		ret.push_back((double)arrival_times[0][i]/1000);
 	
 	sem_post(&access_sem);
 	
@@ -307,6 +339,51 @@ double Scratch::getExeFactor(){
 double Scratch::getBFactor(){
 	sem_wait(&access_sem);
 	double ret = bfactor;
+	sem_post(&access_sem);
+	return ret;
+}
+
+
+
+std::vector<unsigned long> 	Scratch::getAllPeriod(){
+	sem_wait(&access_sem);
+	vector<unsigned long> ret = period;
+	sem_post(&access_sem);
+	return ret;
+}
+vector<unsigned long> 	Scratch::getAllJitter(){
+	sem_wait(&access_sem);
+	vector<unsigned long> ret = jitter;
+	sem_post(&access_sem);
+	return ret;
+}
+vector<unsigned long> 	Scratch::getAllDistance(){
+	sem_wait(&access_sem);
+	vector<unsigned long> ret = distance;
+	sem_post(&access_sem);
+	return ret;
+}
+vector<unsigned long> Scratch::getAllRltDeadline(){
+	sem_wait(&access_sem);
+	vector<unsigned long> ret = rltDeadline;
+	sem_post(&access_sem);
+	return ret;
+}
+vector<double> 	Scratch::getAllRltDeadline_ms(){
+	sem_wait(&access_sem);
+	vector<double> ret = rltDeadline_ms;
+	sem_post(&access_sem);
+	return ret;
+}
+vector<std::vector<unsigned long> > Scratch::getAllWcets(){
+	sem_wait(&access_sem);
+	vector<std::vector<unsigned long> > ret = wcets;
+	sem_post(&access_sem);
+	return ret;
+}
+vector<std::vector<double> >	Scratch::getAllDwcets(){
+	sem_wait(&access_sem);
+	vector<std::vector<double> > ret = dwcets;
 	sem_post(&access_sem);
 	return ret;
 }

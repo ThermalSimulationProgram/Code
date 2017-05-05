@@ -49,6 +49,11 @@ typedef struct{
 	std::vector<double> allEventAbsDeadlines;
 } WorkerInfo;
 
+typedef struct{
+	std::vector<double> allEventAbsDeadlines;
+	std::vector<double> allEventLoads;
+}newWorkerInfo;
+
 
 typedef struct{
 	std::vector<WorkerInfo> workerinfos;

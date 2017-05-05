@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <iterator>
 #include <stdlib.h>
 
 #include "Enumerations.h"
@@ -36,6 +37,7 @@ Worker::Worker(int _stageId, int _id) : Thread(_id), load(Scratch::getBenchmarkN
 	sem_init(&schedule_sem, 0, 0);
 	sem_init(&ptm_sem, 0, 1);
 	sem_init(&state_sem, 0, 1);
+	sem_init(&job_sem, 0, 1);
 
 
 	latestSleep = TimeUtil::Millis(0);
@@ -71,6 +73,15 @@ void Worker::join(){
 	join2();
 }
 
+void Worker::getNewInfo(newWorkerInfo& ret){
+	// cout << "getNewInfo 1" << endl;
+	ret.allEventAbsDeadlines = getAllAbsDeadline_ms();
+
+	// cout << "getNewInfo 2" << endl;
+	ret.allEventLoads = getAllLoads_ms();
+	// cout << "getNewInfo 3" << endl;
+}
+
 void Worker::getAllInfo(double now, WorkerInfo & ret){
 	ret.stageId = stageId;
 	struct timespec tmp;
@@ -104,6 +115,7 @@ void Worker::getAllInfo(double now, WorkerInfo & ret){
 
 	ret.nFIFOJobs            =  (int)ret.allEventAbsDeadlines.size();
 	
+	sem_wait(&job_sem);
 	if (current_job != NULL){
 		ret.onGoEventId = (int)current_job->getId();
 		ret.executed    = ((double)current_job->getABET())/1000;
@@ -112,22 +124,48 @@ void Worker::getAllInfo(double now, WorkerInfo & ret){
 		ret.onGoEventId = 0;
 		ret.executed    = 0;
 	}
+	sem_post(&job_sem);
 }
 
 unsigned long Worker::getExecuted(){
 	unsigned long ret = 0;
-	if (current_job != NULL)
+	sem_wait(&job_sem);
+	if (current_job != NULL){
 		ret = current_job->getABET();
-
+	}
+	sem_post(&job_sem);
 	return ret;
 }
 
 vector<unsigned long> Worker::getAllAbsDeadline(){
 	vector<unsigned long> ret;
+	sem_wait(&job_sem);
+	if (current_job != NULL){
+		ret.push_back(current_job->getAbsDeadline());
+	}
+	sem_post(&job_sem);
+
 	sem_wait(&FIFO_sem);
-	for (unsigned i = 0; i < FIFO.size(); ++i)
+	for (list<Job*>::iterator it = FIFO.begin(); it !=  FIFO.end(); it++)
 	{
-		ret.push_back(FIFO[i]->getAbsDeadline());
+		ret.push_back((*it)->getAbsDeadline());
+	}
+	sem_post(&FIFO_sem);
+	return ret;
+}
+
+vector<double> Worker::getAllLoads_ms(){
+	vector<double> ret;
+	sem_wait(&job_sem);
+	if (current_job != NULL){
+		double maxLoad = current_job->getCurrentWCET() - current_job->getABET();
+		ret.push_back((double)maxLoad/1000);
+	}
+	sem_post(&job_sem);
+	sem_wait(&FIFO_sem);
+	for (list<Job*>::iterator it = FIFO.begin(); it !=  FIFO.end(); it++)
+	{
+		ret.push_back((double) ( (*it)->getCurrentWCET() - (*it)->getABET()  )/1000);
 	}
 	sem_post(&FIFO_sem);
 	return ret;
@@ -135,10 +173,15 @@ vector<unsigned long> Worker::getAllAbsDeadline(){
 
 vector<double> Worker::getAllAbsDeadline_ms(){
 	vector<double> ret;
+	sem_wait(&job_sem);
+	if (current_job != NULL){
+		ret.push_back((double)current_job->getAbsDeadline()/1000);
+	}
+	sem_post(&job_sem);
 	sem_wait(&FIFO_sem);
-	for (unsigned i = 0; i < FIFO.size(); ++i)
+	for (list<Job*>::iterator it = FIFO.begin(); it !=  FIFO.end(); it++)
 	{
-		ret.push_back((double)FIFO[i]->getAbsDeadline()/1000);
+		ret.push_back((double) ((*it)->getAbsDeadline())/1000);
 	}
 	sem_post(&FIFO_sem);
 	return ret;
@@ -241,14 +284,16 @@ void Worker::wrapper(){
 				total_exed = total_exed + exedSlice;
 				start = end;
 
+				sem_wait(&job_sem);
 				if (current_job != NULL){
 					if (current_job->execute(exedSlice) == 1){
 						finishedJob();
 					}
 				}
 				else{
-					tryLoadJob();
+					current_job = popFrontJob();;
 				}
+				sem_post(&job_sem);
 
 				sem_wait(&ptm_sem);
 				if (total_exed > ton)
@@ -269,19 +314,21 @@ void Worker::wrapper(){
 
 // 
 
-void Worker::tryLoadJob(){
-	sem_wait(&FIFO_sem);
-	if (FIFO.size()>0 && current_job == NULL) 
-		current_job = FIFO.front();
-	sem_post(&FIFO_sem);
-}
-
-
 void Worker::newJob(Job * j)
-{
-	sem_wait(&FIFO_sem);
-	FIFO.push_back(j);
-	sem_post(&FIFO_sem);
+{	
+	bool preempted = false;
+
+	sem_wait(&job_sem);
+	if ( current_job!=NULL && current_job->getAbsDeadline() > j->getAbsDeadline() ){
+		insertJobToQueue(current_job);
+		current_job = j;
+		preempted = true;
+	}
+	sem_post(&job_sem);
+
+	if (!preempted){
+		insertJobToQueue(j);
+	}	
 	if (j->joinStage(stageId))
 	{
 		Semaphores::print_sem.wait_sem();
@@ -306,14 +353,8 @@ void Worker::finishedJob()
 	else{
 		pipeline->finishedJob(current_job);
 	}
-	sem_wait(&FIFO_sem);
-    FIFO.pop_front(); 	//Erase old arrival time
-    if (FIFO.size()!=0) 
-    	current_job = FIFO.front();
-    else
-    	current_job = NULL;
-    
-    sem_post(&FIFO_sem);
+
+	current_job = popFrontJob();
 }
 
 
@@ -337,4 +378,42 @@ void Worker::setPTM(unsigned long _ton, unsigned long _toff)
 
 }
 
+
+void Worker::insertJobToQueue(Job* job){
+	unsigned long thisDeadline = job->getAbsDeadline();
+	bool found = false;
+	list<Job*>::iterator insert_it;
+
+	sem_wait(&FIFO_sem);
+	for (list<Job*>::iterator it = FIFO.begin(); it !=  FIFO.end(); it++)
+	{
+		if ((*it)->getAbsDeadline() <= thisDeadline){
+			continue;
+		}else{
+			insert_it = it;
+			found = true;
+			break;
+		}
+	}
+	if (found){
+		FIFO.insert(insert_it, job);
+	}else{
+		FIFO.push_back(job);
+	}
+	
+	sem_post(&FIFO_sem);
+}
+
+Job* Worker::popFrontJob(){
+	Job* ret;
+	sem_wait(&FIFO_sem);
+	if (FIFO.size() < 1){
+		ret = NULL;
+	}else{
+		ret = FIFO.front();
+		FIFO.pop_front();
+	}
+	sem_post(&FIFO_sem);
+	return ret;
+}
 

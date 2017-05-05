@@ -9,7 +9,7 @@
 
 
 #include <vector>
-#include <deque>
+#include <list>
 #include <time.h>
 #include <semaphore.h>
 // #include <pthread.h>
@@ -32,7 +32,7 @@ protected:
 
 
 	///This vector stores the ids of jobs that are waiting for execution
-	std::deque<Job *> FIFO;
+	std::list<Job *> FIFO;
 	Job* current_job;
 
 	unsigned base ;
@@ -42,6 +42,9 @@ protected:
 
 	///This attribute points to next stage, should be NULL when it's the end stage
 	Worker *next;
+
+	///semaphore controls accessing pointer current_job 
+	sem_t job_sem;
 
 	///semaphore controls accessing vector FIFO
 	sem_t FIFO_sem;
@@ -57,6 +60,20 @@ protected:
 
 	Load load;
 
+protected:
+
+	void finishedJob();
+
+	void insertJobToQueue(Job* job);
+
+	Job* popFrontJob();
+
+	std::vector<unsigned long> getAllAbsDeadline();
+
+	std::vector<double> getAllAbsDeadline_ms();
+
+	std::vector<double> getAllLoads_ms();
+
 public:
 	Worker(int, int);
 	~Worker();
@@ -69,10 +86,7 @@ public:
 
 	void newJob(Job*);
 
-	void tryLoadJob();
-
-	void finishedJob();
-
+	
 	void setNext(Worker*);
 
 	void setPipeline(Pipeline*);
@@ -84,11 +98,14 @@ public:
 
 	unsigned long getExecuted();
 
-	std::vector<unsigned long> getAllAbsDeadline();
 
-	std::vector<double> getAllAbsDeadline_ms();
 
 	bool isInitialized();
+
+
+	void getNewInfo(newWorkerInfo& ret);
+
+
 
 };
 

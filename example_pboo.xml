@@ -10,7 +10,7 @@
       <jitter value="150" unit="ms"/>
       <distance value="0" unit="ms"/>
       <wcets value="{14.2 10 3.6 5.7 }" unit="ms"/>
-      <exe_factor value="0.9" />
+      <exe_factor value="1" />
       <relative_deadline value="70" unit="ms"/>
    </events>
 

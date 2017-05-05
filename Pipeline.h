@@ -104,6 +104,8 @@ public:
 	// in the simulation
 	void getAllPipelineInfo(PipelineInfo& p);
 
+	void getAllNewWorkerInfo(std::vector<newWorkerInfo>& info);
+
 
 
 

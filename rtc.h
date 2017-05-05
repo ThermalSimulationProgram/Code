@@ -48,6 +48,7 @@ public:
 	static jobject 	plus(jobject, double);
 	static jobject 	minus(jobject, jobject);
 	static jobject 	minus(jobject, double);
+	static jobject 	times(jobject, double);
 	static bool    	eq(jobject, jobject);
 	static jobject 	min(jobject, jobject);
 	static jobject 	min(jobject, double);

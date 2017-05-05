@@ -118,13 +118,18 @@ void Pipeline::initialize(){
 	
 	
 	vector<unsigned long> wcets = Scratch::getWcets();
+	// cout << "trigger dispatcher" << endl;
 	dispatcher->createJobs(wcets, Scratch::getExeFactor(), Scratch::getRltDeadline());
 	dispatcher->trigger();
 
+	// cout << "trigger scheduler" << endl;
 	scheduler->trigger();
 	scheduler->activate();
+
+	// cout << "trigger tempwatcher" << endl;
 	tempwatcher->trigger();
 
+	// cout << "trigger Worker" << endl;
 	Worker *current;
 	for (int i = 0; i < n_stages; ++i){
 		current = workers[i];
@@ -135,10 +140,15 @@ void Pipeline::initialize(){
 		current->setPipeline(this);
 	}
 
+	// cout << "finish trigger Worker" << endl;
 	// Main thread waits for all threads initialized, especially the scheduler
 	Semaphores::rtcinit_sem.wait_sem();
+
+	// cout << "existing initialize1" << endl;
 	// all threads initialized
 	initialized = true;
+
+	// cout << "existing initialize2" << endl;
 }
 
 // Start the simulation, the duration is loaded from Scratch class
@@ -157,7 +167,7 @@ double Pipeline::simulate(){
 	dispatcher->setCPU(n_cpus-1);
 	
 	
-	scheduler->setCPU(n_cpus - 2);
+	scheduler->setCPU(n_cpus - 1);
 
 	tempwatcher->activate();
 	if(workers.size()==1){
@@ -310,19 +320,19 @@ void Pipeline::finishedJob(Job* j){
 
 	double release = ((double)j->getRltReleaseTime())/1000;
 
-	if (now > deadline + 2){
-		cout << release <<  " A deadline miss happened!" << endl;
-		Statistics::addMissedDeadline(j->getId(), (unsigned long)release, 
-			(unsigned long)deadline, (unsigned long)now);
-	}
+	// if (now > deadline + 1){
+	// 	cout << release <<  " A deadline miss happened!" << endl;
+	// 	Statistics::addMissedDeadline(j->getId(), (unsigned long)release, 
+	// 		(unsigned long)deadline, (unsigned long)now);
+	// }
 	if (j->isFinalFinished()){
 		Semaphores::print_sem.wait_sem();
 		// double now = Statistics::getRelativeTime_ms();
 		// double deadline = (double)j->getRltDeadline()/1000;
-		cout << "Job with id: " << j->getId() << " finishes at time: " 
+		cout << "Task: " << j->getTaskId() << " " << j->getId() <<  "th job finishes at time: " 
 		<< now << " millisecond "  << "with deadline: " << deadline << ". ";
 
-		if (now > deadline+5){
+		if (now > deadline+1){
 			cout << "A deadline miss happened!";
 		}
 
@@ -331,7 +341,7 @@ void Pipeline::finishedJob(Job* j){
 	}
 	else{
 		Semaphores::print_sem.wait_sem();
-		cout << "Job with id: " << j->getId() << " finishes incorrectly!" 
+		cout << "Task: " << j->getTaskId() << " " << j->getId() <<  "th job finishes incorrectly!" 
 		<< "at time: "<< (Statistics::getRelativeTime_ms()) << " millisecond!"  << endl;
 		Semaphores::print_sem.post_sem();
 	}
@@ -349,6 +359,15 @@ unsigned Pipeline::getNCPU(){
 	return n_cpus;
 }
 
+void Pipeline::getAllNewWorkerInfo(std::vector<newWorkerInfo>& info){
+	info.clear();
+	for (unsigned i = 0; i < workers.size(); ++i)
+	{
+		newWorkerInfo ni;
+		info.push_back(ni);
+		workers[i]->getNewInfo(info[i]);		
+	}
+}
 
 
 

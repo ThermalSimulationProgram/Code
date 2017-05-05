@@ -1,0 +1,48 @@
+<simulation name="example_saptm">
+
+   <duration value="20" unit="sec"/>
+
+   <pipeline stagenumber="1"/>
+
+   <events>
+      <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>
+      <period value="100" unit="ms"/>
+      <jitter value="150" unit="ms"/>
+      <distance value="0" unit="ms"/>
+      <wcets value="{14.2}" unit="ms"/>
+      <exe_factor value="0.9"/>
+      <relative_deadline value="100" unit="ms"/>
+   </events>
+
+   <moreevents>
+      <event1>
+         <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>
+         <period value="100" unit="ms"/>
+         <jitter value="150" unit="ms"/>
+         <distance value="0" unit="ms"/>
+         <wcets value="{14.2}" unit="ms"/>
+         <exe_factor value="0.9"/>
+         <relative_deadline value="100" unit="ms"/>
+      </event1> 
+      <event2>
+         <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>
+         <period value="100" unit="ms"/>
+         <jitter value="150" unit="ms"/>
+         <distance value="0" unit="ms"/>
+         <wcets value="{14.2}" unit="ms"/>
+         <exe_factor value="0.9"/>
+         <relative_deadline value="100" unit="ms"/>
+      </event2>
+      
+   </moreevents>
+
+
+   <scheduler>
+      <kernel type="SAPTM">
+         <period value="20" unit="ms"/>
+      </kernel>
+   </scheduler>
+
+</simulation>
+
+

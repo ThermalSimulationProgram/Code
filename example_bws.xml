@@ -1,6 +1,6 @@
 <simulation name="example_bws">
 
-   <duration value="100" unit="sec"/>
+   <duration value="1" unit="sec"/>
 
    <pipeline stagenumber="4"/>
 

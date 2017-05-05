@@ -38,6 +38,8 @@ public:
 
 	void getPipelineInfo(PipelineInfo& pinfo);
 
+	void getNewWorkerInfo(std::vector<newWorkerInfo>& info);
+
 	std::vector<std::vector<double> > getAllSchemes();
 
 };

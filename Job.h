@@ -21,9 +21,13 @@ protected:
 	unsigned long rltDeadline;
 	unsigned long rltReleaseTime;
 
+	std::vector<unsigned long> wcet;
 	///This attribute indicates the real-cse execution time of each job, unit us 
 	std::vector<unsigned long> rcet;
 	std::vector<unsigned long> loads;
+
+	//This variable stores the id of the corresponding task
+	unsigned taskId;
 	//This variable stores the id of current job
 	unsigned id;
 	///This variable stores the time length for which current job has been executed, unit us 
@@ -32,7 +36,7 @@ protected:
 	sem_t state_sem;
 
 public:
-	Job(unsigned, unsigned, unsigned long, unsigned long);
+	Job(unsigned, unsigned, unsigned long, unsigned long, unsigned);
 
 	void release(unsigned long );
 
@@ -40,7 +44,7 @@ public:
 
 	int execute(unsigned long);
 
-	bool isFinished();
+	bool isFinished() ;
 
 	bool isFinalFinished();
 
@@ -48,17 +52,22 @@ public:
 
 	int setRCET(std::vector<unsigned long>, float);
 
-	unsigned long getABET();
+	unsigned long getABET() ;
 
-	unsigned getId();
+	unsigned getId() ;
 
-	unsigned long getLoad();
+	unsigned getTaskId();
 
-	unsigned long getAbsDeadline();
+	unsigned long getLoad() ;
 
-	unsigned long getRltDeadline();
+	unsigned long getAbsDeadline() ;
 
-	unsigned long getRltReleaseTime();
+	unsigned long getRltDeadline() ;
+
+	unsigned long getRltReleaseTime() ;
+
+	std::vector<unsigned long> getWCET() ;
+	unsigned long getCurrentWCET();
 };
 
 

@@ -415,6 +415,12 @@ jobject rtc::minus(jobject a, double b ){
 	return result;
 }
 
+jobject rtc::times(jobject a, double b){
+	jobject result = clone(a);
+	scaleY(result, b);
+	return result;
+}
+
 bool rtc::eq(jobject a, jobject b ){
 	// callfun = "rtc::eq<---" + callfun;
 	if(equals(a, b )){

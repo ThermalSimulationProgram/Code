@@ -42,6 +42,8 @@ protected:
 
 	std::vector<jobject> haAlpha;
 
+	std::vector<jobject> multi_haAlpha;
+
 	int adaptCounter;
 
 	
@@ -63,6 +65,8 @@ public:
 		std::vector<double> , const std::vector<double> &, unsigned);
 
 	void getRawAdaptInfo(AdaptInfo&);
+
+	
 
 	// get the curve data required to construct the arrival curve of the jobs
 	// in ith FIFO

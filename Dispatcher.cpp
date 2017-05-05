@@ -85,10 +85,7 @@ void Dispatcher::timedJob(unsigned index){
 	#endif
 }
 
-// void Dispatcher::setPipeline(Pipeline * p){
-// 	pipeline = p;
-	
-// }
+
 
 void Dispatcher::createJobs(vector<unsigned long> wcets, float factor,
 	unsigned long _rltDeadline){
@@ -97,7 +94,7 @@ void Dispatcher::createJobs(vector<unsigned long> wcets, float factor,
 	unsigned nstage = Scratch::getNstage();
 	///create the jobs according to their releative release times
 	for (unsigned i = 0; i < rl_arrive_times.size(); ++i){
-		Job j = Job(nstage, i+1, _rltDeadline, rl_arrive_times[i]);
+		Job j = Job(nstage, i+1, _rltDeadline, rl_arrive_times[i], id);
 		j.setRCET(wcets, factor);
 		jobs.push_back(j);
 	}

@@ -7,7 +7,8 @@ enum _schedule_kernel
   APTM,
   BWS,
   PBOO,
-  GE
+  GE,
+  SAPTM
 };
 
 
