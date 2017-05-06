@@ -285,6 +285,14 @@ vector<double> 	Scratch::getDwcets(){
 	return ret;
 }
 
+
+std::vector<std::vector<unsigned long> > Scratch::getAllArrivalTimes(){
+	sem_wait(&access_sem);
+	std::vector<std::vector<unsigned long> > ret = arrival_times;
+	sem_post(&access_sem);
+	return ret;
+}
+
 std::vector<std::vector<double> > Scratch::getAllArrivalTimes_ms(){
 	sem_wait(&access_sem);
 	vector<vector<double> > ret;

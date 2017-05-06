@@ -36,8 +36,10 @@ protected:
 	// a stage.
 	std::vector<Worker*> workers;
 
-	// Dispatcher release jobs to Pipeline
-	Dispatcher 	*dispatcher;
+	// Dispatchers release jobs to Pipeline
+	std::vector<Dispatcher*> dispatchers;
+	
+	// Dispatcher 	*dispatcher;
 
 	// Scheduler manages the execution of the workers
 	Scheduler 	*scheduler;

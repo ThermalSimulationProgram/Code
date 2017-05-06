@@ -3,6 +3,7 @@
 #include "Statistics.h"
 // #include "Parser.h"
 #include "utils.h"
+#include "RTCCurveDataSubIterator.h"
 
 
 #include <iostream>
@@ -13,6 +14,8 @@
 
 
 using namespace std;
+
+
 
 void rtc::initialize(){
 	rtcjni::initialize();
@@ -372,6 +375,30 @@ bool rtc::eqZero(const vector<double> & data){
 		}
 	}
 	return eqzero;
+}
+
+
+std::vector<double> rtc::plus(const std::vector<double>& a, const std::vector<double>& b){
+	
+
+	vector<double> returnCurve;
+	returnCurve.reserve(a.size() + b.size());
+	double xMaxA = a[a.size()-3];
+	double xMaxB = b[b.size()-3];
+
+	double xMax = xMaxA > xMaxB ? xMaxA : xMaxB;
+
+	RTCCurveDataSubIterator it(a, b, xMax);
+	while(it.next()){
+		returnCurve.push_back(it.xStart());
+		returnCurve.push_back(it.yStartA() + it.yStartB());
+		returnCurve.push_back(it.sA() + it.sB());
+	}
+
+
+	return returnCurve;
+
+
 }
 
 

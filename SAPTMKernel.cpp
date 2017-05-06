@@ -51,9 +51,9 @@ int SAPTMKernel::getScheme(std::vector<double> & tons, std::vector<double>& toff
 	#endif
 	unsigned long part1_timein = Statistics::getRelativeTime();
 	
-	jobject beta = getBeta();
-	vector<double> beta_data = rtc::segementsData(beta, 2000);
-
+	// jobject beta = getBeta();
+	// vector<double> beta_data = rtc::segementsData(beta, 2000);
+	vector<double> beta_data = getBetaCurveData();
 	unsigned long part1_time = Statistics::getRelativeTime() - part1_timein;
 
 
@@ -78,7 +78,7 @@ int SAPTMKernel::getScheme(std::vector<double> & tons, std::vector<double>& toff
 	#if _PROFILE1 == 1
 	timeout = (double)Statistics::getRelativeTime();
 	double time2 = timeout - timein;
-	if (time1 + time2 > 1000){
+	if (time1 + time2 > 200){
 		partTimes[0] += time1;
 		partTimes[1] += time2;
 		cout << "time1:  "<< time1 << 
@@ -111,6 +111,11 @@ int SAPTMKernel::GoldenSearch(vector<double> beta_data, std::vector<double> & to
 	int counter = 0;
 	double toff_max = rtc::minbdf_BSF(beta_data, minDeadline, 1);
 	double toff_min = tswoff + tswon;
+	if (toff_max < toff_min){
+		tons.push_back(100000);
+		toffs.push_back(0);
+		return counter;
+	}
 
 	double toff_test1 = toff_min + 0.382*(toff_max - toff_min);
 	double toff_test2 = toff_min + 0.618*(toff_max - toff_min);
@@ -161,10 +166,40 @@ jobject SAPTMKernel::getEDFHaAlpha(){
 
 }
 
+std::vector<double> SAPTMKernel::getEDFHaAlphaCurveData(){
+	#if _DEBUG == 1
+	cout << "SAPTMKernel:: start getEDFHaAlpha" << endl;
+	#endif
+	vector<double> edfHaAlpha_data = multi_haAlpha_curve_data[adaptCounter];
+	++adaptCounter;
+	return edfHaAlpha_data;
+}
+
+std::vector<double> SAPTMKernel::getBetaCurveData(){
+	return rtc::plus(getFIFOCurveData(), getEDFHaAlphaCurveData());
+}
+
 jobject SAPTMKernel::getBeta(){
 	#if _DEBUG == 1
 	cout << "SAPTMKernel:: start getBeta" << endl;
 	#endif
+	
+	vector<double> curvedata = getFIFOCurveData();
+	#if _DEBUG == 1
+	cout << "SAPTMKernel:: finish creating fifo_curve" << endl;
+	#endif
+
+	jobject fifo_curve = rtc::Curve(curvedata);
+
+	jobject ret = rtc::plus(fifo_curve, getEDFHaAlpha());   
+
+	return ret;
+}
+
+
+
+
+std::vector<double> SAPTMKernel::getFIFOCurveData(){
 	vector<newWorkerInfo> config;
 	// cout << "getBeta 1" << endl;
 	scheduleAPI->getNewWorkerInfo(config);
@@ -205,20 +240,17 @@ jobject SAPTMKernel::getBeta(){
 
 	}
 
-	#if _DEBUG == 1
-	cout << "SAPTMKernel:: create fifo_curve" << endl;
-	#endif
-
-	jobject fifo_curve = rtc::Curve(curvedata);
-
-	jobject ret = rtc::plus(fifo_curve, getEDFHaAlpha());   
-
-	return ret;
+	return curvedata;
 }
+
 
 
 double SAPTMKernel::calculate_lambda_based_on_toff(const vector<double>& beta, double toff, double& ton){
 	double rho = rtc::minspeedbdfEDG(beta, toff + tswon);
+	if (rho<0 || rho >= 1){
+		ton = 1000000;
+		return 1.0;
+	}
 	ton = (toff * rho + tswon) / (1 - rho) ;
 	double lambda =  ( 1 - exp(-g * (tswoff+ton)/1000 )  )   / 
 				 	 ( 1 - exp(-g * (ton+toff)/1000 )    );

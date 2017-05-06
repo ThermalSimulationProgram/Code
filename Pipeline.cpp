@@ -61,9 +61,15 @@ Pipeline::Pipeline(string xml_path, int isAppendSaveFile):cpuUsageRecorder()
 	}
 	
 	n_stages        = _n_stages;
-	// create a Dispatcher and a Scheduler
-	dispatcher      = new Dispatcher(this, Scratch::getArrivalTimes(), 17);
+	// create Dispatchers 
+	vector<vector<unsigned long> > allArrivalTimes =  Scratch::getAllArrivalTimes();
 
+	for (int i = 0; i < (int) allArrivalTimes.size(); ++i)
+	{
+		Dispatcher* tempdispatcher      = new Dispatcher(this, allArrivalTimes[i], 100+i);
+		dispatchers.push_back(tempdispatcher);
+	}
+	
 	scheduler       = new Scheduler(this, Scratch::getKernel(), 99);
 	
 	// create n_stages workers and attach it to default CPU
@@ -86,11 +92,14 @@ Pipeline::Pipeline(string xml_path, int isAppendSaveFile):cpuUsageRecorder()
 }
 
 Pipeline::~Pipeline(){
-	delete dispatcher;
+	for (int i = 0; i < (int) dispatchers.size(); ++i)
+	{
+		delete dispatchers[i];
+	}
 	delete scheduler;
 	delete tempwatcher;
 
-	for (int i = 0; i < n_stages; ++i)
+	for (int i = 0; i < (int) workers.size();  ++i)
 		delete workers[i];
 	
 }
@@ -117,10 +126,16 @@ void Pipeline::initialize(){
 
 	
 	
-	vector<unsigned long> wcets = Scratch::getWcets();
+	vector<vector<unsigned long> > allwcets = Scratch::getAllWcets();
+	vector<unsigned long> allRltDeadline = Scratch::getAllRltDeadline();
 	// cout << "trigger dispatcher" << endl;
-	dispatcher->createJobs(wcets, Scratch::getExeFactor(), Scratch::getRltDeadline());
-	dispatcher->trigger();
+	for (int i = 0; i < (int)dispatchers.size(); ++i)
+	{
+		dispatchers[i]->createJobs(allwcets[i], Scratch::getExeFactor(), allRltDeadline[i]);
+		dispatchers[i]->trigger();
+		
+	}
+	
 
 	// cout << "trigger scheduler" << endl;
 	scheduler->trigger();
@@ -162,9 +177,12 @@ double Pipeline::simulate(){
 		t->activate();
 		t->setCPU(worker_cpu[i]);
 	}
+	for (int i = 0; i < (int) dispatchers.size(); ++i)
+	{
+		dispatchers[i]->activate();
+		dispatchers[i]->setCPU(n_cpus-1);
+	}
 	
-	dispatcher->activate();
-	dispatcher->setCPU(n_cpus-1);
 	
 	
 	scheduler->setCPU(n_cpus - 1);
@@ -185,8 +203,12 @@ double Pipeline::simulate(){
 	unsigned long tstart_us = TimeUtil::convert_us(Statistics::getStart());
 
 	scheduler->setAbsSchedulingTimes(tstart_us);
-	dispatcher->setAbsReleaseTimes(tstart_us);
+	
 	tempwatcher->setReadingTimes(tstart_us);
+	for (int i = 0; i < (int) dispatchers.size(); ++i)
+	{
+		dispatchers[i]->setAbsReleaseTimes(tstart_us);
+	}
 
 	// simulation starts now
 	cpuUsageRecorder.startLoggingCPU();
@@ -250,7 +272,12 @@ void Pipeline::join_all() {
 			t->join();
 		}
 	}
-	dispatcher->join();
+	
+	for (int i = 0; i < (int) dispatchers.size(); ++i)
+	{
+		dispatchers[i]->join();
+	}
+
 	scheduler->join();
 	tempwatcher->join();
     #if _INFO==1

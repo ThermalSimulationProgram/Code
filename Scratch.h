@@ -67,7 +67,7 @@ public:
 	static std::vector<std::vector<unsigned long> > 	getAllWcets();
 	static std::vector<std::vector<double> >			getAllDwcets();
 
-
+	static std::vector<std::vector<unsigned long> > getAllArrivalTimes();
 	static std::vector<std::vector<double> > getAllArrivalTimes_ms();
 
 	static void addTask(unsigned long period, unsigned long jitter,

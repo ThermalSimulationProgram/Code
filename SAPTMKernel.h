@@ -27,7 +27,13 @@ public:
 
 	jobject getBeta();
 
+	std::vector<double> getBetaCurveData();
+
 	jobject getEDFHaAlpha();
+
+	std::vector<double> getEDFHaAlphaCurveData();
+
+	std::vector<double> getFIFOCurveData();
 
 	int GoldenSearch(std::vector<double> beta_data, std::vector<double> & tons, std::vector<double>& toffs);
 

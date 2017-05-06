@@ -9,18 +9,17 @@
       <period value="100" unit="ms"/>
       <jitter value="150" unit="ms"/>
       <distance value="0" unit="ms"/>
-      <wcets value="{14.2}" unit="ms"/>
-      <exe_factor value="0.9"/>
+      <wcets value="{14}" unit="ms"/>
+      <exe_factor value="1"/>
       <relative_deadline value="100" unit="ms"/>
    </events>
-
-   <moreevents>
+      <moreevents>
       <event1>
          <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>
          <period value="100" unit="ms"/>
          <jitter value="150" unit="ms"/>
          <distance value="0" unit="ms"/>
-         <wcets value="{14.2}" unit="ms"/>
+         <wcets value="{12}" unit="ms"/>
          <exe_factor value="0.9"/>
          <relative_deadline value="100" unit="ms"/>
       </event1> 
@@ -29,12 +28,13 @@
          <period value="100" unit="ms"/>
          <jitter value="150" unit="ms"/>
          <distance value="0" unit="ms"/>
-         <wcets value="{14.2}" unit="ms"/>
+         <wcets value="{12}" unit="ms"/>
          <exe_factor value="0.9"/>
          <relative_deadline value="100" unit="ms"/>
       </event2>
       
    </moreevents>
+
 
 
    <scheduler>

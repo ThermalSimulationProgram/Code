@@ -85,6 +85,7 @@ ScheduleKernel(n, kernel){
 			allAlpha = rtc::plus(allAlpha, all_multi_haAlpha[j][i]);
 		}
 		multi_haAlpha.push_back(allAlpha);
+		multi_haAlpha_curve_data.push_back( rtc::segementsData(allAlpha, 3000) );
 	}
 
 

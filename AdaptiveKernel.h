@@ -44,6 +44,8 @@ protected:
 
 	std::vector<jobject> multi_haAlpha;
 
+	std::vector<std::vector<double> > multi_haAlpha_curve_data;
+
 	int adaptCounter;
 
 	

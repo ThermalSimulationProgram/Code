@@ -8,6 +8,10 @@
 #include <vector>
 
 
+
+
+
+
 typedef struct bucket
 {
 	int bucket1;
@@ -17,6 +21,9 @@ typedef struct bucket
 	jobject upperBound1;
 	jobject upperBound2;
 } bucket;
+
+
+
 
 class rtc{
 
@@ -41,6 +48,8 @@ public:
 
 	static std::vector<double> segementsData(jobject, double);
 	static bool 	eqZero(const std::vector<double>&);
+
+	static std::vector<double> plus(const std::vector<double>& a, const std::vector<double>& b);
 
 /************************** HIGH LEVEL METHODS ***********************/
 	static jobject 	affine(jobject, double, double);
