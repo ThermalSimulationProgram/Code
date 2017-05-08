@@ -16,6 +16,10 @@ using namespace std;
 
 #define _INFO 1
 #define _DEBUG 1
+#define VM "VM"
+#define DELL9020 "DELL9020"
+#define DELL745 "DELL745"
+#define _MACHINE DELL745
 
 
 
