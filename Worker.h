@@ -6,6 +6,7 @@
 #include "Job.h"
 #include "Thread.h"
 #include "structdef.h"
+#include "CoolShaper.h"
 
 
 #include <vector>
@@ -18,6 +19,13 @@
 
 class Pipeline;
 
+/***************Cool Shaper Related*****************/
+
+enum _worker_next_action{
+	_run,
+	_waiting,
+	_idle,
+};
 
 
 class Worker : public Thread
@@ -60,6 +68,15 @@ protected:
 
 	Load load;
 
+	/***************Cool Shaper Related*****************/
+	CoolShaper coolshaper;
+
+	bool isInterruptValid;
+
+	enum _worker_next_action nextAction;
+
+	unsigned long sleepLength;
+
 protected:
 
 	void finishedJob();
@@ -98,13 +115,31 @@ public:
 
 	unsigned long getExecuted();
 
-
-
 	bool isInitialized();
 
 
 	void getNewInfo(newWorkerInfo& ret);
 
+	/***************Cool Shaper Related*****************/
+
+	int hasTask();
+
+	void enableInterrupt();
+
+	void disableInterrupt();
+
+	void setNextAction(enum _worker_next_action na);
+
+	void setIdleLength(unsigned long tsleep);
+
+protected:
+	void runTask(unsigned long Wunit);
+
+	void waiting();
+
+	void idle(unsigned long tsleep);
+
+	
 
 
 };

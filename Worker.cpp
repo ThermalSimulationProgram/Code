@@ -22,14 +22,15 @@ using namespace std;
 
 
 
-Worker::Worker(int _stageId, int _id) : Thread(_id), load(Scratch::getBenchmarkName()){
+Worker::Worker(int _stageId, int _id) : Thread(_id), load(Scratch::getBenchmarkName()),
+coolshaper(this){
 	stageId     = _stageId; 
 	next        = NULL;
 	thread_type = worker;
 	current_job = NULL;
 	state 		= _active;
 
-	base        = 200;
+	base        = 100;
 	ton         = 100000; // default value, unit us 
 	toff        = 0; // default value, unit us 
 	
@@ -41,6 +42,9 @@ Worker::Worker(int _stageId, int _id) : Thread(_id), load(Scratch::getBenchmarkN
 
 
 	latestSleep = TimeUtil::Millis(0);
+
+	isInterruptValid = false;
+	sleepLength = 0;
 }
 
 Worker::~Worker(){
@@ -70,6 +74,7 @@ void Worker::join(){
 	sem_post(&ptm_sem);
 	sem_post(&ptm_sem);
 	sem_post(&state_sem);
+	disableInterrupt();
 	join2();
 }
 
@@ -216,31 +221,56 @@ void Worker::wrapper(){
 	Semaphores::print_sem.post_sem();
   	#endif
 
-	unsigned long exedSlice;
-	unsigned long start;
-	unsigned long end;
-	unsigned long total_exed;
+  	if (Scratch::getKernel() == CS){
+  		coolshaper.init();
+  		coolshaper.runShaper();
+  		while(Pipeline::isSimulating()){
+  			switch (nextAction) {
+  				case _run:{
+  					runTask( (unsigned long) (coolshaper.getWunit() * 1000));
+  					break;
+  				}
+  				case _waiting:{
+  					waiting();
+  					break;
+  				}
+  				case _idle:{
+  					idle(sleepLength);
+  					break;
+  				}
+  			}
+  		}
+  		
+  		
+
+
+  	}else{
+
+  		unsigned long exedSlice;
+  		unsigned long start;
+  		unsigned long end;
+  		unsigned long total_exed;
 	// unsigned int seed;
-	while(Pipeline::isSimulating())
+  		while(Pipeline::isSimulating())
 	// while(1)
-	{
-		if (toff >= 100){
-			sem_wait(&state_sem);
-		 	latestSleep = TimeUtil::getTime();
-			state = _sleep;
-			sem_post(&state_sem);
+  		{
+  			if (toff >= 100){
+  				sem_wait(&state_sem);
+  				latestSleep = TimeUtil::getTime();
+  				state = _sleep;
+  				sem_post(&state_sem);
 			#if _DEBUG == 1
-			Semaphores::print_sem.wait_sem();
-			cout << "Worker: " << id << " waiting for sem_ptm\n";
-			Semaphores::print_sem.post_sem();
+  				Semaphores::print_sem.wait_sem();
+  				cout << "Worker: " << id << " waiting for sem_ptm\n";
+  				Semaphores::print_sem.post_sem();
   			#endif
-			
-			sem_wait(&ptm_sem);
-			struct timespec sleepEnd = latestSleep + TimeUtil::Micros(toff);
-			sem_post(&ptm_sem);
+
+  				sem_wait(&ptm_sem);
+  				struct timespec sleepEnd = latestSleep + TimeUtil::Micros(toff);
+  				sem_post(&ptm_sem);
 
 			// try sleep toff us
-			Statistics::addTrace(thread_type, id, sleep_start);
+  				Statistics::addTrace(thread_type, id, sleep_start);
 			if (sem_timedwait(&schedule_sem, &sleepEnd) == 0) // unblocked by the schedule signal
 			{
 				//cout<<"receives a schedule signal, break from sleep\n";
@@ -250,17 +280,17 @@ void Worker::wrapper(){
 		}
 		// sqrt(rand_r(&seed));
 		// load.cpu_stressor.stressWithMethod(1);
-		if (ton >= 1000)
-		{	sem_wait(&state_sem);
-			latestSleep = TimeUtil::Millis(0);
-			state = _active;
-			sem_post(&state_sem);
+		if (ton >= 100)
+			{	sem_wait(&state_sem);
+				latestSleep = TimeUtil::Millis(0);
+				state = _active;
+				sem_post(&state_sem);
 
 			//Then be active for ton us, waste base time slice with 100 us length.
 			//after consuming 100us, update the execution info if is handling any job.
-			start = TimeUtil::convert_us(TimeUtil::getTime());
-			total_exed = 0;
-			bool stop = false;
+				start = TimeUtil::convert_us(TimeUtil::getTime());
+				total_exed = 0;
+				bool stop = false;
 			// Statistics::addTrace(thread_type, id, active_start);
 			do //ton loop
 			{
@@ -303,6 +333,9 @@ void Worker::wrapper(){
 			Statistics::addTrace(thread_type, id, active_end); 
 		}
 	}
+
+}
+
 
 
   #if _INFO == 1
@@ -417,3 +450,110 @@ Job* Worker::popFrontJob(){
 	return ret;
 }
 
+/***************Cool Shaper Related*****************/
+
+int Worker::hasTask(){
+	int ret = 0;
+	sem_wait(&job_sem);
+	if(current_job != NULL){
+		++ret;
+	}
+	sem_post(&job_sem);
+
+	sem_wait(&FIFO_sem);
+	ret += (int) FIFO.size();
+	sem_post(&FIFO_sem);
+
+	return ret;
+}
+
+
+void Worker::runTask(unsigned long Wunit){
+
+	unsigned long exedSlice;
+	unsigned long start;
+	unsigned long end;
+	unsigned long total_exed;
+
+	
+			//Then be active for ton us, waste base time slice with 100 us length.
+			//after consuming 100us, update the execution info if is handling any job.
+	start = TimeUtil::convert_us(TimeUtil::getTime());
+
+	total_exed = 0;
+	bool stop = false;
+			// Statistics::addTrace(thread_type, id, active_start);
+	do //ton loop
+	{
+
+		load.consume_us_benchmarks(base);
+		end = TimeUtil::convert_us(TimeUtil::getTime());
+		exedSlice = end - start;
+		total_exed = total_exed + exedSlice;
+		start = end;
+
+		sem_wait(&job_sem);
+		if (current_job != NULL){
+			if (current_job->execute(exedSlice) == 1){
+				finishedJob();
+			}
+		}
+		
+		if (current_job == NULL){
+			current_job = popFrontJob();
+			if (current_job == NULL){
+				stop = true;
+			}
+			
+		}
+		
+		sem_post(&job_sem);
+
+		if (total_exed > Wunit){
+			stop = true;
+		}
+
+	} while ((!stop) && Pipeline::isSimulating() );	
+
+
+	coolshaper.decreaseLeakyBucketf(((double)total_exed)/1000);
+	coolshaper.runShaper();
+}
+
+void Worker::waiting(){
+
+	while(isInterruptValid){
+		if (hasTask()){
+			disableInterrupt();
+			runTask( (unsigned long)(coolshaper.getWunit()*1000) );
+		}
+		load.consume_us_benchmarks(100);
+	}
+
+}
+
+void Worker::idle(unsigned long tsleep){
+	unsigned long time = TimeUtil::getTimeUSec();
+	struct timespec sleepEnd = TimeUtil::Micros(time + tsleep);
+	sem_timedwait(&schedule_sem, &sleepEnd);
+	enableInterrupt();
+	setNextAction(_waiting);
+}
+
+
+void Worker::enableInterrupt(){
+	isInterruptValid = true;
+}
+
+void Worker::disableInterrupt(){
+	isInterruptValid = false;
+}
+
+
+void Worker::setNextAction(enum _worker_next_action na){
+	nextAction = na;
+}
+
+void Worker::setIdleLength(unsigned long tsleep){
+	sleepLength = tsleep;
+}

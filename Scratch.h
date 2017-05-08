@@ -74,6 +74,11 @@ public:
 				unsigned long distance, unsigned long deadline, 
 				std::vector<unsigned long> wcet, std::vector<unsigned long> arrivaltimes);
 
+	static double Wunit;
+	static std::vector<double> leakyBucket_b;
+	static std::vector<double> leakyBucket_r;
+	
+
 
 private:
 	

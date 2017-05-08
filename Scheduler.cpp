@@ -21,30 +21,37 @@ Scheduler::Scheduler(Pipeline * p, _schedule_kernel _sche_type, \
 	kernel_type                   = _sche_type;
 	kernelAPI 					  = NULL;
 	
-	/// set relative scheduling time instances
-	unsigned long adaption_period = Scratch::getAdaptionPeriod();
-	int count                     = 1;
-	if (adaption_period != 0 ){
-		unsigned long sim_length = Scratch::getDuration();
-		count                    = sim_length/adaption_period;
-		count                    = count == 0? 1 : count; // at least one adaption at beginning
+	if (kernel_type != CS){
+		/// set relative scheduling time instances
+		unsigned long adaption_period = Scratch::getAdaptionPeriod();
+		int count                     = 1;
+		if (adaption_period != 0 ){
+			unsigned long sim_length = Scratch::getDuration();
+			count                    = sim_length/adaption_period;
+			count                    = count == 0? 1 : count; // at least one adaption at beginning
+		}
+
+		for (int i = 0; i < count; ++i){
+			rl_scheduling_times.push_back((unsigned long) i*adaption_period);	
+		}
 	}
 	
-	for (int i = 0; i < count; ++i){
-		rl_scheduling_times.push_back((unsigned long) i*adaption_period);	
-	}
 }
 
 Scheduler::~Scheduler()
-{
-	delete kernelAPI;
+{	
+	if (kernelAPI != NULL){
+		delete kernelAPI;
+	}
 }
 
 // note: since this function creates a Java Virtual Machine,
 // this function can only be called by the thread which will use the JVM in future,
 // i.e., the thread created in this class 
 void Scheduler::init(){
-	kernelAPI = new ScheduleKernelAPI(this, kernel_type, rl_scheduling_times);
+	if (kernel_type != CS){
+		kernelAPI = new ScheduleKernelAPI(this, kernel_type, rl_scheduling_times);
+	}
 	// all initialized, post the semaphore to signal main thread scheduler is ready
 	Semaphores::rtcinit_sem.post_sem();
 }
@@ -82,8 +89,9 @@ void Scheduler::wrapper(){
 
 
 	// this function is inherited from TimedRunable class
-	timedRun();
-
+	if (kernel_type != CS){
+		timedRun();
+	}
 	#if _INFO == 1
 	Semaphores::print_sem.wait_sem();
 	cout << "Scheduler " << id << " exiting wrapper...\n";
@@ -129,8 +137,11 @@ void Scheduler::timedJob(unsigned _index){
 
 vector<double> Scheduler::getKernelTime(){
 	vector<double> ret;
-	ret.push_back(kernelAPI->getMaxTimeExpense());
-	ret.push_back(kernelAPI->getMeanTimeExpense());
+	if (kernelAPI != NULL){
+		ret.push_back(kernelAPI->getMaxTimeExpense());
+		ret.push_back(kernelAPI->getMeanTimeExpense());
+	}
+	
 	return ret;
 }
 
@@ -140,10 +151,18 @@ Pipeline* Scheduler::getPipelinePointer(){
 }
 
 std::vector<std::vector<double> > Scheduler::getAllSchemes(){
-	return kernelAPI->getAllSchemes();
+	vector<vector<double> > ret;
+	if (kernelAPI != NULL){
+		ret = kernelAPI->getAllSchemes();
+	}
+	return ret;
 }
 
 
 std::vector<std::vector<double> > Scheduler::getKernelTimeExpenseLog(){
-	return kernelAPI->getKernelTimeExpenseLog();
+	vector<vector<double> > ret;
+	if (kernelAPI != NULL){
+		ret = kernelAPI->getKernelTimeExpenseLog();
+	}
+	return ret;
 }

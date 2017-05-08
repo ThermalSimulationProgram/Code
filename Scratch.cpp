@@ -30,6 +30,10 @@ sem_t 					Scratch::access_sem;
 bool 					Scratch::isSave;
 string 					Scratch::benchmark;
 
+double Scratch::Wunit = 50; //unit millisecond
+std::vector<double> Scratch::leakyBucket_b;
+std::vector<double> Scratch::leakyBucket_r;
+
 
 void Scratch::initialize(int _nstage, unsigned long _period,
 	unsigned long _jitter, unsigned long _distance,
@@ -85,6 +89,10 @@ void Scratch::print(){
 	
 	displayvector(ptm.tons, "tons");
 	displayvector(ptm.toffs, "toffs");
+
+	displayvector(leakyBucket_b, "leakyBucket_b");
+	displayvector(leakyBucket_r, "leakyBucket_r");
+	cout << "Wunit \t\t= " << Wunit << endl;
 }
 
 void Scratch::addTask(unsigned long _period, unsigned long _jitter,

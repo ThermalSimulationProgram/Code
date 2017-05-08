@@ -8,7 +8,8 @@ enum _schedule_kernel
   BWS,
   PBOO,
   GE,
-  SAPTM
+  SAPTM,
+  CS
 };
 
 

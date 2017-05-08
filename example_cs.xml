@@ -1,0 +1,27 @@
+<simulation name="example_cs">
+
+   <duration value="20" unit="sec"/>
+
+   <pipeline stagenumber="1"/>
+
+   <events>
+      <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>
+      <period value="100" unit="ms"/>
+      <jitter value="150" unit="ms"/>
+      <distance value="0" unit="ms"/>
+      <wcets value="{14}" unit="ms"/>
+      <exe_factor value="1"/>
+      <relative_deadline value="100" unit="ms"/>
+   </events>
+
+
+   <scheduler>
+      <kernel type="CS">
+         <leaky_bucket_b value = "0, 22.5, 26.111, 36.875"/>
+         <leaky_bucket_r value = "0.3, 0.15, 0.1444, 0.1375 "/>
+         <Wunit value="19" unit="ms"/>
+      </kernel>
+   </scheduler>
+
+</simulation>
+

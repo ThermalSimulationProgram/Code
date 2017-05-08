@@ -76,6 +76,8 @@ int Parser::parseFile(){
 		type = GE;
 	else if (kernel_type == "SAPTM")
 		type = SAPTM;
+	else if (kernel_type == "CS")
+		type = CS;
 	else{
 		cout << "Parser error: could not recognize kernel type!\n";
 		return -1;
@@ -164,6 +166,27 @@ int Parser::parseFile(){
 		ptm.tons  = vector<double>(nstage,1000);  
 		ptm.toffs = vector<double>(nstage,0);
 		Scratch::setPTMValues(ptm);
+	}else if (type == CS){
+		vector<double> leakyBucket_b = stringToVector<double>(
+			kernel_node.child("leaky_bucket_b").attribute("value").value());
+		vector<double> leakyBucket_r = stringToVector<double>(
+			kernel_node.child("leaky_bucket_r").attribute("value").value());
+
+		if (minElement(leakyBucket_b) < -0.00000001 || minElement(leakyBucket_r) <= 0.00000001){
+			cerr << "Parser::parseFile: leaky bucket parameters for cool shaper kernel must be nonnegative!" << endl;
+			exit(1);
+		}
+		if (leakyBucket_b.size() != leakyBucket_r.size()){
+			cerr << "Parser::parseFile: leaky bucket b must be the same size with leaky bucket r!" << endl;
+			exit(1);
+		}
+		struct timespec wunit = parseTime(kernel_node.child("Wunit"));
+
+		double Wunit = (double) TimeUtil::convert_ms(wunit);
+
+		Scratch::leakyBucket_r = leakyBucket_r;
+		Scratch::leakyBucket_b = leakyBucket_b;
+		Scratch::Wunit = Wunit;
 	}
 	Scratch::print();
 	return ret;
@@ -239,6 +262,10 @@ unsigned long parseTimeMircroSecond(xml_node n){
 
 struct timespec parseTime(xml_node n) {
 	int time     = n.attribute("value").as_int();
+	if (time < 0){
+		cerr << "parseTime: time value must be nonnegative!" << endl;
+		exit(0);
+	}
 	string units = n.attribute("unit").value();
 	struct timespec ret;
 
