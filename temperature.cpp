@@ -16,9 +16,9 @@ using namespace std;
 
 #define _INFO 1
 #define _DEBUG 1
-#define VM "VM"
-#define DELL9020 "DELL9020"
-#define DELL745 "DELL745"
+#define VM 10001
+#define DELL9020 19020
+#define DELL745 1745
 #define _MACHINE DELL745
 
 
@@ -41,9 +41,9 @@ TempWatcher::TempWatcher(unsigned period, string _filename, unsigned _id): Timed
   unsigned count           = sim_length/period;
   for (unsigned i = 0; i < count; ++i){
     reading_times.push_back((unsigned long) i*period);
-  }
+}
 
-  filename = _filename;
+filename = _filename;
 
 }	
 
@@ -124,55 +124,70 @@ void TempWatcher::toFile(){
 
 
 std::vector<double> TempWatcher::get_cpu_temperature(){
-	#if _DEBUG == 1
-    std::vector<double> ret(4, 30);
-  #endif
 
-    #if _DEBUG == 0
+
+#if _MACHINE == VM
+    std::vector<double> ret(4, 30);
+#else
     std::vector<double> ret;
     int value;
-    int TEMP_IDX_MAX = 4;
-    FILE *f;
-    const char* n[] = {	"/sys/class/hwmon/hwmon1/temp2_input",
-    "/sys/class/hwmon/hwmon1/temp3_input",
-    "/sys/class/hwmon/hwmon1/temp4_input",
-    "/sys/class/hwmon/hwmon1/temp5_input"};
+
+    FILE *f; 
+
+    #if _MACHINE == DELL9020
+        int TEMP_IDX_MAX = 4;
+        const char* n[] = { "/sys/class/hwmon/hwmon1/temp2_input",
+        "/sys/class/hwmon/hwmon1/temp3_input",
+        "/sys/class/hwmon/hwmon1/temp4_input",
+        "/sys/class/hwmon/hwmon1/temp5_input"};
+    #else
+
+        #if _MACHINE == DELL745
+            int TEMP_IDX_MAX = 2;
+            const char* n[] = { "/sys/class/hwmon/hwmon1/temp2_input",
+                "/sys/class/hwmon/hwmon1/temp3_input"};
+        #else
+            cerr << "Machine define error!" << endl;
+            exit(1);
+
+        #endif
+    #endif 
 
     for ( int i = 0; i < TEMP_IDX_MAX; ++i) {
-      if ( ( f = fopen( n[i], "r"))) {
-        int res, err = 0;
+        if ( ( f = fopen( n[i], "r"))) {
+            int res, err = 0;
 
-        errno = 0;
-        res = fscanf( f, "%d", &value);
-        if ( res == EOF && errno == EIO)
-          err = -SENSORS_ERR_IO;
-        else if ( res != 1)
-          err = -SENSORS_ERR_ACCESS_R;
-        res = fclose( f);
-        if ( err){
-         std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << err <<std::endl;
-         exit(err);
-       }
+            errno = 0;
+            res = fscanf( f, "%d", &value);
+            if ( res == EOF && errno == EIO)
+                err = -SENSORS_ERR_IO;
+            else if ( res != 1)
+                err = -SENSORS_ERR_ACCESS_R;
+            res = fclose( f);
+            if ( err){
+                std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << err <<std::endl;
+                exit(err);
+            }
 
-       if ( res == EOF) {
-        if ( errno == EIO){
-         std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_IO <<std::endl;
-         exit(-SENSORS_ERR_IO) ;
-       }
-       else{
-         std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_ACCESS_R <<std::endl;
-         exit(-SENSORS_ERR_ACCESS_R) ;
-       }
-     }
+            if ( res == EOF) {
+                if ( errno == EIO){
+                    std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_IO <<std::endl;
+                    exit(-SENSORS_ERR_IO) ;
+                }else{
+                    std::cerr << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_ACCESS_R <<std::endl;
+                    exit(-SENSORS_ERR_ACCESS_R) ;
+                }
+            }
             // value /= get_type_scaling( SENSORS_SUBFEATURE_TEMP_INPUT);
-   } else{
-     std::cout << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_KERNEL <<std::endl;
-     exit(-SENSORS_ERR_KERNEL) ;
-   }
+        } else{
+            std::cout << " TempWatcher::get_cpu_temperature: read temperature error, NO:" << -SENSORS_ERR_KERNEL <<std::endl;
+            exit(-SENSORS_ERR_KERNEL) ;
+        }   
 
-   ret.push_back((double)value);
- }
-#endif
+        ret.push_back((double)value);
+    }
+
+#endif 
 
 return ret;
 }
@@ -180,14 +195,14 @@ return ret;
 double TempWatcher::getMaxTemp(){
 	vector<double> s_max;
   s_max.reserve(tempTrace.size());
-	for (unsigned i = 0; i < tempTrace.size(); ++i)
-	{
-		s_max.push_back(maxElement(tempTrace[i]));
-	}
- return maxElement(s_max);
+  for (unsigned i = 0; i < tempTrace.size(); ++i)
+  {
+      s_max.push_back(maxElement(tempTrace[i]));
+  }
+  return maxElement(s_max);
   // double sum = std::accumulate(s_max.begin(), s_max.end(), 0.0);
   // double avg = sum/s_max.size();
-	
+
   // return avg;
 
 }
@@ -198,11 +213,11 @@ double TempWatcher::getMeanMaxTemp(){
   for (unsigned i = 0; i < tempTrace.size(); ++i)
   {
     s_max.push_back(maxElement(tempTrace[i]));
-  }
-  double sum = std::accumulate(s_max.begin(), s_max.end(), 0.0);
-  double avg = sum/s_max.size();
-  
-  return avg;
+}
+double sum = std::accumulate(s_max.begin(), s_max.end(), 0.0);
+double avg = sum/s_max.size();
+
+return avg;
 }
 
 
@@ -218,15 +233,15 @@ vector<double> TempWatcher::getMeanTemp(){
     for (unsigned j = 0; j < tempTrace.size(); ++j)
     {
       singleStageTempTrace.push_back(tempTrace[j][i]);
-    }
-
-    double sum = std::accumulate(singleStageTempTrace.begin(), 
-      singleStageTempTrace.end(), 0.0);
-    double avg = sum/singleStageTempTrace.size();
-    ret.push_back(avg);
   }
 
-  return ret;
+  double sum = std::accumulate(singleStageTempTrace.begin(), 
+      singleStageTempTrace.end(), 0.0);
+  double avg = sum/singleStageTempTrace.size();
+  ret.push_back(avg);
+}
+
+return ret;
 
 }
 
