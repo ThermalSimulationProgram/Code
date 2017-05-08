@@ -215,11 +215,12 @@ std::vector<double> SAPTMKernel::getFIFOCurveData(){
 		double timeToDeadline = (double)config[0].allEventAbsDeadlines[i] - now;
 		if (timeToDeadline < 0 ){
 			cerr << " deadline miss happen " << endl;
-			exit(1);
+			// exit(1);
 		}
 		if (timeToDeadline < timeToDeadline0){
 			cout << " no increment " << endl;
-			exit(1);
+			timeToDeadline = timeToDeadline0;
+			// exit(1);
 		}
 		unsigned numel = curvedata.size();
 		if (abs(timeToDeadline - timeToDeadline0)<0.000001){
