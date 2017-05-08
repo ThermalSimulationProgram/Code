@@ -144,8 +144,7 @@ std::vector<double> TempWatcher::get_cpu_temperature(){
 
         #if _MACHINE == DELL745
             int TEMP_IDX_MAX = 2;
-            const char* n[] = { "/sys/class/hwmon/hwmon1/temp2_input",
-                "/sys/class/hwmon/hwmon1/temp3_input"};
+            const char* n[] = { "/sys/class/hwmon/hwmon1/temp2_input"};
         #else
             cerr << "Machine define error!" << endl;
             exit(1);
