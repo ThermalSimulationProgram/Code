@@ -132,6 +132,8 @@ public:
 
 	void setIdleLength(unsigned long tsleep);
 
+	std::vector<unsigned long> getShapingExpense();
+
 protected:
 	void runTask(unsigned long Wunit);
 

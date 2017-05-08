@@ -557,3 +557,8 @@ void Worker::setNextAction(enum _worker_next_action na){
 void Worker::setIdleLength(unsigned long tsleep){
 	sleepLength = tsleep;
 }
+
+
+std::vector<unsigned long> Worker::getShapingExpense(){
+	return coolshaper.getExpense();
+}

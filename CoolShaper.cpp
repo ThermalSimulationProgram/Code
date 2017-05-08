@@ -13,6 +13,13 @@ using namespace std;
 
 
 CoolShaper::CoolShaper(Worker* _w){
+
+	if (Scratch::getNstage() > 1){
+		cerr << "CoolShaper is only for single core experiment" << endl;
+		exit(1);
+		
+	}
+
 	previousTime = 0;
 
 	Wunit = Scratch::Wunit;
@@ -91,4 +98,8 @@ void CoolShaper::decreaseLeakyBucketf(double w){
 
 double CoolShaper::getWunit(){
 	return Wunit;
+}
+
+std::vector<unsigned long> CoolShaper::getExpense(){
+	return timeExpenses;
 }

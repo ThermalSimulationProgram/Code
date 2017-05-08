@@ -247,7 +247,12 @@ double Pipeline::simulate(){
 		float total_cpu_usage = cpuUsageRecorder.getUsage();
 		appendToFile(tempSaveName, vector<float>(1, total_cpu_usage));
 
-		appendToFile(tempSaveName, scheduler->getKernelTimeExpenseLog());
+		
+		if (Scratch::getKernel() == CS){
+			appendToFile(tempSaveName, workers[0]->getShapingExpense());
+		}else{
+			appendToFile(tempSaveName, scheduler->getKernelTimeExpenseLog());
+		}
 
 		appendContentToFile(tempSaveName, Statistics::getAllMissedDeadline());
 

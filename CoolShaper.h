@@ -31,6 +31,8 @@ public:
 	void decreaseLeakyBucketf(double w);
 
 	double getWunit();
+
+	std::vector<unsigned long> getExpense();
 };
 
 
