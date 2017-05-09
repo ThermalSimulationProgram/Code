@@ -78,7 +78,7 @@ public:
 	static std::vector<double> leakyBucket_b;
 	static std::vector<double> leakyBucket_r;
 	
-
+	static bool isSaveTemperatureTrace;
 
 private:
 	

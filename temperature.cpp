@@ -245,6 +245,10 @@ return ret;
 }
 
 
+std::vector<std::vector<double> > TempWatcher::getAllTempTrace(){
+    return tempTrace;
+}
+
 
 // int get_type_scaling(sensors_subfeature_type type)
 // {

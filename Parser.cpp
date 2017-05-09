@@ -117,6 +117,19 @@ int Parser::parseFile(){
 		}
 	}
 
+	xml_node isSaveTempTrace	   = sim_node.child("save_temperature_trace");
+	if (isSaveTempTrace){
+
+		string isSave 		=  isSaveTempTrace.attribute("value").value();
+		if ((isSave == "false") || (isSave == "False")){
+			Scratch::isSaveTemperatureTrace = false;
+		}else if ((isSave == "true") || (isSave == "True")){
+			Scratch::isSaveTemperatureTrace = true;
+		}else{
+			cout << "Parser warning: parameter of saving temperature trace error! set to default FALSE value\n";
+		}
+	}
+
 	xml_node benchmark = sim_node.child("benchmark");
 	if(benchmark){
 		string benchmark_name = benchmark.attribute("name").value();

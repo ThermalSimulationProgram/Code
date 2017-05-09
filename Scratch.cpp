@@ -34,6 +34,8 @@ double Scratch::Wunit = 50; //unit millisecond
 std::vector<double> Scratch::leakyBucket_b;
 std::vector<double> Scratch::leakyBucket_r;
 
+bool Scratch::isSaveTemperatureTrace = false;
+
 
 void Scratch::initialize(int _nstage, unsigned long _period,
 	unsigned long _jitter, unsigned long _distance,

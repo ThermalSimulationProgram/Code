@@ -254,6 +254,15 @@ double Pipeline::simulate(){
 			appendToFile(tempSaveName, scheduler->getKernelTimeExpenseLog());
 		}
 
+		if (Scratch::isSaveTemperatureTrace){
+			vector<string> beginOfTrace = vector<string>(1, "22222222");
+			vector<string> endOfTrace = vector<string>(1, "44444444");
+
+			appendContentToFile(tempSaveName, beginOfTrace);
+			appendToFile(tempSaveName, tempwatcher->getAllTempTrace());
+			appendContentToFile(tempSaveName, endOfTrace);
+		}
+
 		appendContentToFile(tempSaveName, Statistics::getAllMissedDeadline());
 
 		vector<string> endOfData = vector<string>(1, "999999999999999999999999999999");
