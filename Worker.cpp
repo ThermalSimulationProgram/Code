@@ -17,7 +17,7 @@
 
 using namespace std;
 
-#define _INFO 0
+#define _INFO 1
 #define _DEBUG 0
 
 
@@ -250,11 +250,15 @@ void Worker::wrapper(){
   		unsigned long start;
   		unsigned long end;
   		unsigned long total_exed;
+
+  		int sleep_counter = 0;
+  	
 	// unsigned int seed;
+
   		while(Pipeline::isSimulating())
 	// while(1)
   		{
-  			if (toff >= 100){
+  			if  (toff >= 100 && sleep_counter > 0){
   				sem_wait(&state_sem);
   				latestSleep = TimeUtil::getTime();
   				state = _sleep;
@@ -271,17 +275,18 @@ void Worker::wrapper(){
 
 			// try sleep toff us
   				Statistics::addTrace(thread_type, id, sleep_start);
-			if (sem_timedwait(&schedule_sem, &sleepEnd) == 0) // unblocked by the schedule signal
-			{
+				if (sem_timedwait(&schedule_sem, &sleepEnd) == 0) // unblocked by the schedule signal
+				{
 				//cout<<"receives a schedule signal, break from sleep\n";
-				Statistics::addTrace(thread_type, id, sleep_end);
-				continue; // if current job is sleeping when it receives a schedule signal, quit PTM to continue next PTM with new ton and toff
+					sleep_counter = -1;
+					Statistics::addTrace(thread_type, id, sleep_end);
+					continue; // if current job is sleeping when it receives a schedule signal, quit PTM to continue next PTM with new ton and toff
+				}
+
 			}
-		}
-		// sqrt(rand_r(&seed));
-		// load.cpu_stressor.stressWithMethod(1);
-		if (ton >= 100)
-			{	sem_wait(&state_sem);
+		
+			if (ton >= 100){	
+				sem_wait(&state_sem);
 				latestSleep = TimeUtil::Millis(0);
 				state = _active;
 				sem_post(&state_sem);
@@ -292,14 +297,15 @@ void Worker::wrapper(){
 				total_exed = 0;
 				bool stop = false;
 			// Statistics::addTrace(thread_type, id, active_start);
-			do //ton loop
-			{
-				if (sem_trywait(&schedule_sem) == 0)//successfully read a schedule singal, break immediately
+				do //ton loop
 				{
+					if (sem_trywait(&schedule_sem) == 0)//successfully read a schedule singal, break immediately
+					{
 					//cout<<"receives a schedule signal, break from active\n";
 					// Statistics::addTrace(thread_type, id, active_end);
-					break;
-				}
+						sleep_counter = -1;
+						break;
+					}
 				// load.consume_us(base);
 				// load.consume_us_rand(base);
 				// if (current_job != NULL){
@@ -308,31 +314,32 @@ void Worker::wrapper(){
 				// 	load.consume_us_idle(base);
 				// }
 
-				load.consume_us_benchmarks(base);
-				end = TimeUtil::convert_us(TimeUtil::getTime());
-				exedSlice = end - start;
-				total_exed = total_exed + exedSlice;
-				start = end;
+					load.consume_us_benchmarks(base);
+					end = TimeUtil::convert_us(TimeUtil::getTime());
+					exedSlice = end - start;
+					total_exed = total_exed + exedSlice;
+					start = end;
 
-				sem_wait(&job_sem);
-				if (current_job != NULL){
-					if (current_job->execute(exedSlice) == 1){
-						finishedJob();
+					sem_wait(&job_sem);
+					if (current_job != NULL){
+						if (current_job->execute(exedSlice) == 1){
+							finishedJob();
+						}
 					}
-				}
-				else{
-					current_job = popFrontJob();;
-				}
-				sem_post(&job_sem);
+					else{
+						current_job = popFrontJob();;
+					}
+					sem_post(&job_sem);
 
-				sem_wait(&ptm_sem);
-				if (total_exed > ton)
-					stop = true;
-				sem_post(&ptm_sem);
-			} while ((!stop) && Pipeline::isSimulating() );	
-			Statistics::addTrace(thread_type, id, active_end); 
+					sem_wait(&ptm_sem);
+					if (total_exed > ton)
+						stop = true;
+					sem_post(&ptm_sem);
+				} while ((!stop) && Pipeline::isSimulating() );	
+				Statistics::addTrace(thread_type, id, active_end); 
+			}
+		++sleep_counter;
 		}
-	}
 
 }
 
