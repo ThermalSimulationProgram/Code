@@ -18,8 +18,8 @@ using namespace std;
 #define _DEBUG 1
 #define VM 10001
 #define DELL9020 19020
-#define DELL745 1745
-#define _MACHINE DELL745
+#define AMDCPU 1745
+#define _MACHINE AMDCPU
 
 
 
@@ -142,9 +142,9 @@ std::vector<double> TempWatcher::get_cpu_temperature(){
         "/sys/class/hwmon/hwmon1/temp5_input"};
     #else
 
-        #if _MACHINE == DELL745
-            int TEMP_IDX_MAX = 2;
-            const char* n[] = { "/sys/class/hwmon/hwmon1/temp2_input"};
+        #if _MACHINE == AMDCPU
+            int TEMP_IDX_MAX = 1;
+          const char* n[] = { "/sys/devices/pci0000:00/0000:00:18.3/temp1_input"};
         #else
             cerr << "Machine define error!" << endl;
             exit(1);
