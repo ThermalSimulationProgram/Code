@@ -1,0 +1,30 @@
+<simulation name="temperature_profile">
+
+   <duration value="3000" unit="sec"/>
+
+   <pipeline stagenumber="1"/>
+
+<save_temperature_trace value="true"/>
+
+   <events>
+      <csv_path value="./csv_data/event_trace_60s.csv" unit="ms"/>
+      <period value="100" unit="ms"/>
+      <jitter value="150" unit="ms"/>
+      <distance value="0" unit="ms"/>
+      <wcets value="{184}" unit="ms"/>
+      <exe_factor value="1"/>
+      <relative_deadline value="100" unit="ms"/>
+   </events>
+      
+
+
+   <scheduler>
+      <kernel type="PBOO">
+         <ton value="{1000}" unit="sec"/>
+         <toff value="{1000}" unit="sec"/>
+      </kernel>
+   </scheduler>
+
+</simulation>
+
+
