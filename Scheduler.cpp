@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define _INFO 0
+#define _INFO 1
 #define _DEBUG 0;
 
 Scheduler::Scheduler(Pipeline * p, _schedule_kernel _sche_type, \

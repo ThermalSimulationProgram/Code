@@ -19,7 +19,7 @@ using namespace std;
 #define VM 10001
 #define DELL9020 19020
 #define AMDCPU 1745
-#define _MACHINE AMDCPU
+#define _MACHINE VM
 
 
 
