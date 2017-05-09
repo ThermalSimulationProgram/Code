@@ -20,8 +20,8 @@
 
    <scheduler>
       <kernel type="PBOO">
-         <ton value="{1000}" unit="sec"/>
-         <toff value="{1000}" unit="sec"/>
+         <ton value="{1500}" unit="sec"/>
+         <toff value="{1500}" unit="sec"/>
       </kernel>
    </scheduler>
 
