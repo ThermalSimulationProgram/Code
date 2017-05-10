@@ -201,7 +201,7 @@ int Parser::parseFile(){
 		Scratch::leakyBucket_b = leakyBucket_b;
 		Scratch::Wunit = Wunit;
 	}
-	Scratch::print();
+	// Scratch::print();
 	return ret;
 }
 

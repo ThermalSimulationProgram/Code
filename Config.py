@@ -170,22 +170,27 @@ class Config(object):
 		self.taskSet[0].name = 'events'
 
 	def load_solution(self, taskids):
-		filename = './csv_data/' + self.kernel_type + '_streams_';
-		for id in taskids:
-			filename = filename + 'S' + str(id) + '_'
-		df = round(self.deadline_factor, 1)
-		filename = filename + 'deadlinefactor_' + str(df) + '.csv'
+		valid_solution_kernels = ['pboo', 'cs','jour']
+		if self.kernel_type in valid_solution_kernels:
 
-		data = readcsv(filename);
+			filename = './csv_data/' + self.kernel_type + '_streams_';
+			for id in taskids:
+				filename = filename + 'S' + str(id) + '_'
+				
+			df = round(self.deadline_factor, 1)
+			filename = filename + 'deadlinefactor_' + str(df) + '.csv'
 
-		if (self.kernel_type == 'pboo' or self.kernel_type == 'jour'):
-			self.kernel_ton_value = data[0]
-			self.kernel_toff_value = data[2];
-		if (self.kernel_type == 'cs'):
-			separator_index = data.index(9999)
-			self.leakyBucket_b = data[0:separator_index]
-			self.leakyBucket_r = data[separator_index+1 : len(data)-2]
-			self.leakyBucket_r = data[len(data)-1]
+			data = readcsv(filename);
+
+			if (self.kernel_type == 'pboo' or self.kernel_type == 'jour'):
+				self.kernel_ton_value = data[0]
+				self.kernel_toff_value = data[2];
+
+			if (self.kernel_type == 'cs'):
+				separator_index = data.index(9999)
+				self.leakyBucket_b = data[0:separator_index]
+				self.leakyBucket_r = data[separator_index+1 : len(data)-2]
+				self.Wunit_value = data[len(data)-1]
 
 
 	'''***********************************************'''
@@ -198,7 +203,7 @@ class Config(object):
 				time.sleep(sleeplength)
 				self.set_kernel(kernel)
 				self.load_solution(taskids)
-				self.run(True)
+				self.run()
 			index = index + 1
 	
 	def run_all_kernels(self, control = [1, 1, 1, 1, 1, 1], sleeplength = 60):
@@ -209,7 +214,7 @@ class Config(object):
 			if control[index] > 0:
 				time.sleep(sleeplength)
 				self.set_kernel(kernel)
-				self.run(True)
+				self.run()
 			index = index + 1
 
 
@@ -249,7 +254,7 @@ class Config(object):
 		scheduler = create_node('scheduler', {}, "")
 		kernel    = create_node('kernel', {'type':self.kernel_type.upper()}, "")
 		print self.kernel_type
-		if ((self.kernel_type == 'pboo') or (self.kernel_type == 'ge')):
+		if ((self.kernel_type == 'pboo') or (self.kernel_type == 'ge') or (self.kernel_type == 'jour')):
 			ton  = create_time_node('ton', self.kernel_ton_value, self.kernel_ton_unit)
 			toff = create_time_node('toff', self.kernel_toff_value, self.kernel_toff_unit)
 			kernel.append(ton)
@@ -267,8 +272,8 @@ class Config(object):
 				kernel.append(offlinedata)
 		if (self.kernel_type == 'cs'):
 			Wunit  = create_time_node('Wunit', self.Wunit_value, self.Wunit_unit)
-			leakyBucket_r = create_time_node('leakyBucket_r', self.leakyBucket_r, 'ms')
-			leakyBucket_b = create_time_node('leakyBucket_b', self.leakyBucket_b, 'ms')
+			leakyBucket_r = create_time_node('leaky_bucket_r', self.leakyBucket_r, 'ms')
+			leakyBucket_b = create_time_node('leaky_bucket_b', self.leakyBucket_b, 'ms')
 			kernel.append(Wunit);
 			kernel.append(leakyBucket_b);
 			kernel.append(leakyBucket_r);

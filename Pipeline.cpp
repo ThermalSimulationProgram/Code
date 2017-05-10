@@ -242,7 +242,10 @@ double Pipeline::simulate(){
 		double MeanMaxTemp = tempwatcher->getMeanMaxTemp();
 		appendToFile(tempSaveName, vector<double>(1, MeanMaxTemp));
 
-		appendToFile(tempSaveName, scheduler->getKernelTime());
+		if (Scratch::getKernel() != CS){
+			appendToFile(tempSaveName, scheduler->getKernelTime());
+		}
+		
 
 		float total_cpu_usage = cpuUsageRecorder.getUsage();
 		appendToFile(tempSaveName, vector<float>(1, total_cpu_usage));

@@ -31,7 +31,7 @@ def getTaskParameterFromLibrary(taskids, deadlinefactor):
 	for id in taskids:
 		streams.append(stream_lib[id-1])
 		deadlines.append(stream_lib[id-1][0]*1.0*deadlinefactor)
-		csvpaths.append('S'+str(id) + '_event_trace_200_second.csv') ;
+		csvpaths.append('./csv_data/S'+str(id) + '_event_trace_200_second.csv') ;
 
 	return (streams, deadlines, csvpaths)
 
