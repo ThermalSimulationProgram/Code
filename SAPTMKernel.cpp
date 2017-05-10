@@ -12,7 +12,7 @@
 #include "utils.h"
 
 #define _DEBUG 0
-#define _PROFILE1 1
+#define _PROFILE1 0
 
 using namespace std;
 

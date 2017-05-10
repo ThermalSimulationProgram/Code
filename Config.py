@@ -8,6 +8,7 @@ import csv
   
 from xml_api import *
 from dir_utils import *
+from tasks import *
 
 def readcsv(name):
 	tempdata = []
@@ -93,31 +94,85 @@ class FilePath():
 
 class Config(object):
 	"""docstring for config"""
-	def __init__(self, xml_path='Config.xml'):
-		super(Config, self).__init__()
-		self.__load_xml_config(xml_path)
-		self.__kernel_type = 'invalid kernel'
-		self.valid_kernels = ['aptm', 'bws', 'pboo']
+	def __init__(self):
+		self.kernel_type = 'invalid kernel'
+		self.valid_kernels = ['pboo']
+		self.is_save_result = True
+		self.csv_path = FilePath('./result/csv/')
+		self.xml_path = FilePath('./result/xml/')
+		self.duration_value = 10
+		self.duration_unit = "sec"
+		self.stage_number = 1;
+		self.task_num = 5;
+		self.task_period = 100;
+		self.task_u = 0.4;
+		self.exefactor = 1;
+		self.deadline_factor = 1;
+		self.update_task_set();
+
+		# kernel parameters
+		self.kernel_ton_value = '{100}'
+		self.kernel_ton_unit = 'ms'
+		self.kernel_toff_value = '{50}'
+		self.kernel_toff_unit = 'ms'
+		self.kernel_period_value = '20'
+		self.kernel_period_unit = 'ms'
+		self.kernel_b_factor = 0.93
+		self.kernel_offline_prefix = ''
+		self.Wunit_value = '{15}'
+		self.Wunit_unit = 'ms'
+		self.leakyBucket_b = '{100, 100, 100}'
+		self.leakyBucket_r = '{1, 1, 1}'
+
+		self.fixedFrequency = False
+		self.fixedActive = False
+		self.xmlfileprefix = ''
+		self.csvfileprefix = ''
+		self.valid_kernels = ['aptm', 'bws', 'pboo', 'saptm','cs']
 		self.is_save_result = True
 		self.benchmark_name = 'default'
 
 	def update_xml_csv_filenames(self):
-		same_filename = self.__xmlfileprefix + '_' + self.__kernel_type.lower()
-		self.__xml_path.set_file_name(same_filename)
-		self.__csv_path.set_file_name(same_filename)
+		same_filename = self.xmlfileprefix + '_' + self.kernel_type.lower()
+		self.xml_path.set_file_name(same_filename)
+		self.csv_path.set_file_name(same_filename)
+
+	def set_xml_csv_file_prefix(self, prefix):
+		self.xmlfileprefix = prefix
+		self.csvfileprefix = prefix
+		if self.kernel_type in self.valid_kernels:
+			self.update_xml_csv_filenames()
+
+	def set_xml_csv_sub_dir(self, subdir):
+		self.set_xml_sub_dir(subdir)
+		self.set_csv_sub_dir(subdir)
+
+	def set_xml_sub_dir(self, subdir):
+		self.xml_path.set_sub_dir(subdir)
+
+	def set_csv_sub_dir(self, subdir):
+		self.csv_path.set_sub_dir(subdir)
 
 	def set_kernel(self, kernel_type):
 
 		if kernel_type.lower() in self.valid_kernels:
-			self.__kernel_type = kernel_type.lower()
+			self.kernel_type = kernel_type.lower()
 			self.update_xml_csv_filenames()
 		else:
 			print "Illegal kernel type input!"
 
+	def update_task_set(self):
+		self.taskSet = createTaskSet(self.task_num, self.task_period, self.task_u, self.stage_number)
+
+	def set_task_set(self, stream, deadlines, exefactors, csvpaths):
+		self.taskSet = createTaskSetFromStream(stream, deadlines, exefactors, csvpaths);
+		self.task_num = len(stream)
+		self.taskSet[0].name = 'events'
+
 	'''***********************************************'''
 
 	
-	def run_all_kernels(self, control = [1, 1, 1], sleeplength = 60):
+	def run_all_kernels(self, control = [1, 1, 1, 1,1], sleeplength = 60):
 		# sleeplength = 60
 		# sleeplength = 0
 		index = 0
@@ -132,20 +187,20 @@ class Config(object):
 
 	def save_to_xml(self):
 
-		if not self.__kernel_type in self.valid_kernels:
+		if not self.kernel_type in self.valid_kernels:
 			print "kernel type has not been set yet!"
 			return
 
-		make_dir(self.__xml_path.get_root_path())
-		make_dir(self.__xml_path.get_sub_dir_path())
-		make_dir(self.__csv_path.get_root_path())
-		make_dir(self.__csv_path.get_sub_dir_path())
+		make_dir(self.xml_path.get_root_path())
+		make_dir(self.xml_path.get_sub_dir_path())
+		make_dir(self.csv_path.get_root_path())
+		make_dir(self.csv_path.get_sub_dir_path())
 
 		tree = ElementTree()
-		simulation = create_node('simulation', { 'name': self.__csv_path.get_final_path() }, "")
+		simulation = create_node('simulation', { 'name': self.csv_path.get_final_path() }, "")
 
-		duration    = create_time_node('duration', self.__duration_value, self.__duration_unit);
-		pipeline    = create_node('pipeline', {'stagenumber':str(self.__stage_number)}, "")
+		duration    = create_time_node('duration', self.duration_value, self.duration_unit);
+		pipeline    = create_node('pipeline', {'stagenumber':str(self.stage_number)}, "")
 		save_result = create_node('save_result', {'value':str(self.is_save_result)}, "")
 		benchmark   = create_node('benchmark', {'name':str(self.benchmark_name)}, "")
 		simulation.append(duration)
@@ -153,53 +208,54 @@ class Config(object):
 		simulation.append(pipeline)
 		simulation.append(benchmark)
 
-		events     = create_node('events', {}, "")
-		csv_path   = create_time_node('csv_path', self.__event_csv_path, self.__event_csv_path_unit)
-		period     = create_time_node('period', self.__event_period_value, self.__event_period_unit)
-		distance   = create_time_node('distance', self.__event_distance_value, self.__event_distance_unit)
-		jitter     = create_time_node('jitter', self.__event_jitter_value,self. __event_jitter_unit)
-		wcets      = create_time_node('wcets', self.__event_wcets_value, self.__event_wcets_unit)
-		deadline   = create_time_node('relative_deadline', self.__relative_deadline_value, self.__relative_deadline_unit)
-		exe_factor = create_node('exe_factor', {'value':str(self.__exe_factor)}, "")
-		events.append(csv_path)
-		events.append(period)
-		events.append(jitter)
-		events.append(distance)
-		events.append(wcets)
-		events.append(deadline)
-		events.append(exe_factor)
+		events     = self.taskSet[0].to_xml_node();	
 		simulation.append(events)
 
+		moreevents = create_node('moreevents', {}, "");
+		for i in range(1, self.task_num):
+			task = self.taskSet[i].to_xml_node();	
+			moreevents.append(task);
+
+		simulation.append(moreevents);
+
 		scheduler = create_node('scheduler', {}, "")
-		kernel    = create_node('kernel', {'type':self.__kernel_type.upper()}, "")
-		if ((self.__kernel_type == 'pboo') or (self.__kernel_type == 'ge')):
-			ton  = create_time_node('ton', self.__kernel_ton_value, self.__kernel_ton_unit)
-			toff = create_time_node('toff', self.__kernel_toff_value, self.__kernel_toff_unit)
+		kernel    = create_node('kernel', {'type':self.kernel_type.upper()}, "")
+		print self.kernel_type
+		if ((self.kernel_type == 'pboo') or (self.kernel_type == 'ge')):
+			ton  = create_time_node('ton', self.kernel_ton_value, self.kernel_ton_unit)
+			toff = create_time_node('toff', self.kernel_toff_value, self.kernel_toff_unit)
 			kernel.append(ton)
 			kernel.append(toff)
-		else:
-			kernel_period = create_time_node('period', self.__kernel_period_value, self.__kernel_period_unit)
+		if ((self.kernel_type == 'bws') or (self.kernel_type == 'aptm') or (self.kernel_type == 'saptm')):
+			kernel_period = create_time_node('period', self.kernel_period_value, self.kernel_period_unit)
 			kernel.append(kernel_period)
-			if self.__kernel_type == 'aptm':
-				bfactor     = create_node('b_factor', {'value':str(self.__kernel_b_factor)},"")
+			if self.kernel_type == 'aptm':
+				bfactor     = create_node('b_factor', {'value':str(self.kernel_b_factor)},"")
 				offlinedata = create_node('offlinedata', {}, "")
-				prefix      = create_node('prefix', {'path':self.__kernel_offline_prefix}, "")
+				prefix      = create_node('prefix', {'path':self.kernel_offline_prefix}, "")
 				offlinedata.append(prefix)
 
 				kernel.append(bfactor)
 				kernel.append(offlinedata)
+		if (self.kernel_type == 'cs'):
+			Wunit  = create_time_node('Wunit', self.Wunit_value, self.Wunit_unit)
+			leakyBucket_r = create_time_node('leakyBucket_r', self.leakyBucket_r, 'ms')
+			leakyBucket_b = create_time_node('leakyBucket_b', self.leakyBucket_b, 'ms')
+			kernel.append(Wunit);
+			kernel.append(leakyBucket_b);
+			kernel.append(leakyBucket_r);
 
 		scheduler.append(kernel)
 		simulation.append(scheduler)
 
 		tree._setroot(simulation)
 
-		saved_xml_name = self.__xml_path.get_final_path() + '.xml'
+		saved_xml_name = self.xml_path.get_final_path() + '.xml'
 		pretty_write_xml(tree, saved_xml_name)
 
 	def run(self, flag = False):
 		self.save_to_xml()
-		main_to_xml_path = './' + self.__xml_path.get_final_path()
+		main_to_xml_path = './' + self.xml_path.get_final_path()
 		exe_command(main_to_xml_path, flag)
 		
 
@@ -294,110 +350,110 @@ class Config(object):
 
 
 
-	def get_kernel_type (self):
-		return	self.__kernel_type.lower()
+	# def get_kernel_type (self):
+	# 	return	self.__kernel_type.lower()
 
 
-	def get_write_file_path(self):
-		return self.__write_file_path
+	# def get_write_file_path(self):
+	# 	return self.__write_file_path
 
-	def get_csv_filepath(self):
-		return self.__csv_path.get_final_path()
+	# def get_csv_filepath(self):
+	# 	return self.__csv_path.get_final_path()
 
-	def get_filepath(self):
-		return self.__filepath
+	# def get_filepath(self):
+	# 	return self.__filepath
 
-	def get_relative_deadline(self):
-		return self.__relative_deadline_value
+	# def get_relative_deadline(self):
+	# 	return self.__relative_deadline_value
 
-	def get_exe_factor(self):
-		return self.__exe_factor
+	# def get_exe_factor(self):
+	# 	return self.__exe_factor
 
-	def get_kernel_period(self):
-		return self.__kernel_period_value
+	# def get_kernel_period(self):
+	# 	return self.__kernel_period_value
 
-	def get_b_factor(self):
-		return self.__kernel_b_factor
+	# def get_b_factor(self):
+	# 	return self.__kernel_b_factor
 
-	def get_kernel_ton(self):
-		return self.__kernel_ton_value
+	# def get_kernel_ton(self):
+	# 	return self.__kernel_ton_value
 
-	def get_kernel_toff(self):
-		return self.__kernel_toff_value
+	# def get_kernel_toff(self):
+	# 	return self.__kernel_toff_value
 
-	def get_event_period(self):
-		return self.__event_period_value
+	# def get_event_period(self):
+	# 	return self.__event_period_value
 
-	def get_event_jitter(self):
-		return self.__event_jitter_value
+	# def get_event_jitter(self):
+	# 	return self.__event_jitter_value
 
-	def get_event_distance(self):
-		return self.__event_distance_value
+	# def get_event_distance(self):
+	# 	return self.__event_distance_value
 
-	def get_event_wcets(self):
-		return self.__event_wcets_value
+	# def get_event_wcets(self):
+	# 	return self.__event_wcets_value
 
-	'''***********************************************'''
-	def set_benchmark_name(self, name):
-		self.benchmark_name = name
+	# '''***********************************************'''
+	# def set_benchmark_name(self, name):
+	# 	self.benchmark_name = name
 
-	def set_simulation_duration(self, duration):
-		self.__duration_value = duration
+	# def set_simulation_duration(self, duration):
+	# 	self.__duration_value = duration
 
-	def set_xml_csv_file_prefix(self, prefix):
-		self.__xmlfileprefix = prefix
-		self.__csvfileprefix = prefix
-		if self.__kernel_type in self.valid_kernels:
-			self.update_xml_csv_filenames()
+	# def set_xml_csv_file_prefix(self, prefix):
+	# 	self.__xmlfileprefix = prefix
+	# 	self.__csvfileprefix = prefix
+	# 	if self.__kernel_type in self.valid_kernels:
+	# 		self.update_xml_csv_filenames()
 
-	def set_kernel_type(self, kernel_type):
-		self.set_kernel(kernel_type)
+	# def set_kernel_type(self, kernel_type):
+	# 	self.set_kernel(kernel_type)
 
-	def set_xml_csv_sub_dir(self, subdir):
-		self.set_xml_sub_dir(subdir)
-		self.set_csv_sub_dir(subdir)
+	# def set_xml_csv_sub_dir(self, subdir):
+	# 	self.set_xml_sub_dir(subdir)
+	# 	self.set_csv_sub_dir(subdir)
 
-	def set_xml_sub_dir(self, subdir):
-		self.__xml_path.set_sub_dir(subdir)
+	# def set_xml_sub_dir(self, subdir):
+	# 	self.__xml_path.set_sub_dir(subdir)
 
-	def set_csv_sub_dir(self, subdir):
-		self.__csv_path.set_sub_dir(subdir)
+	# def set_csv_sub_dir(self, subdir):
+	# 	self.__csv_path.set_sub_dir(subdir)
 
-	def set_xml_filename(self, filename):
-		self.__xml_path.set_file_name(filename)
+	# def set_xml_filename(self, filename):
+	# 	self.__xml_path.set_file_name(filename)
 
-	def set_csv_filename(self, filename):
-		self.__csv_path.set_file_name(filename)
+	# def set_csv_filename(self, filename):
+	# 	self.__csv_path.set_file_name(filename)
 
-	def set_relative_deadline(self, relative_deadline):
-		self.__relative_deadline_value = relative_deadline
+	# def set_relative_deadline(self, relative_deadline):
+	# 	self.__relative_deadline_value = relative_deadline
 
-	def set_exe_factor(self, exe_factor):
-		self.__exe_factor = exe_factor
+	# def set_exe_factor(self, exe_factor):
+	# 	self.__exe_factor = exe_factor
 
-	def set_kernel_period(self, kernel_period):
-		self.__kernel_period_value = kernel_period
+	# def set_kernel_period(self, kernel_period):
+	# 	self.__kernel_period_value = kernel_period
 
-	def set_b_factor(self,b_factor):
-		self.__kernel_b_factor = b_factor
+	# def set_b_factor(self,b_factor):
+	# 	self.__kernel_b_factor = b_factor
 
-	def set_kernel_ton(self,ton):
-		self.__kernel_ton_value = ton
+	# def set_kernel_ton(self,ton):
+	# 	self.__kernel_ton_value = ton
 
-	def set_kernel_toff(self,toff):
-		self.__kernel_toff_value = toff
+	# def set_kernel_toff(self,toff):
+	# 	self.__kernel_toff_value = toff
 
-	def set_event_period(self,event_period):
-		self.__event_period_value = event_period
+	# def set_event_period(self,event_period):
+	# 	self.__event_period_value = event_period
 
-	def set_event_jitter(self,event_jitter):
-		 self.__event_jitter_value = event_jitter
+	# def set_event_jitter(self,event_jitter):
+	# 	 self.__event_jitter_value = event_jitter
 
-	def set_event_distance(self,event_distance):
-		 self.__event_distance_value = event_distance
+	# def set_event_distance(self,event_distance):
+	# 	 self.__event_distance_value = event_distance
 
-	def set_event_wcets(self,event_wcets):
-		 self.__event_wcets_value = event_wcets
+	# def set_event_wcets(self,event_wcets):
+	# 	 self.__event_wcets_value = event_wcets
 
 
 
@@ -412,5 +468,25 @@ class Config(object):
 # 	config_me.set_xml_sub_dir('test/')
 # 	config_me.set_xml_filename('testtt2')
 # 	config_me.save_to_xml()
+
+if __name__ == "__main__": 
+	c = Config();
+	streams = [[100,150,0,14], [100,150,0,7], [100,150,0,9]]
+	deadlines = [100,100,100]
+	exefactors = [1,1,1]
+	csvpaths = ['./csv_data/event_trace_60s.csv', './csv_data/event_trace_60s.csv','./csv_data/event_trace_60s.csv']
+	c.set_xml_csv_sub_dir('test_config/')
+	c.set_xml_csv_file_prefix('xxx')
+	c.set_task_set(streams, deadlines, exefactors, csvpaths)
+	c.set_kernel('saptm')
+	c.save_to_xml()
+
+	c.set_kernel('cs')
+	c.save_to_xml()
+
+	c.set_kernel('pboo')
+	c.save_to_xml()
+
+
 
 
