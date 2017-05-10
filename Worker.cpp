@@ -258,7 +258,7 @@ void Worker::wrapper(){
   		while(Pipeline::isSimulating())
 	// while(1)
   		{
-  			if  (toff >= 100 && sleep_counter > 0){
+  			if  (toff >= 100 && sleep_counter >= 0){
   				sem_wait(&state_sem);
   				latestSleep = TimeUtil::getTime();
   				state = _sleep;

@@ -30,7 +30,7 @@ partTimes(10, 0){
 
 	tswon = 0.5;
 	tswoff = 0.5;
-	g = 6.3;
+	g = 0.037;
 	epsilon = 0.1;
 	vector<double> alldeadlines = Scratch::getAllRltDeadline_ms();
 
