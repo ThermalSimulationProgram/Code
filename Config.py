@@ -128,7 +128,7 @@ class Config(object):
 		self.fixedActive = False
 		self.xmlfileprefix = ''
 		self.csvfileprefix = ''
-		self.valid_kernels = ['aptm', 'bws', 'pboo', 'saptm','cs']
+		self.valid_kernels = ['aptm', 'bws', 'pboo', 'saptm','cs','jour']
 		self.is_save_result = True
 		self.benchmark_name = 'default'
 
@@ -169,10 +169,27 @@ class Config(object):
 		self.task_num = len(stream)
 		self.taskSet[0].name = 'events'
 
-	'''***********************************************'''
+	def load_solution(self, taskids):
+		filename = './csv_data/' + self.kernel_type + '_streams_';
+		for id in taskids:
+			filename = filename + 'S' + str(id) + '_'
+		df = round(self.deadline_factor, 1)
+		filename = filename + 'deadlinefactor_' + str(df) + '.csv'
 
-	
-	def run_all_kernels(self, control = [1, 1, 1, 1,1], sleeplength = 60):
+		data = readcsv(filename);
+
+		if (self.kernel_type == 'pboo' or self.kernel_type == 'jour'):
+			self.kernel_ton_value = data[0]
+			self.kernel_toff_value = data[2];
+		if (self.kernel_type == 'cs'):
+			separator_index = data.index(9999)
+			self.leakyBucket_b = data[0:separator_index]
+			self.leakyBucket_r = data[separator_index+1 : len(data)-2]
+			self.leakyBucket_r = data[len(data)-1]
+
+
+	'''***********************************************'''
+	def run_all_kernels_v2(self, taskids, control = [1, 1, 1, 1, 1, 1], sleeplength = 60):
 		# sleeplength = 60
 		# sleeplength = 0
 		index = 0
@@ -180,13 +197,24 @@ class Config(object):
 			if control[index] > 0:
 				time.sleep(sleeplength)
 				self.set_kernel(kernel)
-				self.run()
+				self.load_solution(taskids)
+				self.run(True)
+			index = index + 1
+	
+	def run_all_kernels(self, control = [1, 1, 1, 1, 1, 1], sleeplength = 60):
+		# sleeplength = 60
+		# sleeplength = 0
+		index = 0
+		for kernel in self.valid_kernels:
+			if control[index] > 0:
+				time.sleep(sleeplength)
+				self.set_kernel(kernel)
+				self.run(True)
 			index = index + 1
 
 
 
 	def save_to_xml(self):
-
 		if not self.kernel_type in self.valid_kernels:
 			print "kernel type has not been set yet!"
 			return
