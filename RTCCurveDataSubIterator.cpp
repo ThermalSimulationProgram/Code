@@ -3,6 +3,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "utils.h"
+
 using namespace std;
 
 #define EPSILON (0.0000001)
@@ -24,6 +26,7 @@ double YatSegement(double x0, double y0, double s0, double x){
 bool CurveChecker(const vector<double>& data){
 	int numeldata = data.size();
 	if (numeldata < 3 || numeldata%3 != 0){
+		cout << "CurveChecker: data element number error" << endl;
 		return false;
 	}
 
@@ -32,9 +35,11 @@ bool CurveChecker(const vector<double>& data){
 	for (int i = 0; i < numeldata; i+=3)
 	{
 		if (data[i] < previousX + EPSILON){
+			cout << "CurveChecker: x is not strictly increasing" << endl;
 			return false;
 		}
 		if (data[i+1] <= previousY - EPSILON){
+			cout << "CurveChecker: y is not wide increasing" << endl;
 			return false;
 		}
 		previousX = data[i];
@@ -47,6 +52,7 @@ RTCCurveDataIterator::RTCCurveDataIterator(const std::vector<double>& _c, double
 c(_c){
 	if (!CurveChecker(_c)){
 		cerr<<"RTCCurveDataIterator: input curve vector error\n" ;
+		displayvector(_c, "CurveChecker:c");
 		exit(1);
 	}
 

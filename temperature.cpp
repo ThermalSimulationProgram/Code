@@ -14,8 +14,8 @@
 using namespace std;
 
 
-#define _INFO 1
-#define _DEBUG 1
+#define _INFO 0
+#define _DEBUG 0
 #define VM 10001
 #define DELL9020 19020
 #define AMDCPU 1745

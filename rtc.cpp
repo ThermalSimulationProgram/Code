@@ -122,7 +122,7 @@ vector<jobject> rtc::staticHistoryAwareArrialCurves(vector<double> rl_job_arriva
 		int eventArrivals = 0;
 		for (unsigned j = 0; j < rl_job_arrivals.size(); ++j){
 			if ((rl_job_arrivals[j] < curTime) || 
-				(abs(rl_job_arrivals[j] - curTime)<0.00001))
+				(abs(rl_job_arrivals[j] - curTime)<0.000001))
 				eventArrivals++;
 			else
 				break;

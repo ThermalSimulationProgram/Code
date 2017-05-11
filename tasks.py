@@ -105,7 +105,7 @@ def createTaskSetFromStream(stream, deadlines, exefactors, csvpaths):
 	task_num = len(stream);
 
 	if (len(deadlines) != task_num or len(exefactors) != task_num or len(csvpaths) != task_num):
-		print "error parameter"
+		print "error parameter, sizes do not match with each other"
 		return -1;
 
 	taskSet = [];

@@ -70,7 +70,7 @@ int Parser::parseFile(){
 		type = APTM;
 	else if (kernel_type == "BWS")
 		type = BWS;
-	else if (kernel_type == "PBOO")
+	else if (kernel_type == "PBOO" || kernel_type == "JOUR")
 		type = PBOO;
 	else if (kernel_type == "GE")
 		type = GE;

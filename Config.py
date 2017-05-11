@@ -10,6 +10,13 @@ from xml_api import *
 from dir_utils import *
 from tasks import *
 
+
+def taskIds2name(taskids):
+	filename = '_streams_';
+	for id in taskids:
+		filename = filename + 'S' + str(id) + '_'
+	return filename
+
 def readcsv(name):
 	tempdata = []
 	with open(name, 'rb') as csvfile:
@@ -173,9 +180,7 @@ class Config(object):
 		valid_solution_kernels = ['pboo', 'cs','jour']
 		if self.kernel_type in valid_solution_kernels:
 
-			filename = './csv_data/' + self.kernel_type + '_streams_';
-			for id in taskids:
-				filename = filename + 'S' + str(id) + '_'
+			filename = './csv_data/' + self.kernel_type + taskIds2name(taskids);
 				
 			df = round(self.deadline_factor, 1)
 			filename = filename + 'deadlinefactor_' + str(df) + '.csv'

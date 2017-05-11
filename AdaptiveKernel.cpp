@@ -60,9 +60,12 @@ ScheduleKernel(n, kernel){
 	vector<double> alldelay 			= Scratch::getAllDistance()/1000;
 	vector<vector<double> > allwcets 			= Scratch::getAllDwcets();
 	vector<double> allRelativeDeadlines = Scratch::getAllRltDeadline_ms();
-	// for every task
+
 
 	vector<vector<jobject>> all_multi_haAlpha;
+
+	int taskNum = (int)all_rl_job_arrivals.size();
+	// for each task, calculate the history aware arrival curves at each scheduling time
 	for (int i = 0; i < (int) all_rl_job_arrivals.size(); ++i)
 	{
 		vector<jobject> temp = rtc::staticHistoryAwareArrialCurves(all_rl_job_arrivals[i],
@@ -79,13 +82,13 @@ ScheduleKernel(n, kernel){
 
 	for (int i = 0; i < (int) tmp_scheduling_times.size(); ++i)
 	{
-		jobject allAlpha = all_multi_haAlpha[0][i];
-		for (int j = 1; j < (int) all_multi_haAlpha.size(); ++j)
+		jobject allAlpha = all_multi_haAlpha[0][i];// the ha arrival curve of task 0 at ith scheduling time
+		for (int j = 1; j < taskNum; ++j)
 		{
 			allAlpha = rtc::plus(allAlpha, all_multi_haAlpha[j][i]);
 		}
 		multi_haAlpha.push_back(allAlpha);
-		multi_haAlpha_curve_data.push_back( rtc::segementsData(allAlpha, 3000) );
+		multi_haAlpha_curve_data.push_back( rtc::segementsData(allAlpha, 2500) );
 	}
 
 
