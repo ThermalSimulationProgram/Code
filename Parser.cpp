@@ -174,11 +174,13 @@ int Parser::parseFile(){
 		ptm.tons                    = tons/1000;  
 		ptm.toffs                   = toffs/1000;
 		Scratch::setPTMValues(ptm);
+		Scratch::setAdaptionPeriod(0);
 	}else if (type == GE){
 		ptmspec ptm;
 		ptm.tons  = vector<double>(nstage,1000);  
 		ptm.toffs = vector<double>(nstage,0);
 		Scratch::setPTMValues(ptm);
+		Scratch::setAdaptionPeriod(0);
 	}else if (type == CS){
 		vector<double> leakyBucket_b = stringToVector<double>(
 			kernel_node.child("leaky_bucket_b").attribute("value").value());
