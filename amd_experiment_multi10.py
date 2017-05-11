@@ -5,7 +5,7 @@ taskids = list(range(1,11));
 
 deadline_factors = [];
 
-for i in range(5, 21):
+for i in range(5, 6):
 	deadline_factors.append(i*0.1)
 
 exe_factor = 1;
@@ -19,9 +19,9 @@ c = Config();
 
 c.set_xml_csv_sub_dir('test_config/')
 
-c.duration_value = 1;
+c.duration_value = 100;
 
-control = [0, 0, 0, 0, 1, 0]
+control = [0, 0, 1, 1, 1, 1]
 
 for df in deadline_factors:
 	c.deadline_factor = df
@@ -29,7 +29,7 @@ for df in deadline_factors:
 	(streams, deadlines, csvpaths) = getTaskParameterFromLibrary(taskids, df)
 	c.set_task_set(streams, deadlines, exefactors, csvpaths)
 
-	c.run_all_kernels_v2(taskids, control, 0.2)
+	c.run_all_kernels_v2(taskids, control, 100)
 
 
 
