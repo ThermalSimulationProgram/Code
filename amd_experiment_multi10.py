@@ -5,7 +5,7 @@ taskids = list(range(1,11));
 
 deadline_factors = [];
 
-for i in range(5, 6):
+for i in range(5, 21):
 	deadline_factors.append(i*0.1)
 
 exe_factor = 1;
@@ -17,7 +17,7 @@ for i in range(0, len(taskids)):
 
 c = Config();
 
-c.set_xml_csv_sub_dir('test_config/')
+c.set_xml_csv_sub_dir('multi-ten-events/')
 
 c.duration_value = 100;
 
