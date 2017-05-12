@@ -66,6 +66,8 @@ ScheduleKernel(n, kernel){
 
 	int taskNum = (int)all_rl_job_arrivals.size();
 	// for each task, calculate the history aware arrival curves at each scheduling time
+	// 
+	cout << "The number of scheduling instants: " << tmp_scheduling_times.size() << endl;
 	for (int i = 0; i < (int) all_rl_job_arrivals.size(); ++i)
 	{
 		vector<jobject> temp = rtc::staticHistoryAwareArrialCurves(all_rl_job_arrivals[i],
@@ -76,6 +78,7 @@ ScheduleKernel(n, kernel){
 			temp[i] = rtc::affine(temp[i], 1, allRelativeDeadlines[i]);
 			temp[i] = rtc::times(temp[i], allwcets[i][0]);
 		}
+		cout << "Finish calculating task: " << i+1 << endl;
 
 		all_multi_haAlpha.push_back(temp);
 	}
@@ -87,6 +90,7 @@ ScheduleKernel(n, kernel){
 		{
 			allAlpha = rtc::plus(allAlpha, all_multi_haAlpha[j][i]);
 		}
+		cout << "Finish post processing scheduling instant: " << i+1 << endl;
 		multi_haAlpha.push_back(allAlpha);
 		multi_haAlpha_curve_data.push_back( rtc::segementsData(allAlpha, 2500) );
 	}
