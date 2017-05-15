@@ -76,7 +76,8 @@ void Scheduler::wrapper(){
 
 	
   	//Wait until the simulation is initialized
-	while( !Pipeline::isInitialized() );
+	//while( !Pipeline::isInitialized() );
+	sem_wait(&Pipeline::init_sem);
 
   	#if _INFO == 1
 	Semaphores::print_sem.wait_sem();
@@ -85,7 +86,8 @@ void Scheduler::wrapper(){
   	#endif
 
 	///wait for the simulation start
-	while(!Pipeline::isSimulating()){};
+	//while(!Pipeline::isSimulating()){};
+sem_wait(&Pipeline::running_sem);
 
 
 	// this function is inherited from TimedRunable class

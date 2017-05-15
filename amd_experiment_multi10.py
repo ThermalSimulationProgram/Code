@@ -19,7 +19,7 @@ c = Config();
 
 c.set_xml_csv_sub_dir('multi-ten-events/')
 
-c.duration_value = 180;
+c.duration_value = 70;
 
 control = [0, 0, 1, 1, 1, 1]
 

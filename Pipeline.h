@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <semaphore.h>
 
 #include "structdef.h"
 #include "CPUUsage.h"
@@ -55,7 +56,10 @@ protected:
 	CPUUsage cpuUsageRecorder;
 
 	int _isAppendSaveFile;
+	int thread_num;
 public:
+	static sem_t init_sem;
+	static sem_t running_sem;
 
 	// Constructor needs the xml file path
 	explicit Pipeline(std::string);

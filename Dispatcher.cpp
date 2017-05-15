@@ -40,8 +40,8 @@ void Dispatcher::wrapper(){
   	#endif
 
   //Wait until the simulation is initialized
-	while( !Pipeline::isInitialized() );
-
+	//while( !Pipeline::isInitialized() );
+	sem_wait(&Pipeline::init_sem);
   	#if _INFO == 1
 	Semaphores::print_sem.wait_sem();
 	cout << "Dispatcher: " << id << " begining execution \n";
@@ -50,7 +50,8 @@ void Dispatcher::wrapper(){
 
 	
 	///wait for the simulation start
-	while(!Pipeline::isSimulating()){};
+	//while(!Pipeline::isSimulating()){};
+sem_wait(&Pipeline::running_sem);
 
 	///Dispatcher releases jobs to a Pipeline object
 	if (pipeline == NULL){

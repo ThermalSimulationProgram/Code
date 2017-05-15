@@ -33,6 +33,8 @@ using namespace std;
 
 bool Pipeline::initialized = false;
 bool Pipeline::simulating  = false;
+sem_t Pipeline::init_sem;
+sem_t Pipeline::running_sem;
 
 // Constructor needs the xml file path
 Pipeline::Pipeline(string xml_path):Pipeline(xml_path, 0){
@@ -51,6 +53,7 @@ Pipeline::Pipeline(string xml_path, int isAppendSaveFile):cpuUsageRecorder()
 	#if _DEBUG == 1
 	cout << "finished parse file\n";
 	#endif
+	thread_num = 0;
 
 	// compare stage number with CPU number
 	int _n_stages = Scratch::getNstage();
@@ -68,15 +71,18 @@ Pipeline::Pipeline(string xml_path, int isAppendSaveFile):cpuUsageRecorder()
 	{
 		Dispatcher* tempdispatcher      = new Dispatcher(this, allArrivalTimes[i], 100+i);
 		dispatchers.push_back(tempdispatcher);
+		thread_num++;
 	}
 	
 	scheduler       = new Scheduler(this, Scratch::getKernel(), 99);
+	thread_num++;
 	
 	// create n_stages workers and attach it to default CPU
 	for (int i = 0; i < n_stages; ++i){
 		Worker *t = new Worker(i, i);
 		workers.push_back(t);
-		worker_cpu.push_back(i);		
+		worker_cpu.push_back(i);
+		thread_num++;		
 	}
 
 	// give main thread the highest priority
@@ -86,8 +92,12 @@ Pipeline::Pipeline(string xml_path, int isAppendSaveFile):cpuUsageRecorder()
 		pthread_exit(0);
 	}
 	tempwatcher 	= new TempWatcher(200000, Scratch::getName(), 98);
+	thread_num++;
 
 	_isAppendSaveFile = isAppendSaveFile;
+
+	sem_init(&init_sem, 0,0 );
+	sem_init(&running_sem, 0, 0);
 	// initialize();	
 }
 
@@ -124,7 +134,10 @@ void Pipeline::setWorkerCPU(vector<unsigned> order){
 void Pipeline::initialize(){
 	Statistics::initialize();
 
-	
+		// cout << "trigger scheduler" << endl;
+	scheduler->trigger();
+	scheduler->activate();
+//sleep(30);
 	
 	vector<vector<unsigned long> > allwcets = Scratch::getAllWcets();
 	vector<unsigned long> allRltDeadline = Scratch::getAllRltDeadline();
@@ -137,9 +150,7 @@ void Pipeline::initialize(){
 	}
 	
 
-	// cout << "trigger scheduler" << endl;
-	scheduler->trigger();
-	scheduler->activate();
+
 
 	// cout << "trigger tempwatcher" << endl;
 	tempwatcher->trigger();
@@ -162,6 +173,9 @@ void Pipeline::initialize(){
 	// cout << "existing initialize1" << endl;
 	// all threads initialized
 	initialized = true;
+	for(int i=0; i<thread_num; ++i){
+		sem_post(&init_sem);
+	}
 
 	// cout << "existing initialize2" << endl;
 }
@@ -213,6 +227,9 @@ double Pipeline::simulate(){
 	// simulation starts now
 	cpuUsageRecorder.startLoggingCPU();
 	simulating = true;
+	for(int i=0; i<thread_num; ++i){
+		sem_post(&running_sem);
+	}
 	// main thread sleeps for duration time length
 	nanosleep(&duration, &rem);
 	simulating = false;
@@ -254,6 +271,7 @@ double Pipeline::simulate(){
 		if (Scratch::getKernel() == CS){
 			appendToFile(tempSaveName, workers[0]->getShapingExpense());
 		}else{
+			appendToFile(tempSaveName, scheduler->getAllSchemes());
 			appendToFile(tempSaveName, scheduler->getKernelTimeExpenseLog());
 		}
 
@@ -265,6 +283,8 @@ double Pipeline::simulate(){
 			appendToFile(tempSaveName, tempwatcher->getAllTempTrace());
 			appendContentToFile(tempSaveName, endOfTrace);
 		}
+
+
 
 		appendContentToFile(tempSaveName, Statistics::getAllMissedDeadline());
 
@@ -359,7 +379,7 @@ bool Pipeline::isSimulating(){
 void Pipeline::finishedJob(Job* j){
 	// let the job self-check if it is real finished
 
-	double now = Statistics::getRelativeTime_ms();
+/*	double now = Statistics::getRelativeTime_ms();
 	double deadline = (double)j->getRltDeadline()/1000;
 
 	double release = ((double)j->getRltReleaseTime())/1000;
@@ -388,7 +408,7 @@ void Pipeline::finishedJob(Job* j){
 		cout << "Task: " << j->getTaskId() << " " << j->getId() <<  "th job finishes incorrectly!" 
 		<< "at time: "<< (Statistics::getRelativeTime_ms()) << " millisecond!"  << endl;
 		Semaphores::print_sem.post_sem();
-	}
+	}*/
 }
 
 // This function is called by the scheduler to apply new schedule scheme to each stage

@@ -28,9 +28,9 @@ partTimes(10, 0){
 
 	}
 
-	tswon = 0.5;
-	tswoff = 0.5;
-	g = 0.037;
+	tswon = 0.1;
+	tswoff = 0.1;
+	g = 0.0328;
 	epsilon = 0.1;
 	vector<double> alldeadlines = Scratch::getAllRltDeadline_ms();
 
@@ -123,7 +123,7 @@ int SAPTMKernel::GoldenSearch(vector<double> beta_data, std::vector<double> & to
 	double lambda1 = calculate_lambda_based_on_toff(beta_data, toff_test1, ton_test1);
 	double lambda2 = calculate_lambda_based_on_toff(beta_data, toff_test2, ton_test2);
 
-	while( toff_max - toff_test1 > epsilon){
+	while( toff_test2 - toff_test1 > epsilon){
 		if (lambda1 > lambda2){
 			toff_min = toff_test1;
 			toff_test1 = toff_test2;
@@ -249,7 +249,7 @@ std::vector<double> SAPTMKernel::getFIFOCurveData(){
 double SAPTMKernel::calculate_lambda_based_on_toff(const vector<double>& beta, double toff, double& ton){
 	double rho = rtc::minspeedbdfEDG(beta, toff + tswon);
 	if (rho<0 || rho >= 1){
-		ton = 1000000;
+		ton = 9000000;
 		return 1.0;
 	}
 	ton = (toff * rho + tswon) / (1 - rho) ;
