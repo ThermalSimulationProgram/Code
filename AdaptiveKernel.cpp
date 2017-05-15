@@ -12,6 +12,8 @@
 #include <unistd.h>
 
 
+
+
 using namespace std;
 
 AdaptiveKernel::AdaptiveKernel(unsigned n, vector<double> _wcets, 
@@ -68,6 +70,7 @@ ScheduleKernel(n, kernel){
 	int taskNum = (int)all_rl_job_arrivals.size();
 	// for each task, calculate the history aware arrival curves at each scheduling time
 	// 
+	cout << "The number of tasks: " << taskNum << endl;
 	cout << "The number of scheduling instants: " << tmp_scheduling_times.size() << endl;
 	for (int i = 0; i < (int) all_rl_job_arrivals.size(); ++i)
 	{
@@ -86,21 +89,31 @@ ScheduleKernel(n, kernel){
 	for (int i = 0; i < (int) tmp_scheduling_times.size(); ++i)
 	{
 		jobject allAlpha = all_multi_haAlpha[0][i];// the ha arrival curve of task 0 at ith scheduling time
+		vector<double> tempdata = rtc::segementsData(allAlpha, 500);
+		if (vectorAny(tempdata < -0.0001)){
+			displayvector(tempdata, "tempdata1");
+		}
+		
 		for (int j = 1; j < taskNum; ++j)
 		{
+			cout << "second and more tasks" << endl;
 			allAlpha = rtc::plus(allAlpha, all_multi_haAlpha[j][i]);
 		}
-		//if ((double)(i+1)/tmp_scheduling_times.size() > counter * 0.05){
+		if ((double)(i+1)/tmp_scheduling_times.size() > counter * 0.05){
 		cout << "finish computing scheduling: " << i+1 << endl;
 		counter++;
-//}
+}
 		multi_haAlpha.push_back(allAlpha);
-		multi_haAlpha_curve_data.push_back( rtc::segementsData(allAlpha, 500) );
+		 tempdata = rtc::segementsData(allAlpha, 500);
+		if (vectorAny(tempdata < -0.0001)){
+			displayvector(tempdata, "tempdata");
+		}
+		multi_haAlpha_curve_data.push_back( tempdata );
 	}
 
 
 	cout << "AdaptiveKernel: finish calculate history arrival curve" << endl;
-	sleep(100);
+	sleep(10);
 }
 
 AdaptiveKernel::~AdaptiveKernel(){

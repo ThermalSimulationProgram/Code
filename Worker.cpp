@@ -170,7 +170,11 @@ vector<double> Worker::getAllLoads_ms(){
 	sem_wait(&FIFO_sem);
 	for (list<Job*>::iterator it = FIFO.begin(); it !=  FIFO.end(); it++)
 	{
-		ret.push_back((double) ( (*it)->getCurrentWCET() - (*it)->getABET()  )/1000);
+		double temp = (double) ((*it)->getCurrentWCET() - (*it)->getABET());
+		if (temp < 0 ){
+			cout << (*it)->getCurrentWCET() << " abet: " << (*it)->getABET() << endl;
+		}
+		ret.push_back( temp/1000);
 	}
 	sem_post(&FIFO_sem);
 	return ret;
