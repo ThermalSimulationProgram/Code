@@ -7,6 +7,8 @@ double YatSegement(double x0, double y0, double s0, double x);
 
 bool CurveChecker(const std::vector<double>&);
 
+bool CurveChecker(const std::vector<double>&, double initY);
+
 class RTCCurveDataIterator{
 private:
 	std::vector<double> c;

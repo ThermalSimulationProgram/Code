@@ -72,42 +72,42 @@ ScheduleKernel(n, kernel){
 	// 
 	cout << "The number of tasks: " << taskNum << endl;
 	cout << "The number of scheduling instants: " << tmp_scheduling_times.size() << endl;
-	for (int i = 0; i < (int) all_rl_job_arrivals.size(); ++i)
+	for (int i = 0; i < taskNum; ++i)
 	{
 		vector<jobject> temp = rtc::staticHistoryAwareArrialCurves(all_rl_job_arrivals[i],
 			tmp_scheduling_times, allperiod[i], alljitter[i], alldelay[i]);
 
+	
 		for (int j = 0; j < (int)temp.size(); ++j)
 		{
 			temp[j] = rtc::affine(temp[j], 1, allRelativeDeadlines[i]);
 			temp[j] = rtc::times(temp[j], allwcets[i][0]);
 		}
+
 		cout << "finish computing task: " << i+1 << endl;
 		all_multi_haAlpha.push_back(temp);
 	}
+
+
+
 	int counter = 0;
+	vector<jobject> firstTasks = all_multi_haAlpha[0];
 	for (int i = 0; i < (int) tmp_scheduling_times.size(); ++i)
 	{
-		jobject allAlpha = all_multi_haAlpha[0][i];// the ha arrival curve of task 0 at ith scheduling time
-		vector<double> tempdata = rtc::segementsData(allAlpha, 500);
-		if (vectorAny(tempdata < -0.0001)){
-			displayvector(tempdata, "tempdata1");
-		}
+		
+		jobject allAlpha = rtc::clone(firstTasks[i]);// the ha arrival curve of task 0 at ith scheduling time
 		
 		for (int j = 1; j < taskNum; ++j)
 		{
-			cout << "second and more tasks" << endl;
 			allAlpha = rtc::plus(allAlpha, all_multi_haAlpha[j][i]);
 		}
 		if ((double)(i+1)/tmp_scheduling_times.size() > counter * 0.05){
-		cout << "finish computing scheduling: " << i+1 << endl;
-		counter++;
-}
-		multi_haAlpha.push_back(allAlpha);
-		 tempdata = rtc::segementsData(allAlpha, 500);
-		if (vectorAny(tempdata < -0.0001)){
-			displayvector(tempdata, "tempdata");
+			cout << "finish computing scheduling: " << i+1 << endl;
+			counter++;
 		}
+		multi_haAlpha.push_back(allAlpha);
+		vector<double> tempdata = rtc::segementsData(allAlpha, 500);
+	
 		multi_haAlpha_curve_data.push_back( tempdata );
 	}
 

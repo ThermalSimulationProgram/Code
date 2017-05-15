@@ -87,6 +87,7 @@ void Scratch::print(){
 	for (int i = 0; i < (int)wcets.size(); ++i)
 	{
 		displayvector(wcets[i], "wcets");
+		displayvector(dwcets[i], "dwcets");
 	}
 	
 	displayvector(ptm.tons, "tons");

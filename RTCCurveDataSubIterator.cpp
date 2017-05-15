@@ -24,6 +24,9 @@ double YatSegement(double x0, double y0, double s0, double x){
 }
 
 bool CurveChecker(const vector<double>& data){
+	return CurveChecker(data, -EPSILON);
+}
+bool CurveChecker(const vector<double>& data, double initY){
 	int numeldata = data.size();
 	if (numeldata < 3 || numeldata%3 != 0){
 		cout << "CurveChecker: data element number error" << endl;
@@ -50,11 +53,19 @@ bool CurveChecker(const vector<double>& data){
 
 RTCCurveDataIterator::RTCCurveDataIterator(const std::vector<double>& _c, double _xmax):
 c(_c){
-	if (!CurveChecker(_c)){
-		cerr<<"RTCCurveDataIterator: input curve vector error\n" ;
+
+	int numeldata = _c.size();
+	if (numeldata < 3 || numeldata%3 != 0){
+		cout << "RTCCurveDataIterator: data element number error" << endl;
 		displayvector(_c, "CurveChecker:c");
 		exit(1);
 	}
+
+	// if (!CurveChecker(_c)){
+	// 	cerr<<"RTCCurveDataIterator: input curve vector error\n" ;
+	// 	displayvector(_c, "CurveChecker:c");
+	// 	exit(1);
+	// }
 
 	size = _c.size();
 	// for (int i = 2; i < size; i+=3){

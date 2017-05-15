@@ -63,28 +63,33 @@ jobject rtc::historyAwareAlphaByLeakyBucket_BSW(bucket b, double curTime,
  	}
 	int myfactorJ = floor(curTime/b.stepWidth1);
 	int myBurstJ = b.bucket1 - eventArrivals + myfactorJ;
-	if (myBurstJ > b.bucket1)
+	if (myBurstJ > b.bucket1){
 		myBurstJ = b.bucket1;
+	}
 
 	int aux1   = ceil(curTime/b.stepWidth1);
 	int myk    =  aux1 > 1 ? aux1 : 1;
 	double tmp = (double) myk * b.stepWidth1;
 	double myoffsetJ;
-	if(abs(curTime - tmp)< EPSILON)
+	if(abs(curTime - tmp)< EPSILON){
 		myoffsetJ = 0;
-	else
+	}
+	else{
 		myoffsetJ = tmp - curTime;
+	}
 
-	jobject alpha = affine(b.upperBound1, 1, (-1)*(b.stepWidth1-myoffsetJ) );
+	jobject alpha = rtc::affine(b.upperBound1, 1, (-1)*(b.stepWidth1-myoffsetJ) );
 
-	if(myBurstJ != b.bucket1)
-		alpha = minus(alpha, (b.bucket1 - myBurstJ) );
+	if(myBurstJ != b.bucket1){
+		alpha = rtc::minus(alpha, (b.bucket1 - myBurstJ) );
+	}
 
 	if (b.bucket2 != 0){
 		myfactorJ = floor(curTime/b.stepWidth2);
 		myBurstJ  = b.bucket2 - eventArrivals + myfactorJ;
-		if (myBurstJ > b.bucket2)
+		if (myBurstJ > b.bucket2){
 			myBurstJ = b.bucket2;
+		}
 
 		myk = 1;
 		while(myk*b.stepWidth2 < curTime){
@@ -94,16 +99,20 @@ jobject rtc::historyAwareAlphaByLeakyBucket_BSW(bucket b, double curTime,
 		myk = aux2 > 1? aux2 : 1;
 		tmp = myk * b.stepWidth2;
 
-		if(abs(curTime - tmp)< EPSILON)
+		if(abs(curTime - tmp)< EPSILON){
 			myoffsetJ = 0;
-		else
+		}
+		else{
 			myoffsetJ = tmp - curTime;
+		}
 
-		jobject alpha2 = affine(b.upperBound2, 1, myoffsetJ-b.stepWidth2 );
-		if(myBurstJ != b.bucket2)
-			alpha2 = minus(alpha2, (b.bucket2 - myBurstJ) );
+		jobject alpha2 = rtc::affine(b.upperBound2, 1, myoffsetJ-b.stepWidth2 );
 
-		alpha = min(alpha, alpha2 );
+		if(myBurstJ != b.bucket2){
+			alpha2 = rtc::minus(alpha2, (b.bucket2 - myBurstJ) );
+		}
+
+		alpha = rtc::min(alpha, alpha2 );
 	}
 
 	return alpha;
