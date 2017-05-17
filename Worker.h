@@ -140,6 +140,8 @@ protected:
 	void waiting();
 
 	void idle(unsigned long tsleep);
+	
+	void idlePowerState(unsigned long tIdle);
 
 	
 

@@ -379,7 +379,7 @@ bool Pipeline::isSimulating(){
 void Pipeline::finishedJob(Job* j){
 	// let the job self-check if it is real finished
 
-/*	double now = Statistics::getRelativeTime_ms();
+	double now = Statistics::getRelativeTime_ms();
 	double deadline = (double)j->getRltDeadline()/1000;
 
 	double release = ((double)j->getRltReleaseTime())/1000;
@@ -408,7 +408,7 @@ void Pipeline::finishedJob(Job* j){
 		cout << "Task: " << j->getTaskId() << " " << j->getId() <<  "th job finishes incorrectly!" 
 		<< "at time: "<< (Statistics::getRelativeTime_ms()) << " millisecond!"  << endl;
 		Semaphores::print_sem.post_sem();
-	}*/
+	}
 }
 
 // This function is called by the scheduler to apply new schedule scheme to each stage

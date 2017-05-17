@@ -113,7 +113,7 @@ ScheduleKernel(n, kernel){
 
 
 	cout << "AdaptiveKernel: finish calculate history arrival curve" << endl;
-	sleep(10);
+	sleep(60);
 }
 
 AdaptiveKernel::~AdaptiveKernel(){

@@ -23,7 +23,7 @@ void rtc::initialize(){
 
 /************************** THIRDPARTY METHODS ************************/
 bucket rtc::initbucket(long period, double jitter, long delay){
-	int approxRange = 10;
+	int approxRange = 20;
 	// string callfun = "rtc::initbucket";
 	bucket result;
 	if ((delay>0 ) && (delay>period-jitter)){

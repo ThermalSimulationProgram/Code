@@ -113,7 +113,7 @@ class Config(object):
 		self.task_num = 5;
 		self.task_period = 100;
 		self.task_u = 0.4;
-		self.exefactor = 1;
+		self.exefactor = 0.5;
 		self.deadline_factor = 1;
 		self.update_task_set();
 
@@ -199,16 +199,18 @@ class Config(object):
 
 
 	'''***********************************************'''
-	def run_all_kernels_v2(self, taskids, control = [1, 1, 1, 1, 1, 1], sleeplength = 60):
+	def run_all_kernels_v2(self, taskids, control = [1, 1, 1, 1, 1, 1], sleeplength = 60, isRealRun = False):
 		# sleeplength = 60
 		# sleeplength = 0
 		index = 0
 		for kernel in self.valid_kernels:
 			if control[index] > 0:
-				time.sleep(sleeplength)
+				if kernel != 'saptm':
+					time.sleep(sleeplength)
+					
 				self.set_kernel(kernel)
 				self.load_solution(taskids)
-				self.run()
+				self.run(isRealRun)
 			index = index + 1
 	
 	def run_all_kernels(self, control = [1, 1, 1, 1, 1, 1], sleeplength = 60):

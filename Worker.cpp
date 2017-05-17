@@ -80,11 +80,31 @@ void Worker::join(){
 
 void Worker::getNewInfo(newWorkerInfo& ret){
 	// cout << "getNewInfo 1" << endl;
-	ret.allEventAbsDeadlines = getAllAbsDeadline_ms();
+	//ret.allEventAbsDeadlines = getAllAbsDeadline_ms();
 
 	// cout << "getNewInfo 2" << endl;
-	ret.allEventLoads = getAllLoads_ms();
+	// ret.allEventLoads = getAllLoads_ms();
 	// cout << "getNewInfo 3" << endl;
+	
+	sem_wait(&job_sem);
+	if (current_job != NULL){
+		double maxLoad = current_job->getCurrentWCET() - current_job->getABET();
+		ret.allEventLoads.push_back((double)maxLoad/1000);
+		ret.allEventAbsDeadlines.push_back(current_job->getAbsDeadline());
+	}
+	sem_post(&job_sem);
+	sem_wait(&FIFO_sem);
+	for (list<Job*>::iterator it = FIFO.begin(); it !=  FIFO.end(); it++)
+	{
+		double temp = (double) ((*it)->getCurrentWCET() - (*it)->getABET());
+		if (temp < 0 ){
+			cout << (*it)->getCurrentWCET() << " abet: " << (*it)->getABET() << endl;
+		}
+		ret.allEventLoads.push_back( temp/1000);
+		ret.allEventAbsDeadlines.push_back((*it)->getAbsDeadline());
+	}
+	sem_post(&FIFO_sem);
+	
 }
 
 void Worker::getAllInfo(double now, WorkerInfo & ret){
@@ -498,12 +518,23 @@ void Worker::runTask(unsigned long Wunit){
 			// Statistics::addTrace(thread_type, id, active_start);
 	do //ton loop
 	{
-
-		load.consume_us_benchmarks(base);
+		bool hasJob = false;
+		sem_wait(&job_sem);
+		if (current_job != NULL){
+			hasJob = true;
+		}
+		sem_post(&job_sem);
+		
+		if (hasJob){
+			load.consume_us_benchmarks(base);
+		}else{
+			idlePowerState(base);
+		}
 		end = TimeUtil::convert_us(TimeUtil::getTime());
 		exedSlice = end - start;
 		total_exed = total_exed + exedSlice;
 		start = end;
+		
 
 		sem_wait(&job_sem);
 		if (current_job != NULL){
@@ -514,9 +545,9 @@ void Worker::runTask(unsigned long Wunit){
 		
 		if (current_job == NULL){
 			current_job = popFrontJob();
-			if (current_job == NULL){
+			/*if (current_job == NULL){
 				stop = true;
-			}
+			}*/
 			
 		}
 		
@@ -534,13 +565,20 @@ void Worker::runTask(unsigned long Wunit){
 }
 
 void Worker::waiting(){
-
+	
+	if (!isInterruptValid){
+		cout << "interrupt not enabled " << endl;
+	}
+	
 	while(isInterruptValid){
+		idlePowerState(200);
+	
 		if (hasTask()){
 			disableInterrupt();
-			runTask( (unsigned long)(coolshaper.getWunit()*1000) );
+			setNextAction(_run);
+			//runTask( (unsigned long)(coolshaper.getWunit()*1000) );
 		}
-		load.consume_us_benchmarks(100);
+		
 	}
 
 }
@@ -574,4 +612,15 @@ void Worker::setIdleLength(unsigned long tsleep){
 
 std::vector<unsigned long> Worker::getShapingExpense(){
 	return coolshaper.getExpense();
+}
+
+
+void Worker::idlePowerState(unsigned long tIdle){
+	unsigned long start = TimeUtil::getTimeUSec();
+	//float ratio = 0.3;
+	unsigned long part1Time =  (unsigned long) (    tIdle    );
+	load.consume_us_benchmarks(part1Time);
+	
+	//struct timespec End = TimeUtil::Micros(start + tIdle);
+	//sem_timedwait(&schedule_sem, &End);
 }

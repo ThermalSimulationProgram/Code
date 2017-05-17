@@ -15,7 +15,7 @@ randseq=[
 
 
 
-exe_factor = 1;
+exe_factor = 0.5;
 exefactors = [];
 for i in range(0, 5):
 	exefactors.append(exe_factor)

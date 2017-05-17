@@ -53,7 +53,7 @@ f2:
 Worker:Worker.h  Worker.cpp
 	$(CXX) $(CXXFLAGSNO) $(INCLUDE) -c Worker.cpp -o Worker.o
 
-all: $(OBJECTS)  Worker
+all: $(OBJECTS) Worker
 	$(CXX) $(CCFLAGSNO) $(INCLUDE) $(OBJECTS) -o $(APPNAME) $(LIBPATH) $(LIBS)
 
 # warming: $(OBJECTS)

@@ -5,10 +5,10 @@ taskids = list(range(1,11));
 
 deadline_factors = [];
 
-for i in range(14, 21):
+for i in range(8, 16):
 	deadline_factors.append(i*0.1)
 
-exe_factor = 1;
+exe_factor = 0.1;
 exefactors = [];
 for i in range(0, len(taskids)):
 	exefactors.append(exe_factor)
@@ -19,9 +19,9 @@ c = Config();
 
 c.set_xml_csv_sub_dir('multi-ten-events/')
 
-c.duration_value = 70;
-c.kernel_period_value = 40;
-control = [0, 0, 1, 1, 1, 1]
+c.duration_value = 120;
+c.kernel_period_value = 20;
+control = [0, 0, 1, 1, 0, 1]
 
 for df in deadline_factors:
 	c.deadline_factor = df
@@ -29,7 +29,7 @@ for df in deadline_factors:
 	(streams, deadlines, csvpaths) = getTaskParameterFromLibrary(taskids, df)
 	c.set_task_set(streams, deadlines, exefactors, csvpaths)
 
-	c.run_all_kernels_v2(taskids, control, 100)
+	c.run_all_kernels_v2(taskids, control, 100, False)
 
 
 

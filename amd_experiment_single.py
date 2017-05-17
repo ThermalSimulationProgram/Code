@@ -1,10 +1,10 @@
 
 from Config import *
 
-taskids = list(range(1,11));
+taskids = list(range(2,3));
 
 
-exe_factor = 1;
+exe_factor = 0.5;
 exefactors = [];
 for i in range(0, 1):
 	exefactors.append(exe_factor)
@@ -15,11 +15,11 @@ c = Config();
 
 c.set_xml_csv_sub_dir('single-ten-events/')
 
-df = 1
+df = 0.5
 c.deadline_factor = df
-c.duration_value = 180;
+c.duration_value = 120;
 
-control = [0, 0, 1, 1, 1, 1]
+control = [0, 0, 0, 0, 1, 0]
 
 for theid in taskids:
 	

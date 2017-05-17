@@ -71,9 +71,9 @@ void CoolShaper::runShaper(){
 				tsleep = temp;
 			}
 		}
-		// cout << "CoolShaper:: sleep time : " << tsleep << endl;
+		//cout << "CoolShaper:: sleep time : " << tsleep << endl;
 		worker->setNextAction(_idle);
-		worker->setIdleLength((unsigned long)tsleep*1000);
+		worker->setIdleLength((unsigned long)(tsleep*1000));
 	}
 	unsigned long thisExpense = TimeUtil::getTimeUSec() - time;
 	timeExpenses.push_back(thisExpense);
