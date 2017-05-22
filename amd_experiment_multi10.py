@@ -22,7 +22,7 @@ c.set_xml_csv_sub_dir('multi-ten-events/')
 c.duration_value = 100;
 c.kernel_period_value = 25;
 #valid_kernels = ['aptm', 'bws', 'pboo', 'saptm','cs','jour']
-control = [0, 0, 1, 0, 0, 0]
+control = [0, 0, 0, 0, 0, 1]
 
 for df in deadline_factors:
 	c.deadline_factor = df
