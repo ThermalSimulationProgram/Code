@@ -29,7 +29,7 @@ c.set_xml_csv_sub_dir('random-four-events/')
 df = 0.3
 c.deadline_factor = df
 c.duration_value = 120;
-
+#valid_kernels = ['aptm', 'bws', 'pboo', 'saptm','cs','jour']
 control = [0, 0, 1, 1, 1, 1]
 
 for taskids in randseq:

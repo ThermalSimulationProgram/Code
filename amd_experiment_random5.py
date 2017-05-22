@@ -23,7 +23,7 @@ for i in range(0, 5):
 
 
 c = Config();
-
+#valid_kernels = ['aptm', 'bws', 'pboo', 'saptm','cs','jour']
 c.set_xml_csv_sub_dir('random-five-events/')
 
 df = 0.8
