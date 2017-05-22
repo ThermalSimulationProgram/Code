@@ -51,7 +51,8 @@ void CoolShaper::runShaper(){
 	#endif
 
 	previousTime = time;
-
+	
+	
 
 	double min_f = minElement(leakyBucket_f);
 	if (min_f >= Wunit){

@@ -175,6 +175,7 @@ class Config(object):
 		self.taskSet = createTaskSetFromStream(stream, deadlines, exefactors, csvpaths);
 		self.task_num = len(stream)
 		self.taskSet[0].name = 'events'
+		
 
 	def load_solution(self, taskids):
 		valid_solution_kernels = ['pboo', 'cs','jour']
@@ -207,6 +208,8 @@ class Config(object):
 			if control[index] > 0:
 				if kernel != 'saptm':
 					time.sleep(sleeplength)
+				else:
+					time.sleep(sleeplength*0.2)
 					
 				self.set_kernel(kernel)
 				self.load_solution(taskids)
@@ -247,8 +250,13 @@ class Config(object):
 		simulation.append(save_result)
 		simulation.append(pipeline)
 		simulation.append(benchmark)
-
+		
+		if (self.kernel_type == 'cs'):
+			self.taskSet[0].exefator = 1
+			
 		events     = self.taskSet[0].to_xml_node();	
+		
+			
 		simulation.append(events)
 
 		moreevents = create_node('moreevents', {}, "");

@@ -15,7 +15,7 @@ randseq=[
 
 
 
-exe_factor = 0.5;
+exe_factor = 0.1;
 exefactors = [];
 for i in range(0, 5):
 	exefactors.append(exe_factor)
@@ -26,9 +26,10 @@ c = Config();
 
 c.set_xml_csv_sub_dir('random-five-events/')
 
-df = 1
+df = 0.8
 c.deadline_factor = df
-c.duration_value = 180;
+c.duration_value = 120;
+c.kernel_period_value = 25;
 
 control = [0, 0, 1, 1, 1, 1]
 
@@ -39,7 +40,7 @@ for taskids in randseq:
 
 	c.set_task_set(streams, deadlines, exefactors, csvpaths)
 
-	c.run_all_kernels_v2(taskids, control, 120)
+	c.run_all_kernels_v2(taskids, control, 100)
 
 
 

@@ -25,7 +25,9 @@ def getTaskParameterFromLibrary(taskids, deadlinefactor):
 				[114,    13,     1,    14],
 				[313,   302,    86,     5],
 				[119,   187,    89,     6],
-				[100,	 90,	10, 	47]];
+				[100,	 90,	10, 	47],
+				[198,	 87,	28,	 	82],
+				[300, 	 50, 	10, 	102]];
 	streams = [];
 	deadlines = [];
 	csvpaths = [];

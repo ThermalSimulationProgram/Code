@@ -13,6 +13,7 @@
 #include "Priorities.h"
 #include "Scratch.h"
 #include "Pipeline.h"
+#include "utils.h"
 
 
 using namespace std;
@@ -250,22 +251,29 @@ void Worker::wrapper(){
   	if (Scratch::getKernel() == CS){
   		coolshaper.init();
   		coolshaper.runShaper();
+		vector<double> ttt(3, 0);
   		while(Pipeline::isSimulating()){
+			unsigned long timein = TimeUtil::getTimeUSec();
   			switch (nextAction) {
   				case _run:{
   					runTask( (unsigned long) (coolshaper.getWunit() * 1000));
+					ttt[0] += ((double)( TimeUtil::getTimeUSec() - timein )) * 0.000001;
   					break;
   				}
   				case _waiting:{
   					waiting();
+					ttt[1] += ((double)( TimeUtil::getTimeUSec() - timein )) * 0.000001;
   					break;
   				}
   				case _idle:{
   					idle(sleepLength);
+					ttt[2] += ((double)( TimeUtil::getTimeUSec() - timein )) * 0.000001;
   					break;
   				}
   			}
   		}
+		
+		displayvector(ttt, "action times ");
   		
   		
 
@@ -339,6 +347,19 @@ void Worker::wrapper(){
 				// }else{
 				// 	load.consume_us_idle(base);
 				// }
+				
+					/*bool hasJob = false;
+					sem_wait(&job_sem);
+					if (current_job != NULL){
+						hasJob = true;
+					}
+					sem_post(&job_sem);
+		
+					if (hasJob){
+						load.consume_us_benchmarks(base);
+					}else{
+						idlePowerState(base);
+					}*/
 
 					load.consume_us_benchmarks(base);
 					end = TimeUtil::convert_us(TimeUtil::getTime());
@@ -518,7 +539,7 @@ void Worker::runTask(unsigned long Wunit){
 			// Statistics::addTrace(thread_type, id, active_start);
 	do //ton loop
 	{
-		bool hasJob = false;
+		/*bool hasJob = false;
 		sem_wait(&job_sem);
 		if (current_job != NULL){
 			hasJob = true;
@@ -529,7 +550,8 @@ void Worker::runTask(unsigned long Wunit){
 			load.consume_us_benchmarks(base);
 		}else{
 			idlePowerState(base);
-		}
+		}*/
+		load.consume_us_benchmarks(base);
 		end = TimeUtil::convert_us(TimeUtil::getTime());
 		exedSlice = end - start;
 		total_exed = total_exed + exedSlice;
@@ -560,7 +582,7 @@ void Worker::runTask(unsigned long Wunit){
 	} while ((!stop) && Pipeline::isSimulating() );	
 
 
-	coolshaper.decreaseLeakyBucketf(((double)total_exed)/1000);
+	coolshaper.decreaseLeakyBucketf(((double)Wunit)/1000);
 	coolshaper.runShaper();
 }
 
@@ -572,7 +594,11 @@ void Worker::waiting(){
 	
 	while(isInterruptValid){
 		idlePowerState(200);
+		/*unsigned long start = TimeUtil::getTimeUSec();
 	
+		struct timespec End = TimeUtil::Micros(start + 100);
+		sem_timedwait(&schedule_sem, &End);*/
+		
 		if (hasTask()){
 			disableInterrupt();
 			setNextAction(_run);
@@ -616,10 +642,9 @@ std::vector<unsigned long> Worker::getShapingExpense(){
 
 
 void Worker::idlePowerState(unsigned long tIdle){
-	unsigned long start = TimeUtil::getTimeUSec();
-	//float ratio = 0.3;
-	unsigned long part1Time =  (unsigned long) (    tIdle    );
-	load.consume_us_benchmarks(part1Time);
+	//unsigned long start = TimeUtil::getTimeUSec();
+	//unsigned long part1Time =  (unsigned long) (    tIdle * 0.9   );
+	load.consume_us_benchmarks(tIdle);
 	
 	//struct timespec End = TimeUtil::Micros(start + tIdle);
 	//sem_timedwait(&schedule_sem, &End);
