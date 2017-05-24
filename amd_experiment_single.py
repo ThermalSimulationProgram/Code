@@ -18,7 +18,7 @@ c.set_xml_csv_sub_dir('single-ten-events/')
 df = 1.0
 c.deadline_factor = df
 c.duration_value = 120;
-
+#valid_kernels = ['aptm', 'bws', 'pboo', 'saptm','cs','jour']
 control = [0, 0, 0, 0, 1, 0]
 
 for theid in taskids:

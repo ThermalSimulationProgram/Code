@@ -31,7 +31,7 @@ c.deadline_factor = df
 c.duration_value = 120;
 c.kernel_period_value = 25;
 
-control = [0, 0, 1, 1, 1, 1]
+control = [0, 0, 1, 0, 0, 0]
 
 for taskids in randseq:
 	
@@ -40,7 +40,7 @@ for taskids in randseq:
 
 	c.set_task_set(streams, deadlines, exefactors, csvpaths)
 
-	c.run_all_kernels_v2(taskids, control, 100)
+	c.run_all_kernels_v2(taskids, control, 140)
 
 
 
