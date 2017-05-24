@@ -31,7 +31,7 @@ c.deadline_factor = df
 c.duration_value = 120;
 c.kernel_period_value = 25;
 
-control = [0, 0, 1, 0, 0, 0]
+control = [0, 0, 0, 1, 0, 0]
 
 for taskids in randseq:
 	
