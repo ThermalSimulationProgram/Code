@@ -30,7 +30,7 @@ for df in deadline_factors:
 	(streams, deadlines, csvpaths) = getTaskParameterFromLibrary(taskids, df)
 	c.set_task_set(streams, deadlines, exefactors, csvpaths)
 
-	c.run_all_kernels_v2(taskids, control, 200)
+	c.run_all_kernels_v2(taskids, control, 300)
 
 
 
