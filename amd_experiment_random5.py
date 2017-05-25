@@ -29,7 +29,7 @@ c.set_xml_csv_sub_dir('random-five-events/')
 df = 0.8
 c.deadline_factor = df
 c.duration_value = 120;
-c.kernel_period_value = 25;
+c.kernel_period_value = 20;
 
 control = [0, 0, 0, 1, 0, 0]
 
