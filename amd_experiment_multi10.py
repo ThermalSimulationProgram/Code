@@ -31,6 +31,22 @@ for df in deadline_factors:
 	c.set_task_set(streams, deadlines, exefactors, csvpaths)
 
 	c.run_all_kernels_v2(taskids, control, 300)
+	
+for df in deadline_factors:
+	c.deadline_factor = df
+	c.set_xml_csv_file_prefix('deadline_factor_' + str(df))
+	(streams, deadlines, csvpaths) = getTaskParameterFromLibrary(taskids, df)
+	c.set_task_set(streams, deadlines, exefactors, csvpaths)
+
+	c.run_all_kernels_v2(taskids, control, 300)
+	
+for df in deadline_factors:
+	c.deadline_factor = df
+	c.set_xml_csv_file_prefix('deadline_factor_' + str(df))
+	(streams, deadlines, csvpaths) = getTaskParameterFromLibrary(taskids, df)
+	c.set_task_set(streams, deadlines, exefactors, csvpaths)
+
+	c.run_all_kernels_v2(taskids, control, 300)
 
 
 
